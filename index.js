@@ -17,7 +17,8 @@ const testOrders = [
         consultant: "CONSULTANT1",
         createdDate: new Date("1/1/2017"),
         phone: "88888888",
-        name: "NN1 Bondegården",
+        name: "NN1",
+        farmName: "Bondegården",
         address: {
             street: "Markvejen 1",
             city: "aarhus",
@@ -29,7 +30,8 @@ const testOrders = [
         consultant: "CONSULTANT1",
         createdDate: new Date("1/1/2017"),
         phone: "88888889",
-        name: "NN2 Bondegården",
+        name: "NN2",
+        farmName: "Bondegården",
         address: {
             street: "parkvejen 2",
             city: "galten",
@@ -41,7 +43,8 @@ const testOrders = [
         consultant: "CONSULTANT2",
         createdDate: new Date("1/1/2017"),
         phone: "88888887",
-        name: "NN3 Bondegården",
+        name: "NN3",
+        farmName: "Bondegården",
         address: {
             street: "parkvejen 3",
             city: "galten",
