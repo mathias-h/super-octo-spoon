@@ -33,9 +33,7 @@
             <th>Dato oprettet</th>
             <th>Telefonnummer</th>
             <th>Gårdnavn</th>
-            <th>Vejnavn</th>
-            <th>Bynavn</th>
-            <th>Postnummer</th>
+            <th>Adresse</th>
             <th>Comment</th>
         </tr>
         </thead>
@@ -55,13 +53,7 @@
                         {{name}}
                     </td>
                     <td>
-                        {{address.street}}
-                    </td>
-                    <td>
-                        {{address.city}}
-                    </td>
-                    <td>
-                        {{address.zip}}
+                        {{farmName}} {{address.street}} {{address.city}} {{address.zip}} 
                     </td>
                     <td>
                         {{comment}}
