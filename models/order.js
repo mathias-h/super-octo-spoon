@@ -2,15 +2,33 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var order = new Schema({
-    consultant:     String,
-    signedDate:     Date,
+    consultant:     {
+        type:       String,
+        required:   true
+    },
+    signedDate:     {
+        type:       Date,
+        required:   true
+    },
     landlineNumber: String,
     phoneNumber:    String,
-    name:           String,
-    address: {
-        street: String,
-        city:   String,
-        zip:    Integer
+    name:           {
+        type:       String,
+        required:   true
+    },
+    address:    {
+        street: {
+            type:       String,
+            required:   true
+        },
+        city:   {
+            type:       String,
+            required:   true
+        },
+        zip:    {
+            type:       Number,
+            required:   true
+        }
     },
     comment: String
 });

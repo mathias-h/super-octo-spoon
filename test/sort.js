@@ -1,13 +1,13 @@
 const { expect } = require("chai")
 const { sort } = require("../models/sort")
 
-describe("addressTest", () => {
+describe("Sorting tests", () => {
     var correctAnswer = [];
     var sortingArray = [];
     beforeEach(function () {
        sortingArray = [
            {
-               consultant: "CONSULANT1",
+               consultant: "CONSULANT7",
                createdDate: new Date("1/1/2017"),
                tlf: "88888888",
                name: "NN1 Bondegården",
@@ -19,7 +19,7 @@ describe("addressTest", () => {
                comment: "Ring efter høst"
            },
            {
-               consultant: "CONSULANT1",
+               consultant: "CONSULANT2",
                createdDate: new Date("1/1/2017"),
                tlf: "88888889",
                name: "NN1 Bondegården",
@@ -31,7 +31,7 @@ describe("addressTest", () => {
                comment: "Ring før høst"
            },
            {
-               consultant: "CONSULANT2",
+               consultant: "CONSULANT4",
                createdDate: new Date("1/1/2017"),
                tlf: "88888888",
                name: "NN1 Bondegården",
@@ -43,7 +43,7 @@ describe("addressTest", () => {
                comment: "Ring under høst"
            },
            {
-               consultant: "CONSULANT2",
+               consultant: "CONSULANT5",
                createdDate: new Date("1/1/2017"),
                tlf: "88888888",
                name: "NN1 Bondegården",
@@ -55,7 +55,7 @@ describe("addressTest", () => {
                comment: "Ring under høst"
            },
            {
-               consultant: "CONSULANT2",
+               consultant: "CONSULANT1",
                createdDate: new Date(2017,2,1),
                tlf: "88888888",
                name: "NN1 Bondegården",
@@ -67,14 +67,14 @@ describe("addressTest", () => {
                comment: "Ring under høst"
            }
        ]
-        correctAnswer = [sortingArray[3],sortingArray[2],sortingArray[0],sortingArray[1],sortingArray[4]]
-         sort(sortingArray, "address")
     });
-    it("should pass", () => {
-        console.log(sortingArray)
-        console.log()
-        expect(sortingArray).to.deep.eq(correctAnswer)
-
+    it("should pass, sorted by address", () => {
+        correctAnswer = [sortingArray[3],sortingArray[2],sortingArray[0],sortingArray[1],sortingArray[4]]
+        expect(sort(sortingArray, "address")).to.deep.eq(correctAnswer)
+    });
+    it("should pass, sorted by consultant", () => {
+        correctAnswer = [sortingArray[4], sortingArray[1],sortingArray[2], sortingArray[3], sortingArray[0]];
+        expect(sort(sortingArray, "consultant")).to.deep.eq(correctAnswer)
     })
     it("should fail", () => {
         expect(false).to.be.false
