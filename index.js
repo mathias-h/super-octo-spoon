@@ -8,4 +8,8 @@ const app = express()
 
 app.get("/", (req,res) => res.end("HELLO WORLD"))
 
+app.get("/opretOrdre", (req, res) => {
+
+});
+
 app.listen(1024)
