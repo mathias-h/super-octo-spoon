@@ -1,4 +1,6 @@
 module.exports.search = function search(orders, query) {
+    if (!query) return orders
+    
     const words = query.split(" ")
 
     return orders
