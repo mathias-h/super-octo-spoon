@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "test": "mocha test/**/*.js",
+    "start": "node index"
+  },
   "keywords": [],
   "author": "MNMNM",
   "license": "NONE",
