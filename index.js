@@ -1,7 +1,9 @@
 
 const express = require("express");
 const mongoose = require("mongoose");
+const moment = require("moment");
 const hbs = require("hbs");
+
 const { search } = require("./models/search")
 
 mongoose.connect("mongodb://localhost:27017/super-octo-spoon");
@@ -51,7 +53,10 @@ const testOrders = [
 
 app.get("/", (req,res) => {
     const query = req.query.query
-    const orders = search(testOrders, query)
+    const orders = search(testOrders, query).map(o => {
+        o.createdDate = moment(o.createdDate).format("DD/MM/YYYY")
+    return o;
+    })
     res.render("overview", { orders, query })
 });
 
