@@ -56,10 +56,8 @@ const testOrders = [
 
 app.get("/", (req,res) => {
     const query = req.query.query
-    const orders = search(testOrders, query).map(o => {
-        o.createdDate = moment(o.createdDate).format("DD/MM/YYYY")
-    return o;
-    })
+    const orders = search(testOrders, query)
+        .map(o => Object.assign({ createdDate: moment(o.createdDate).format("DD/MM/YYYY") }, o))
     res.render("overview", { orders, query })
 });
 
