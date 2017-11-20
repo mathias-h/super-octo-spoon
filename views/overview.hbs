@@ -3,20 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <title>Oversigt</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css"
+          integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"
+            integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh"
+            crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"
+            integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ"
+            crossorigin="anonymous"></script>
+    <style>
+        #navMenuButton {
+            margin: 1.5% !important;
+        }
+
+        #navMenu {
+            float: left;
+        }
+
+        #navSearch {
+            float: right;
+        }
+    </style>
 </head>
 <body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="#">Ny Bruger</a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" href="#">Ny order</a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" href="#">Statistik</a>
+            </li>
+        </ul>
+    </div>
+    <form class="form-inline my-2 my-lg-0">
+        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+    </form>
+</nav>
+
+
 
 <div id="navBar">
-    <div id="navMenu">
-        MENUBUTTON
+    <div id="navMenuButton">
+        <div id="navMenu" class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Menu
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item" href="#">Ny Bruger</a>
+                <a class="dropdown-item" href="#">Ny Ordre</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#">Statistik</a>
+            </div>
+        </div>
     </div>
     <div id="navSearch">
-        SØGNING
+        <form action="/">
+            <input name="query" type="text" value="{{query}}">
+            <button>
+                <img src="/public/search.svg" alt="search icon">
+            </button>
+        </form>
     </div>
 </div>
 
 <div id="contentData">
-    {{#each orders}}{{consultant}}{{createdDate}}{{/each}}
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Konsulent</th>
+            <th>Dato oprettet</th>
+            <th>Telefonnummer</th>
+            <th>Navn</th>
+            <th>Adresse</th>
+            <th>Comment</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{#each orders}}
+            <tr>
+                <td>
+                    {{consultant}}
+                </td>
+                <td>
+                    {{createdDate}}
+                </td>
+                <td>
+                    {{phone}}
+                </td>
+                <td>
+                    {{name}}
+                </td>
+                <td>
+                    {{farmName}}. {{address.street}}, {{address.city}} {{address.zip}}
+                </td>
+                <td>
+                    {{comment}}
+                </td>
+            </tr>
+        {{/each}}
+        </tbody>
+    </table>
 </div>
 </body>
 </html>
