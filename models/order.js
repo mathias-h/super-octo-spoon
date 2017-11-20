@@ -13,8 +13,6 @@ var order = new Schema({
         zip:    Integer
     },
     comment: String
-
-
 });
 
 module.exports = mongoose.model('Order', order);
