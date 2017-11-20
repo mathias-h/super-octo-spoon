@@ -15,7 +15,13 @@
         MENUBUTTON
     </div>
     <div id="navSearch" style="float: right;">
-        SØGNING
+        <form action="/">
+            <input name="query" type="text" value="{{query}}" required>
+            <button>
+                <img src="/public/search.svg" alt="search icon">
+            </button>
+        </form>
+
     </div>
 </div>
 
@@ -43,7 +49,7 @@
                         {{createdDate}}
                     </td>
                     <td>
-                        {{tlf}}
+                        {{phone}}
                     </td>
                     <td>
                         {{name}}
