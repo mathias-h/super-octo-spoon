@@ -77,6 +77,10 @@ describe("Sorting tests", () => {
         correctAnswer = [sortingArray[3],sortingArray[2],sortingArray[0],sortingArray[1],sortingArray[4]]
         expect(sort(sortingArray, "address")).to.deep.eq(correctAnswer)
     });
+    it("should pass, sorted by address", () => {
+        correctAnswer = [sortingArray[4], sortingArray[1], sortingArray[0], sortingArray[2], sortingArray[3]]
+        expect(sort(sortingArray, "address", "desc")).to.deep.eq(correctAnswer)
+    });
     it("should pass, sorted by consultant", () => {
         correctAnswer = [sortingArray[4], sortingArray[1],sortingArray[2], sortingArray[3], sortingArray[0]];
         expect(sort(sortingArray, "consultant")).to.deep.eq(correctAnswer)
