@@ -63,4 +63,22 @@ app.post("/order/create", (req, res) => {
     }
 });
 
+app.get("/order/:orderId", (req,res) => {
+    const orderId = req.params.orderId
+    Order.findOne({ _id: orderId }).then(order => {
+        if (!order) res.status(404).send("order not found")
+        else res.json(order)
+    })
+})
+
+app.post("/order", (req,res) => {
+    const order = req.body
+
+    Order.findOneAndUpdate({ _id: order._id }, { $set: order }).then(() => {
+        res.end("order updated")
+    }).catch(err => {
+        res.json(err)
+    })
+})
+
 app.listen(1024);
