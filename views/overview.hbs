@@ -5,9 +5,7 @@
     <title>Oversigt</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css"
           integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-            crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"
             integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh"
             crossorigin="anonymous"></script>
@@ -50,7 +48,7 @@
                 <a class="nav-link" href="#">by bruger</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/opretOrdre">ny ordre</a>
+                <a class="nav-link" href="#" data-toggle="modal" data-target="#createOrderModal">ny ordre</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="#">statistik</a>
@@ -107,5 +105,168 @@
         </tbody>
     </table>
 </div>
+
+<!-- Create order modal -->
+<div class="modal fade" id="createOrderModal" tabindex="-1" role="dialog" aria-labelledby="createOrderModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createOrderModalLabel">Opret ordre</h5>
+                <button type="button" class="close" id="orderCreateClose" data-dismiss="modal" aria-label="Close" style="cursor: pointer;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="orderCreateForm" novalidate>
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="col form-group">
+                            <label for="inputConsultant">Konsulent</label>
+                            <select name="consultant" id="inputConsultant" class="form-control" required>
+                                <option selected>MJ</option>
+                                <option>ML</option>
+                                <option>MH</option>
+                                <option>NK</option>
+                            </select>
+                        </div>
+                        <div class="col form-group">
+                            <label for="inputSignedDate">Indgået dato</label>
+                            <input name="signedDate" type="date" id="inputSignedDate" class="form-control" required>
+                            <script>
+                                var date = new Date();
+                                $("#inputSignedDate").val(date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate());
+                            </script>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="col-9 form-group">
+                            <label for="inputName">Navn</label>
+                            <input name="name" type="text" id="inputName" class="form-control" placeholder="Navn" required>
+                        </div>
+                        <div class="col form-group">
+                            <label for="inputFarmName">Gårdnavn</label>
+                            <input name="farmName" type="text" id="inputFarmName" class="form-control" placeholder="Gårdnavn" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="col-6 form-group">
+                            <label for="inputStreet">Adresse</label>
+                            <input name="street" type="text" id="inputStreet" class="form-control" placeholder="Adresse" required>
+                        </div>
+                        <div class="col form-group">
+                            <label for="inputZip">Postnummer</label>
+                            <input name="zip" type="number" id="inputZip" class="form-control" placeholder="Postnummer" required>
+                        </div>
+                        <div class="col form-group">
+                            <label for="inputCity">By</label>
+                            <input name="city" type="text" id="inputCity" class="form-control" placeholder="By" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="col form-group">
+                            <label for="inputLandlineNumber">Fastnet nummer</label>
+                            <input name="landlineNumber" type="tel" id="inputLandlineNumber" class="form-control" placeholder="Fastnet telefon" pattern="^[\s()+-]*([0-9][\s()+-]*){6,20}$">
+                        </div>
+                        <div class="col form-group">
+                            <label for="inputPhoneNumber">Mobil nummer</label>
+                            <input name="phoneNumber" type="tel" id="inputPhoneNumber" class="form-control" placeholder="Mobil telefon" pattern="^[\s()+-]*([0-9][\s()+-]*){6,20}$">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="col form-group">
+                            <label for="inputComment">Kommentarer</label>
+                            <textarea name="comment" id="inputComment" class="form-control" rows="5" style="min-height: 74px"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="form-row float-right">
+                        <div class="col form-group">
+                            <button id="orderCreateCancel" class="btn btn-secondary" data-dismiss="modal" style="cursor: pointer">Annuller ordre</button>
+                            <button type="submit" class="btn btn-primary" style="cursor: pointer;">Opret ordre</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript for create order modal -->
+<script>
+    'use strict';
+
+    $("#orderCreateCancel").click(() => {
+        clearOrderCreate();
+    });
+
+    $("#orderCreateClose").click(() => {
+        clearOrderCreate();
+    });
+
+    $(document).keyup((e) => {
+        if(e.which == 27){
+            clearOrderCreate();
+        }
+    });
+
+    function clearOrderCreate(){
+        // TODO: Sæt konsulent tilbage til bruger
+        $("#inputSignedDate").val("2017-11-21");
+        $("#inputName").val("");
+        $("#inputFarmName").val("");
+        $("#inputStreet").val("");
+        $("#inputZip").val("");
+        $("#inputCity").val("");
+        $("#inputLandlineNumber").val("");
+        $("#inputPhoneNumber").val("");
+        $("#inputComment").val("");
+    }
+
+    window.addEventListener('load', function() {
+        var form = document.getElementById('orderCreateForm');
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            var landline = $("#inputLandlineNumber");
+            var mobile = $("#inputPhoneNumber");
+
+            landline[0].setCustomValidity("")
+            mobile[0].setCustomValidity("")
+
+            if(!(landline[0].validity.valid && landline.val()) && !(mobile[0].validity.valid && mobile.val())){
+                landline[0].setCustomValidity("Mindst et telefonnummer skal angives");
+                mobile[0].setCustomValidity("Mindst et telefonnummer skal angives");
+            }else{
+                landline[0].setCustomValidity("");
+                mobile[0].setCustomValidity("");
+            }
+
+            if (form.checkValidity() === true) {
+                const data = {};
+                var f = new FormData(form);
+                for (const [key,value] of f.entries()) {
+                    data[key] = value;
+                }
+                $.ajax({
+                    url: "/order/create",
+                    method: "POST",
+                    data: JSON.stringify(data),
+                    headers: {
+                        "content-type": "application/json"
+                    }
+                }).then(location.reload());
+            }
+
+            form.classList.add('was-validated');
+        }, false);
+
+    }, false);
+</script>
+
 </body>
 </html>
