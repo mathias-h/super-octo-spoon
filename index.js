@@ -22,7 +22,6 @@ app.use(bodyParser.json());
 app.get("/", (req,res) => {
     Order.find({}).lean().exec((err, orders) => {
         const query = req.query.query
-        console.log(Object.assign({ a: 1 }, orders[0]))
         const data = {
             orders: search(orders, query)
                 .map(o => {
