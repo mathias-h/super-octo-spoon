@@ -10,7 +10,7 @@ var order = new Schema({
     address: {
         street: String,
         city:   String,
-        zip:    Integer
+        zip:    Number,
     },
     comment: String
 
