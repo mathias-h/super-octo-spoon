@@ -77,8 +77,10 @@ app.post("/order", (req,res) => {
     Order.findOneAndUpdate({ _id: order._id }, { $set: order }).then(() => {
         res.end("order updated")
     }).catch(err => {
-        res.json(err)
+        res.status(500).json(err)
     })
 })
 
 app.listen(1024);
+
+module.exports.app = app;
