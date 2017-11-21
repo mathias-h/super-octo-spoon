@@ -8,11 +8,11 @@ describe("Sorting tests", () => {
        sortingArray = [
            {
                consultant: "CONSULANT7",
-               createdDate: new Date("2017-02-24"),
-               tlf: "88888888",
+               signedDate: new Date("2017-02-24"),
+               landlineNumber: "88888888",
                name: "Niels Hansen",
+               farmName: "Bondegården",
                address: {
-                   farm: "Bondegården",
                    street: "Markvejen 1",
                    city: "Bondeby",
                    zip: "8123"
@@ -21,11 +21,11 @@ describe("Sorting tests", () => {
            },
            {
                consultant: "CONSULANT2",
-               createdDate: new Date("2017-02-23"),
-               tlf: "88888889",
+               signedDate: new Date("2017-02-23"),
+               landlineNumber: "88888889",
                name: "Alan Jensen",
+               farmName: "Bondegården",
                address: {
-                   farm: "Bondegården",
                    street: "Markvejen 2",
                    city: "Bondeby",
                    zip: "8123"
@@ -34,11 +34,11 @@ describe("Sorting tests", () => {
            },
            {
                consultant: "CONSULANT4",
-               createdDate: new Date("2017-01-23"),
-               tlf: "88888888",
+               signedDate: new Date("2017-01-23"),
+               landlineNumber: "88888888",
                name: "Niels Adamsen",
+               farmName: "Bondegården",
                address: {
-                   farm: "Bondegården",
                    street: "Markvejen 12",
                    city: "TestAArhus",
                    zip: "8000"
@@ -47,11 +47,11 @@ describe("Sorting tests", () => {
            },
            {
                consultant: "CONSULANT5",
-               createdDate: new Date("2017-06-23"),
-               tlf: "88888888",
+               signedDate: new Date("2017-06-23"),
+               landlineNumber: "88888888",
                name: "Lars A. Adamsen",
+               farmName: "Bondegården",
                address: {
-                   farm: "Bondegården",
                    street: "Markvejen 12",
                    city: "Arhus",
                    zip: "8000"
@@ -60,11 +60,11 @@ describe("Sorting tests", () => {
            },
            {
                consultant: "CONSULANT1",
-               createdDate: new Date("2017-02-15"),
-               tlf: "88888888",
+               signedDate: new Date("2017-02-15"),
+               landlineNumber: "88888888",
                name: "Bo Adamsen",
+               farmName: "Bondegården",
                address: {
-                   farm: "Bondegården",
                    street: "Markvejen 3",
                    city: "Bondeby",
                    zip: "8123"
@@ -77,6 +77,10 @@ describe("Sorting tests", () => {
         correctAnswer = [sortingArray[3],sortingArray[2],sortingArray[0],sortingArray[1],sortingArray[4]]
         expect(sort(sortingArray, "address")).to.deep.eq(correctAnswer)
     });
+    it("should pass, sorted by address", () => {
+        correctAnswer = [sortingArray[4], sortingArray[1], sortingArray[0], sortingArray[2], sortingArray[3]]
+        expect(sort(sortingArray, "address", "desc")).to.deep.eq(correctAnswer)
+    });
     it("should pass, sorted by consultant", () => {
         correctAnswer = [sortingArray[4], sortingArray[1],sortingArray[2], sortingArray[3], sortingArray[0]];
         expect(sort(sortingArray, "consultant")).to.deep.eq(correctAnswer)
@@ -88,8 +92,24 @@ describe("Sorting tests", () => {
     it("should pass, sorted by name", () => {
         correctAnswer =[sortingArray[4], sortingArray[3],sortingArray[2], sortingArray[0], sortingArray[1]];
         expect(sort(sortingArray, "name")).to.deep.eq(correctAnswer);
-        console.log(sort(sortingArray, "name"))
     })
+    it("should pass, sorted by name (firstName test)", () => {
+        farmerBo = {
+            consultant: "CONSULANT1",
+            createdDate: new Date("2017-02-15"),
+            landlineNumber: "88888888",
+            name: "Bo",
+            farmName: "Bondegården",
+            address: {
+                street: "Markvejen 3",
+                city: "Bondeby",
+                zip: "8123"
+            }
+        }
+        sortingArray.push(farmerBo);
+        correctAnswer = [sortingArray[4], sortingArray[3], sortingArray[2], sortingArray[5], sortingArray[0], sortingArray[1]];
+        expect(sort(sortingArray, "name")).to.deep.eq(correctAnswer);
+    });
     it("should fail", () => {
         expect(false).to.be.false
     })

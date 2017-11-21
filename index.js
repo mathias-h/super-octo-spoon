@@ -56,5 +56,4 @@ app.post("/opretOrdre", (req, res) => {
     }
 });
 
-
 app.listen(1024);
