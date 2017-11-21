@@ -4,7 +4,7 @@ const testOrders = [
     {
         consultant: "CONSULTANT1",
         signedDate: new Date("1/1/2017"),
-        phone: "88888888",
+        landlineNumber: "88888888",
         name: "NN1 Bondegården",
         address: {
             street: "Markvejen 1",
@@ -16,7 +16,7 @@ const testOrders = [
     {
         consultant: "CONSULTANT1",
         signedDate: new Date("1/1/2017"),
-        phone: "88888889",
+        landlineNumber: "88888889",
         name: "NN2 Bondegården",
         address: {
             street: "parkvejen 2",
@@ -28,7 +28,7 @@ const testOrders = [
     {
         consultant: "CONSULTANT2",
         signedDate: new Date("1/1/2017"),
-        phone: "88888887",
+        landlineNumber: "88888887",
         name: "NN3 Bondegården",
         address: {
             street: "parkvejen 3",

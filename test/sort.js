@@ -8,11 +8,11 @@ describe("Sorting tests", () => {
        sortingArray = [
            {
                consultant: "CONSULANT7",
-               createdDate: new Date("2017-02-24"),
-               tlf: "88888888",
+               signedDate: new Date("2017-02-24"),
+               landlineNumber: "88888888",
                name: "Niels Hansen",
+               farmName: "Bondegården",
                address: {
-                   farm: "Bondegården",
                    street: "Markvejen 1",
                    city: "Bondeby",
                    zip: "8123"
@@ -21,11 +21,11 @@ describe("Sorting tests", () => {
            },
            {
                consultant: "CONSULANT2",
-               createdDate: new Date("2017-02-23"),
-               tlf: "88888889",
+               signedDate: new Date("2017-02-23"),
+               landlineNumber: "88888889",
                name: "Alan Jensen",
+               farmName: "Bondegården",
                address: {
-                   farm: "Bondegården",
                    street: "Markvejen 2",
                    city: "Bondeby",
                    zip: "8123"
@@ -34,11 +34,11 @@ describe("Sorting tests", () => {
            },
            {
                consultant: "CONSULANT4",
-               createdDate: new Date("2017-01-23"),
-               tlf: "88888888",
+               signedDate: new Date("2017-01-23"),
+               landlineNumber: "88888888",
                name: "Niels Adamsen",
+               farmName: "Bondegården",
                address: {
-                   farm: "Bondegården",
                    street: "Markvejen 12",
                    city: "TestAArhus",
                    zip: "8000"
@@ -47,11 +47,11 @@ describe("Sorting tests", () => {
            },
            {
                consultant: "CONSULANT5",
-               createdDate: new Date("2017-06-23"),
-               tlf: "88888888",
+               signedDate: new Date("2017-06-23"),
+               landlineNumber: "88888888",
                name: "Lars A. Adamsen",
+               farmName: "Bondegården",
                address: {
-                   farm: "Bondegården",
                    street: "Markvejen 12",
                    city: "Arhus",
                    zip: "8000"
@@ -60,11 +60,11 @@ describe("Sorting tests", () => {
            },
            {
                consultant: "CONSULANT1",
-               createdDate: new Date("2017-02-15"),
-               tlf: "88888888",
+               signedDate: new Date("2017-02-15"),
+               landlineNumber: "88888888",
                name: "Bo Adamsen",
+               farmName: "Bondegården",
                address: {
-                   farm: "Bondegården",
                    street: "Markvejen 3",
                    city: "Bondeby",
                    zip: "8123"
@@ -97,10 +97,10 @@ describe("Sorting tests", () => {
         farmerBo = {
             consultant: "CONSULANT1",
             createdDate: new Date("2017-02-15"),
-            tlf: "88888888",
+            landlineNumber: "88888888",
             name: "Bo",
+            farmName: "Bondegården",
             address: {
-                farm: "Bondegården",
                 street: "Markvejen 3",
                 city: "Bondeby",
                 zip: "8123"

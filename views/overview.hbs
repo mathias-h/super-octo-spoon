@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Oversigt</title>
+    <title>Djursland Landboforening - Oversigt</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css"
           integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.2.1.js"></script>
@@ -12,29 +12,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"
             integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ"
             crossorigin="anonymous"></script>
-    <style>
-        #navMenuButton {
-            margin: 1.5% !important;
-        }
-
-        #navMenu {
-            float: left;
-        }
-
-        #navSearch {
-            float: right;
-        }
-
-        tbody {
-            overflow-y: auto;
-        }
-
-        .search {
-            position: absolute;
-            top: 7px;
-            right: 7px;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="/overviewStyle.css">
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -45,7 +23,7 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-                <a class="nav-link" href="#">by bruger</a>
+                <a class="nav-link" href="#">ny bruger</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="#" data-toggle="modal" data-target="#createOrderModal">ny ordre</a>
@@ -55,7 +33,7 @@
             </li>
         </ul>
     </div>
-    <form class="search form-inline my-2 my-lg-0">
+    <form class="form-inline my-2 my-lg-0">
         <input class="form-control mr-sm-2" type="search" name="query" placeholder="search" aria-label="Search">
         <button class="btn btn-primary my-2 my-sm-0" type="submit">
             <img src="/search.svg" alt="search icon">
@@ -68,12 +46,12 @@
         <thead>
         <tr>
             <th>konsulent</th>
-            <th>indgået dato</th>
-            <th>telefonnummer</th>
+            <th>dato oprettet</th>
+            <th>fastnet nr</th>
             <th>mobil nr</th>
             <th>navn</th>
             <th>adresse</th>
-            <th>comment</th>
+            <th>kommentar</th>
         </tr>
         </thead>
         <tbody>
