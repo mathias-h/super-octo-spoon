@@ -20,11 +20,15 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
 app.get("/", (req,res) => {
-    Order.find().exec((err, orders) => {
+    Order.find({}).lean().exec((err, orders) => {
         const query = req.query.query
+        console.log(Object.assign({ a: 1 }, orders[0]))
         const data = {
             orders: search(orders, query)
-                .map(o => Object.assign(o, { signedDate: moment(o.signedDate).format("DD-MM-YYYY") })),
+                .map(o => {
+                    o.signedDate = moment(o.signedDate).format("DD-MM-YYYY")
+                    return o
+                }),
             query
         }
         res.render("overview", data)
