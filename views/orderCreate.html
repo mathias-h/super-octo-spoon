@@ -1,8 +1,4 @@
 <!-- TODO:
----- Bestem om det skal være 2 knapper, eller en stor til submit
----- Find ud af hvordan du pusher dine ændringer til git master uden at fucke alt over
----- Knapperne i toppen, hvad var planen med dem? De andre lod til at have en ide med dem
----- Hvordan sender vi data? Post. Men til hvor? Samme side? Ja, det er den nødt til, ellers er bruger post fucked.
 ---- Men skal den redirecte til f.eks. forside/seOrdre side efter post? Eller til samme, og så automatisk udfylde? Eller bare være tom?
 -->
 
@@ -15,8 +11,6 @@
         <title>Opret ordre - APAPA</title>
 
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
-        <link rel="stylesheet" href="/css/font-awesome.min.css">
-        <link rel="stylesheet" href="/css/style.css">
 
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
@@ -30,88 +24,64 @@
         </button>
 
         <!-- Modal -->
-        <div class="modal fade" id="createOrderModal" tabindex="-1" role="dialog" aria-labelledby="createOrderModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="createOrderModalLabel">Opret ordre</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="cursor: pointer;">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <form method="post" action="/order/create">
-                        <div class="modal-body">
-                            <div class="form-row">
-                                <div class="col form-group">
-                                    <label for="inputConsultant">Konsulent</label>
-                                    <select id="inputConsultant" class="form-control" required>
-                                        <option selected>MJ</option>
-                                        <option>ML</option>
-                                        <option>MH</option>
-                                        <option>NK</option>
-                                    </select>
-                                </div>
-                                <div class="col form-group">
-                                    <label for="inputSignedDate">Indgået dato</label>
-                                    <input type="date" id="inputSignedDate" class="form-control" required>
-                                </div>
-                            </div>
 
-                            <div class="form-row">
-                                <div class="col-9 form-group">
-                                    <label for="inputFullName">Navn</label>
-                                    <input type="text" id="inputFullName" class="form-control" placeholder="Navn" required>
-                                </div>
-                                <div class="col form-group">
-                                    <label for="inputFarmName">Gårdnavn</label>
-                                    <input type="text" id="inputFarmName" class="form-control" placeholder="Gårdnavn" required>
-                                </div>
-                            </div>
 
-                            <div class="form-row">
-                                <div class="col-6 form-group">
-                                    <label for="inputAddress">Adresse</label>
-                                    <input type="text" id="inputAddress" class="form-control" placeholder="Adresse" required>
-                                </div>
-                                <div class="col form-group">
-                                    <label for="inputZip">Postnummer</label>
-                                    <input type="text" id="inputZip" class="form-control" placeholder="Postnummer" required>
-                                </div>
-                                <div class="col form-group">
-                                    <label for="inputCity">By</label>
-                                    <input type="text" id="inputCity" class="form-control" placeholder="By" required>
-                                </div>
-                            </div>
+        <script>
+                'use strict';
 
-                            <div class="form-row">
-                                <div class="col form-group">
-                                    <label for="inputLandline">Fastnet nummer</label>
-                                    <input type="tel" id="inputLandline" class="form-control" placeholder="Fastnet telefon">
-                                </div>
-                                <div class="col form-group">
-                                    <label for="inputMobile">Mobil nummer</label>
-                                    <input type="tel" id="inputMobile" class="form-control" placeholder="Mobil telefon">
-                                </div>
-                            </div>
+                $("#orderCreateCancel").click(() => {
+                    clearOrderCreate();
+                });
 
-                            <div class="form-row">
-                                <div class="col form-group">
-                                    <label for="inputComments">Kommentarer</label>
-                                    <textarea id="inputComments" class="form-control" rows="5" style="min-height: 74px"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <div class="form-row float-right">
-                                <div class="col form-group">
-                                    <a href="/" class="btn btn-secondary" data-dismiss="modal">Annuller ordre</a>
-                                    <button type="submit" class="btn btn-primary" style="cursor: pointer;">Opret ordre</button>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+                $("#orderCreateClose").click(() => {
+                    clearOrderCreate();
+                });
+
+                $(document).keyup((e) => {
+                    if(e.which == 27){
+                        clearOrderCreate();
+                    }
+                });
+
+                function clearOrderCreate(){
+                    // TODO: Sæt konsulent tilbage til bruger
+                    $("#inputSignedDate").val("2017-11-21");
+                    $("#inputFullName").val("");
+                    $("#inputFarmName").val("");
+                    $("#inputAddress").val("");
+                    $("#inputZip").val("");
+                    $("#inputCity").val("");
+                    $("#inputLandline").val("");
+                    $("#inputMobile").val("");
+                    $("#inputComments").val("");
+                }
+
+                window.addEventListener('load', function() {
+                    var form = document.getElementById('orderCreateForm');
+                    form.addEventListener('submit', function(event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+
+                        form.classList.add('was-validated');
+
+                        var landline = $("#inputLandline");
+                        var mobile = $("#inputMobile");
+
+                        landline[0].setCustomValidity("")
+                        mobile[0].setCustomValidity("")
+
+                        if(!(landline[0].validity.valid && landline.val()) && !(mobile[0].validity.valid && mobile.val())){
+                            landline[0].setCustomValidity("Mindst et telefonnummer skal angives");
+                            mobile[0].setCustomValidity("Mindst et telefonnummer skal angives");
+                        }else{
+                            landline[0].setCustomValidity("");
+                            mobile[0].setCustomValidity("");
+                        }
+                    }, false);
+                }, false);
+        </script>
+
     </body>
 </html>

@@ -5,7 +5,6 @@ const moment = require("moment");
 const hbs = require("hbs");
 
 const { search } = require("./models/search");
-const { sort } = require("./models/sort");
 
 mongoose.connect("mongodb://localhost:27017/super-octo-spoon");
 mongoose.Promise = global.Promise;
@@ -16,31 +15,23 @@ const app = express();
 app.set('view engine', 'hbs');
 
 app.use(express.static(__dirname + '/public'));
-
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
-
 app.get("/", (req,res) => {
-    Order.find({}).lean().exec((err, orders) => {
+    Order.find().exec((err, orders) => {
         const query = req.query.query
-        //req.query.order
-        console.log(Object.assign({ a: 1 }, orders[0]))
         const data = {
-            orders: sort(search(orders, query), "name", "asc")
-                .map(o => {
-                    o.signedDate = moment(o.signedDate).format("DD-MM-YYYY")
-                    return o
-                }),
+            orders: search(orders, query)
+                .map(o => Object.assign(o, { signedDate: moment(o.signedDate).format("DD-MM-YYYY") })),
             query
         }
         res.render("overview", data)
     })
 });
 
-app.get("/opretOrdre", (req,res) => res.sendFile(__dirname + "/views/createOrder.html"));
-
-app.post("/opretOrdre", (req, res) => {
+app.post("/order/create", (req, res) => {
+    console.log("POST");
     if(req.body.landlineNumber || req.body.phoneNumber) {
         try {
             var order = new Order({
@@ -49,11 +40,19 @@ app.post("/opretOrdre", (req, res) => {
                 landlineNumber: req.body.landlineNumber,
                 phoneNumber:    req.body.phoneNumber,
                 name:           req.body.name,
-                address:        req.body.address,
+                address:        {
+                    street:     req.body.street,
+                    city:       req.body.city,
+                    zip:        req.body.zip
+                },
                 comment:        req.body.comment
             });
 
-            order.save().then(() => res.json({message: "Ordre oprettet i database."})).catch(() => res.json({error: "Ordre kunne ikke oprettes i database."}));
+            order.save().then(() => res.json({message: "Ordre oprettet i database."}))
+                .catch((e) => {
+                    res.json({error: "Ordre kunne ikke oprettes i database."});
+                    console.log(e);
+                });
 
         } catch(e) {
             console.log(e);
@@ -63,6 +62,5 @@ app.post("/opretOrdre", (req, res) => {
         res.json({error: "Intet telefonnummer angivet."});
     }
 });
-
 
 app.listen(1024);
