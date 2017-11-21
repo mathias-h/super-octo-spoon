@@ -1,9 +1,11 @@
 const testOrders = [
     {
         consultant: "CONSULANT1",
-        createdDate: new Date("1/1/2017"),
-        tlf: "88888888",
-        name: "NN1 Bondegården",
+        signedDate: new Date("1/1/2017"),
+        landlineNumber: "88888888",
+        phoneNumber: "20202020",
+        name: "NN1",
+        farmName: "Bondegården",
         address: {
             street: "Markvejen 1",
             city: "Bondeby",
@@ -13,9 +15,11 @@ const testOrders = [
     },
     {
         consultant: "CONSULANT1",
-        createdDate: new Date("1/1/2017"),
-        tlf: "88888889",
-        name: "NN1 Bondegården",
+        signedDate: new Date("1/1/2017"),
+        landlineNumber: "88888889",
+        phoneNumber: "20202020",
+        name: "NN1",
+        farmName: "Bondegården",
         address: {
             street: "Markvejen 2",
             city: "Bondeby",
@@ -25,9 +29,39 @@ const testOrders = [
     },
     {
         consultant: "CONSULANT2",
-        createdDate: new Date("1/1/2017"),
-        tlf: "88888888",
-        name: "NN1 Bondegården",
+        signedDate: new Date("1/1/2017"),
+        landlineNumber: "88888888",
+        phoneNumber: "20202020",
+        name: "NN1",
+        farmName: "Bondegården",
+        address: {
+            street: "Markvejen 12",
+            city: "TestAArhus",
+            zip: "8000"
+        },
+        comment: "Ring under høst"
+    },
+    {
+        consultant: "CONSULANT2",
+        signedDate: new Date("1/1/2017"),
+        landlineNumber: "88888888",
+        phoneNumber: "20202020",
+        name: "NN1",
+        farmName: "Bondegården",
+        address: {
+            street: "Markvejen 12",
+            city: "Aarhus",
+            zip: "8000"
+        },
+        comment: "Ring under høst"
+    },
+    {
+        consultant: "CONSULANT2",
+        signedDate: new Date("1/1/2017"),
+        landlineNumber: "88888888",
+        phoneNumber: "20202020",
+        name: "NN1",
+        farmName: "Bondegården",
         address: {
             street: "Markvejen 3",
             city: "Bondeby",
@@ -36,3 +70,5 @@ const testOrders = [
         comment: "Ring under høst"
     }
 ]
+
+module.exports = testOrders;

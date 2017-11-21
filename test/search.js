@@ -3,9 +3,8 @@ const { search } = require("../models/search")
 const testOrders = [
     {
         consultant: "CONSULTANT1",
-        createdDate: new Date("1/1/2017"),
+        signedDate: new Date("1/1/2017"),
         phone: "88888888",
-        moblie: "20111111",
         name: "NN1 Bondegården",
         address: {
             street: "Markvejen 1",
@@ -16,7 +15,7 @@ const testOrders = [
     },
     {
         consultant: "CONSULTANT1",
-        createdDate: new Date("1/1/2017"),
+        signedDate: new Date("1/1/2017"),
         phone: "88888889",
         name: "NN2 Bondegården",
         address: {
@@ -28,7 +27,7 @@ const testOrders = [
     },
     {
         consultant: "CONSULTANT2",
-        createdDate: new Date("1/1/2017"),
+        signedDate: new Date("1/1/2017"),
         phone: "88888887",
         name: "NN3 Bondegården",
         address: {
@@ -75,5 +74,10 @@ describe("search", () => {
         const results = search(testOrders, "CONSULTANT1 NN1")
 
         expect(results).to.deep.eq([testOrders[0],testOrders[1]])
+    })
+    it("should handle no query", () => {
+        const results = search(testOrders, null)
+
+        expect(results).to.eq(testOrders)
     })
 })
