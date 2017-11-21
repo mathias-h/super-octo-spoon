@@ -88,8 +88,24 @@ describe("Sorting tests", () => {
     it("should pass, sorted by name", () => {
         correctAnswer =[sortingArray[4], sortingArray[3],sortingArray[2], sortingArray[0], sortingArray[1]];
         expect(sort(sortingArray, "name")).to.deep.eq(correctAnswer);
-        console.log(sort(sortingArray, "name"))
     })
+    it("should pass, sorted by name (firstName test)", () => {
+        farmerBo = {
+            consultant: "CONSULANT1",
+            createdDate: new Date("2017-02-15"),
+            tlf: "88888888",
+            name: "Bo",
+            address: {
+                farm: "Bondegården",
+                street: "Markvejen 3",
+                city: "Bondeby",
+                zip: "8123"
+            }
+        }
+        sortingArray.push(farmerBo);
+        correctAnswer = [sortingArray[4], sortingArray[3], sortingArray[2], sortingArray[5], sortingArray[0], sortingArray[1]];
+        expect(sort(sortingArray, "name")).to.deep.eq(correctAnswer);
+    });
     it("should fail", () => {
         expect(false).to.be.false
     })

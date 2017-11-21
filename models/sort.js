@@ -14,12 +14,8 @@ module.exports.sort = function (orders, sortBy) {
             return order.createdDate
         });
     }else if (sortBy == "name") {
-        //Requires at least 2 names!!
-        //TODO Safe requirement or better validation?
         return _.orderBy(orders, function (order) {
             var names = order.name.split(" ");
-            //var firstName = names[0];
-            //var lastName = names[names.length-1]
             return names[names.length-1] + names[0];
         });
 
