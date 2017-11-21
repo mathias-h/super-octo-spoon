@@ -1,0 +1,15 @@
+#contentData thead th {
+    text-transform: capitalize;
+}
+
+tbody {
+    overflow-y: auto;
+}
+
+.navbar {
+    text-transform: capitalize;
+}
+
+.form-control {
+    text-transform: capitalize;
+}
