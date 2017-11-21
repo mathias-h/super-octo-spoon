@@ -16,6 +16,10 @@ var order = new Schema({
         type:       String,
         required:   true
     },
+    farmName: {
+        type: String,
+        require: true
+    },
     address:    {
         street: {
             type:       String,
