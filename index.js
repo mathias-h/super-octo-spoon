@@ -15,19 +15,15 @@ const app = express();
 app.set('view engine', 'hbs');
 
 app.use(express.static(__dirname + '/public'));
-
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
 app.get("/", (req,res) => {
-    Order.find({}).lean().exec((err, orders) => {
+    Order.find().exec((err, orders) => {
         const query = req.query.query
         const data = {
             orders: search(orders, query)
-                .map(o => {
-                    o.signedDate = moment(o.signedDate).format("DD-MM-YYYY")
-                    return o
-                }),
+                .map(o => Object.assign(o, { signedDate: moment(o.signedDate).format("DD-MM-YYYY") })),
             query
         }
         res.render("overview", data)
