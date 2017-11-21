@@ -1,7 +1,7 @@
 const testOrders = [
     {
         consultant: "CONSULANT1",
-        createdDate: new Date("1/1/2017"),
+        signedDate: new Date("1/1/2017"),
         tlf: "88888888",
         name: "NN1 Bondegården",
         address: {
@@ -13,7 +13,7 @@ const testOrders = [
     },
     {
         consultant: "CONSULANT1",
-        createdDate: new Date("1/1/2017"),
+        signedDate: new Date("1/1/2017"),
         tlf: "88888889",
         name: "NN1 Bondegården",
         address: {
@@ -25,7 +25,7 @@ const testOrders = [
     },
     {
         consultant: "CONSULANT2",
-        createdDate: new Date("1/1/2017"),
+        signedDate: new Date("1/1/2017"),
         tlf: "88888888",
         name: "NN1 Bondegården",
         address: {
@@ -37,7 +37,7 @@ const testOrders = [
     },
     {
         consultant: "CONSULANT2",
-        createdDate: new Date("1/1/2017"),
+        signedDate: new Date("1/1/2017"),
         tlf: "88888888",
         name: "NN1 Bondegården",
         address: {
@@ -49,7 +49,7 @@ const testOrders = [
     },
     {
         consultant: "CONSULANT2",
-        createdDate: new Date("1/1/2017"),
+        signedDate: new Date("1/1/2017"),
         tlf: "88888888",
         name: "NN1 Bondegården",
         address: {

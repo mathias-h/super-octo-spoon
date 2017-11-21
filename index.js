@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const moment = require("moment");
 const hbs = require("hbs");
 
-const { search } = require("./models/search")
+const { search } = require("./models/search");
 
 mongoose.connect("mongodb://localhost:27017/super-octo-spoon");
 mongoose.Promise = global.Promise;
@@ -22,8 +22,9 @@ app.use(bodyParser.json());
 const testOrders = [
     {
         consultant: "CONSULTANT1",
-        createdDate: new Date("1/1/2017"),
+        signedDate: new Date("1/1/2017"),
         phone: "88888888",
+        mobile: "20202020",
         name: "NN1",
         farmName: "Bondegården",
         address: {
@@ -35,8 +36,9 @@ const testOrders = [
     },
     {
         consultant: "CONSULTANT1",
-        createdDate: new Date("1/1/2017"),
+        signedDate: new Date("1/1/2017"),
         phone: "88888889",
+        mobile: "20202020",
         name: "NN2",
         farmName: "Bondegården",
         address: {
@@ -48,8 +50,9 @@ const testOrders = [
     },
     {
         consultant: "CONSULTANT2",
-        createdDate: new Date("1/1/2017"),
+        signedDate: new Date("1/1/2017"),
         phone: "88888887",
+        mobile: "20202020",
         name: "NN3",
         farmName: "Bondegården",
         address: {
@@ -64,7 +67,9 @@ const testOrders = [
 app.get("/", (req,res) => {
     const query = req.query.query
     const orders = search(testOrders, query)
-        .map(o => Object.assign({ createdDate: moment(o.createdDate).format("DD/MM/YYYY") }, o))
+        .map(o => Object.assign({
+            signedDate: moment(o.signedDate).format("DD/MM/YYYY")
+        }, o))
     res.render("overview", { orders, query })
 });
 
