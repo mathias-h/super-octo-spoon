@@ -16,6 +16,10 @@ var order = new Schema({
         type:       String,
         required:   true
     },
+    farmName: {
+        type: String,
+        require: true
+    },
     address:    {
         street: {
             type:       String,
@@ -31,8 +35,6 @@ var order = new Schema({
         }
     },
     comment: String
-
-
 });
 
 module.exports = mongoose.model('Order', order);

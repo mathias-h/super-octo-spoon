@@ -26,6 +26,16 @@
         #navSearch {
             float: right;
         }
+
+        tbody {
+            overflow-y: auto;
+        }
+
+        .search {
+            position: absolute;
+            top: 0;
+            right: 5px;
+        }
     </style>
 </head>
 <body>
@@ -36,60 +46,36 @@
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href="#">Ny Bruger</a>
+            <li class="nav-item">
+                <a class="nav-link" href="#">by bruger</a>
             </li>
-            <li class="nav-item active">
-                <a class="nav-link" href="#">Ny order</a>
+            <li class="nav-item">
+                <a class="nav-link" href="/opretOrdre">ny ordre</a>
             </li>
-            <li class="nav-item active">
-                <a class="nav-link" href="#">Statistik</a>
+            <li class="nav-item">
+                <a class="nav-link" href="#">statistik</a>
             </li>
         </ul>
     </div>
-    <form class="form-inline my-2 my-lg-0">
-        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+    <form class="search form-inline my-2 my-lg-0">
+        <input class="form-control mr-sm-2" type="search" name="query" placeholder="search" aria-label="Search">
+        <button class="btn btn-primary my-2 my-sm-0" type="submit">
+            <img src="/search.svg" alt="search icon">
+        </button>
     </form>
 </nav>
-
-
-
-<div id="navBar">
-    <div id="navMenuButton">
-        <div id="navMenu" class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
-                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Menu
-            </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                <a class="dropdown-item" href="#">Ny Bruger</a>
-                <a class="dropdown-item" href="#">Ny Ordre</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#">Statistik</a>
-            </div>
-        </div>
-    </div>
-    <div id="navSearch">
-        <form action="/">
-            <input name="query" type="text" value="{{query}}">
-            <button>
-                <img src="/public/search.svg" alt="search icon">
-            </button>
-        </form>
-    </div>
-</div>
 
 <div id="contentData">
     <table class="table table-striped">
         <thead>
         <tr>
-            <th>Konsulent</th>
-            <th>Dato oprettet</th>
-            <th>Telefonnummer</th>
-            <th>Navn</th>
-            <th>Adresse</th>
-            <th>Comment</th>
+            <th>konsulent</th>
+            <th>indgået dato</th>
+            <th>telefonnummer</th>
+            <th>mobil nr</th>
+            <th>navn</th>
+            <th>adresse</th>
+            <th>comment</th>
         </tr>
         </thead>
         <tbody>
@@ -99,16 +85,19 @@
                     {{consultant}}
                 </td>
                 <td>
-                    {{createdDate}}
+                    {{signedDate}}
                 </td>
                 <td>
-                    {{phone}}
+                    {{landlineNumber}}
+                </td>
+                <td>
+                    {{phoneNumber}}
                 </td>
                 <td>
                     {{name}}
                 </td>
                 <td>
-                    {{farmName}}. {{address.street}}, {{address.city}} {{address.zip}}
+                    {{farmName}}, {{address.street}}, {{address.city}}, {{address.zip}}
                 </td>
                 <td>
                     {{comment}}

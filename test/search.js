@@ -3,7 +3,7 @@ const { search } = require("../models/search")
 const testOrders = [
     {
         consultant: "CONSULTANT1",
-        createdDate: new Date("1/1/2017"),
+        signedDate: new Date("1/1/2017"),
         phone: "88888888",
         name: "NN1 Bondegården",
         address: {
@@ -15,7 +15,7 @@ const testOrders = [
     },
     {
         consultant: "CONSULTANT1",
-        createdDate: new Date("1/1/2017"),
+        signedDate: new Date("1/1/2017"),
         phone: "88888889",
         name: "NN2 Bondegården",
         address: {
@@ -27,7 +27,7 @@ const testOrders = [
     },
     {
         consultant: "CONSULTANT2",
-        createdDate: new Date("1/1/2017"),
+        signedDate: new Date("1/1/2017"),
         phone: "88888887",
         name: "NN3 Bondegården",
         address: {
