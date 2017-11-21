@@ -37,6 +37,14 @@
             right: 5px;
         }
     </style>
+    <script defer>
+        onload = () => {
+
+        $(".sortable").click(function () {
+
+        });
+        }
+    </script>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -69,12 +77,12 @@
     <table class="table table-striped">
         <thead>
         <tr>
-            <th>konsulent</th>
-            <th>indgået dato</th>
+            <th class="sortable" id="consultant" >konsulent</th>
+            <th class="sortable" id="date">indgået dato</th>
             <th>telefonnummer</th>
             <th>mobil nr</th>
-            <th>navn</th>
-            <th>adresse</th>
+            <th class="sortable" id="name">navn</th>
+            <th class="sortable" id="address">adresse</th>
             <th>comment</th>
         </tr>
         </thead>

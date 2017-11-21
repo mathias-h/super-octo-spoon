@@ -5,6 +5,7 @@ const moment = require("moment");
 const hbs = require("hbs");
 
 const { search } = require("./models/search");
+const { sort } = require("./models/sort");
 
 mongoose.connect("mongodb://localhost:27017/super-octo-spoon");
 mongoose.Promise = global.Promise;
@@ -19,12 +20,14 @@ app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
+
 app.get("/", (req,res) => {
     Order.find({}).lean().exec((err, orders) => {
         const query = req.query.query
+        //req.query.order
         console.log(Object.assign({ a: 1 }, orders[0]))
         const data = {
-            orders: search(orders, query)
+            orders: sort(search(orders, query), "name", "asc")
                 .map(o => {
                     o.signedDate = moment(o.signedDate).format("DD-MM-YYYY")
                     return o
