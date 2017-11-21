@@ -11,7 +11,7 @@ module.exports.sort = function (orders, sortBy, order = "asc") {
         }, [order]);
     }else if (sortBy == "date"){
         return _.orderBy(orders, function (order) {
-            return order.createdDate
+            return order.signedDate
         }, [order]);
     }else if (sortBy == "name") {
         return _.orderBy(orders, function (order) {
