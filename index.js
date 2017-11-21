@@ -19,7 +19,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
 app.get("/", (req,res) => {
-    Order.find().exec((err, orders) => {
+    Order.find().sort({ signedDate: -1 }).lean().exec((err, orders) => {
         const query = req.query.query
         const data = {
             orders: search(orders, query)
