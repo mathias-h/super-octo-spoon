@@ -30,9 +30,8 @@ app.get("/", (req,res) => {
     })
 });
 
-app.get("/opretOrdre", (req,res) => res.sendFile(__dirname + "/views/createOrder.html"));
-
-app.post("/opretOrdre", (req, res) => {
+app.post("/order/create", (req, res) => {
+    console.log("POST");
     if(req.body.landlineNumber || req.body.phoneNumber) {
         try {
             var order = new Order({
@@ -41,11 +40,19 @@ app.post("/opretOrdre", (req, res) => {
                 landlineNumber: req.body.landlineNumber,
                 phoneNumber:    req.body.phoneNumber,
                 name:           req.body.name,
-                address:        req.body.address,
+                address:        {
+                    street:     req.body.street,
+                    city:       req.body.city,
+                    zip:        req.body.zip
+                },
                 comment:        req.body.comment
             });
 
-            order.save().then(() => res.json({message: "Ordre oprettet i database."})).catch(() => res.json({error: "Ordre kunne ikke oprettes i database."}));
+            order.save().then(() => res.json({message: "Ordre oprettet i database."}))
+                .catch((e) => {
+                    res.json({error: "Ordre kunne ikke oprettes i database."});
+                    console.log(e);
+                });
 
         } catch(e) {
             console.log(e);
