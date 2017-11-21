@@ -1,8 +1,4 @@
 <!-- TODO:
----- Bestem om det skal være 2 knapper, eller en stor til submit
----- Find ud af hvordan du pusher dine ændringer til git master uden at fucke alt over
----- Knapperne i toppen, hvad var planen med dem? De andre lod til at have en ide med dem
----- Hvordan sender vi data? Post. Men til hvor? Samme side? Ja, det er den nødt til, ellers er bruger post fucked.
 ---- Men skal den redirecte til f.eks. forside/seOrdre side efter post? Eller til samme, og så automatisk udfylde? Eller bare være tom?
 -->
 
@@ -15,8 +11,6 @@
         <title>Opret ordre - APAPA</title>
 
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
-        <link rel="stylesheet" href="/css/font-awesome.min.css">
-        <link rel="stylesheet" href="/css/style.css">
 
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
@@ -35,11 +29,11 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="createOrderModalLabel">Opret ordre</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="cursor: pointer;">
+                        <button type="button" class="close" id="orderCreateClose" data-dismiss="modal" aria-label="Close" style="cursor: pointer;">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <form method="post" action="/order/create">
+                    <form id="orderCreateForm" novalidate>
                         <div class="modal-body">
                             <div class="form-row">
                                 <div class="col form-group">
@@ -54,6 +48,10 @@
                                 <div class="col form-group">
                                     <label for="inputSignedDate">Indgået dato</label>
                                     <input type="date" id="inputSignedDate" class="form-control" required>
+                                    <script>
+                                        var date = new Date();
+                                        $("#inputSignedDate").val(date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate());
+                                    </script>
                                 </div>
                             </div>
 
@@ -86,11 +84,11 @@
                             <div class="form-row">
                                 <div class="col form-group">
                                     <label for="inputLandline">Fastnet nummer</label>
-                                    <input type="tel" id="inputLandline" class="form-control" placeholder="Fastnet telefon">
+                                    <input type="tel" id="inputLandline" class="form-control" placeholder="Fastnet telefon" pattern="^[\s()+-]*([0-9][\s()+-]*){6,20}$">
                                 </div>
                                 <div class="col form-group">
                                     <label for="inputMobile">Mobil nummer</label>
-                                    <input type="tel" id="inputMobile" class="form-control" placeholder="Mobil telefon">
+                                    <input type="tel" id="inputMobile" class="form-control" placeholder="Mobil telefon" pattern="^[\s()+-]*([0-9][\s()+-]*){6,20}$">
                                 </div>
                             </div>
 
@@ -104,7 +102,7 @@
                         <div class="modal-footer">
                             <div class="form-row float-right">
                                 <div class="col form-group">
-                                    <a href="/" class="btn btn-secondary" data-dismiss="modal">Annuller ordre</a>
+                                    <button id="orderCreateCancel" class="btn btn-secondary" data-dismiss="modal" style="cursor: pointer">Annuller ordre</button>
                                     <button type="submit" class="btn btn-primary" style="cursor: pointer;">Opret ordre</button>
                                 </div>
                             </div>
@@ -113,5 +111,63 @@
                 </div>
             </div>
         </div>
+
+        <script>
+                'use strict';
+
+                $("#orderCreateCancel").click(() => {
+                    clearOrderCreate();
+                });
+
+                $("#orderCreateClose").click(() => {
+                    clearOrderCreate();
+                });
+
+                $(document).keyup((e) => {
+                    if(e.which == 27){
+                        clearOrderCreate();
+                    }
+                });
+
+                function clearOrderCreate(){
+                    // TODO: Sæt konsulent tilbage til bruger
+                    $("#inputSignedDate").val("2017-11-21");
+                    $("#inputFullName").val("");
+                    $("#inputFarmName").val("");
+                    $("#inputAddress").val("");
+                    $("#inputZip").val("");
+                    $("#inputCity").val("");
+                    $("#inputLandline").val("");
+                    $("#inputMobile").val("");
+                    $("#inputComments").val("");
+                }
+
+                window.addEventListener('load', function() {
+                    var form = document.getElementById('orderCreateForm');
+                    form.addEventListener('submit', function(event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+
+                        form.classList.add('was-validated');
+
+                        var landline = $("#inputLandline");
+                        var mobile = $("#inputMobile");
+
+                        landline[0].setCustomValidity("")
+                        mobile[0].setCustomValidity("")
+
+                        if(!(landline[0].validity.valid && landline.val()) && !(mobile[0].validity.valid && mobile.val())){
+                            landline[0].setCustomValidity("Mindst et telefonnummer skal angives");
+                            mobile[0].setCustomValidity("Mindst et telefonnummer skal angives");
+                        }else{
+                            landline[0].setCustomValidity("");
+                            mobile[0].setCustomValidity("");
+                        }
+                    }, false);
+                }, false);
+        </script>
+
     </body>
 </html>

@@ -31,9 +31,7 @@ app.get("/", (req,res) => {
     })
 });
 
-app.get("/opretOrdre", (req,res) => res.sendFile(__dirname + "/views/createOrder.html"));
-
-app.post("/opretOrdre", (req, res) => {
+app.post("/order/create", (req, res) => {
     if(req.body.landlineNumber || req.body.phoneNumber) {
         try {
             var order = new Order({
