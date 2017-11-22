@@ -1,6 +1,6 @@
 const testOrders = [
     {
-        consultant: "CONSULANT1",
+        consultant: "MH",
         signedDate: new Date("1/1/2017"),
         landlineNumber: "88888888",
         phoneNumber: "20202020",
@@ -11,10 +11,14 @@ const testOrders = [
             city: "Bondeby",
             zip: "8123"
         },
-        comment: "Ring efter høst"
+        comment: "Ring efter høst",
+        sampleDensity: 1,
+        samePlanAsLast: true,
+        takeOwnSamples: true,
+        area: 100
     },
     {
-        consultant: "CONSULANT1",
+        consultant: "MJ",
         signedDate: new Date("1/1/2017"),
         landlineNumber: "88888889",
         phoneNumber: "20202020",
@@ -25,10 +29,14 @@ const testOrders = [
             city: "Bondeby",
             zip: "8123"
         },
-        comment: "Ring før høst"
+        comment: "Ring før høst",
+        sampleDensity: 1,
+        samePlanAsLast: true,
+        takeOwnSamples: true,
+        area: 100
     },
     {
-        consultant: "CONSULANT2",
+        consultant: "NL",
         signedDate: new Date("1/1/2017"),
         landlineNumber: "88888888",
         phoneNumber: "20202020",
@@ -39,10 +47,14 @@ const testOrders = [
             city: "TestAArhus",
             zip: "8000"
         },
-        comment: "Ring under høst"
+        comment: "Ring under høst",
+        sampleDensity: 1,
+        samePlanAsLast: true,
+        takeOwnSamples: true,
+        area: 100
     },
     {
-        consultant: "CONSULANT2",
+        consultant: "MHL",
         signedDate: new Date("1/1/2017"),
         landlineNumber: "88888888",
         phoneNumber: "20202020",
@@ -53,10 +65,14 @@ const testOrders = [
             city: "Aarhus",
             zip: "8000"
         },
-        comment: "Ring under høst"
+        comment: "Ring under høst",
+        sampleDensity: 1,
+        samePlanAsLast: true,
+        takeOwnSamples: true,
+        area: 100
     },
     {
-        consultant: "CONSULANT2",
+        consultant: "NK",
         signedDate: new Date("1/1/2017"),
         landlineNumber: "88888888",
         phoneNumber: "20202020",
@@ -67,7 +83,11 @@ const testOrders = [
             city: "Bondeby",
             zip: "8123"
         },
-        comment: "Ring under høst"
+        comment: "Ring under høst",
+        smapleDensity: 1,
+        samePlanAsLast: true,
+        takeOwnSamples: true,
+        area: 100
     }
 ]
 

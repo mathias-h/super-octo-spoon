@@ -13,3 +13,12 @@ tbody {
 .form-control {
     text-transform: capitalize;
 }
+
+#sampleDensityContainer {
+    display: flex;
+    align-items: center;
+}
+
+#inputSampleDensity {
+    display: inline-block;
+}

@@ -101,10 +101,9 @@
                         <div class="col form-group">
                             <label for="inputConsultant">Konsulent</label>
                             <select name="consultant" id="inputConsultant" class="form-control" required>
-                                <option selected>MJ</option>
-                                <option>ML</option>
-                                <option>MH</option>
-                                <option>NK</option>
+                                {{#each consultants}}
+                                    <option value="{{this}}">{{this}}</option>
+                                {{/each}}
                             </select>
                         </div>
                         <div class="col form-group">
@@ -177,7 +176,7 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editOrderModalLabel">Opret ordre</h5>
+                <h5 class="modal-title" id="editOrderModalLabel">Ret ordre</h5>
                 <button type="button" class="close" id="orderEditClose" data-dismiss="modal" aria-label="Close" style="cursor: pointer;">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -188,10 +187,9 @@
                         <div class="col form-group">
                             <label for="inputConsultant">Konsulent</label>
                             <select name="consultant" id="inputConsultant" class="form-control" required>
-                                <option value="MJ" selected>MJ</option>
-                                <option value="ML">ML</option>
-                                <option value="MH">MH</option>
-                                <option value="NK">NK</option>
+                                {{#each consultants}}
+                                    <option value="{{this}}">{{this}}</option>
+                                {{/each}}
                             </select>
                         </div>
                         <div class="col form-group">
@@ -246,6 +244,37 @@
                             <textarea name="comment" id="inputComment" class="form-control" rows="5" style="min-height: 74px"></textarea>
                         </div>
                     </div>
+
+                    <hr/>
+
+                    <div class="form-row">
+                        <div class="col-3 form-group">
+                            <label for="inputSampleDensity">Prøvetæthed</label>
+                            <div id="sampleDensityContainer">
+                                <span>1/</span>
+                                <input name="sampleDensity" type="number" min="0" id="inputSampleDensity" class="form-control">
+                                <span>ha</span>
+                            </div>
+                        </div>
+
+                        <div class="col-3 form-group">
+                            <label for="inputArea">Areal</label>
+                            <div id="sampleDensityContainer">
+                                <input name="area" type="number" min="0" id="inputArea" class="form-control">
+                                <span>ha</span>
+                            </div>
+                        </div>
+                        <div class="col-5 ml-3">
+                            <div class="form-row form-group">
+                                <label for="inputSamePlanAsLast">Samme plan som sidst</label>
+                                <input name="samePlanAsLast" type="checkbox" id="inputSamePlanAsLast" class="form-control">
+                            </div>
+                            <div class="form-row form-group">
+                                <label for="inputTakeOwnSamples">Prøver selvudtaget</label>
+                                <input name="takeOwnSamples" type="checkbox" id="inputTakeOwnSamples" class="form-control">
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <div class="form-row float-right">
@@ -282,16 +311,20 @@
             $("tbody tr").click(function (evt) {
                 const orderId = this.getAttribute("data-order-id")
                 $.get(`/order/${orderId}`).then(order => {
-                    $("select[name=consustant]").val(order.consultant)
-                    $("input[name=signedDate]").val(moment(new Date(order.signedDate)).format("YYYY-MM-DD"));
-                    $("input[name=name]").val(order.name)
-                    $("input[name=farmName]").val(order.farmName)
-                    $("input[name=street]").val(order.address.street)
-                    $("input[name=city]").val(order.address.city)
-                    $("input[name=zip]").val(order.address.zip)
-                    $("input[name=landlineNumber]").val(order.landlineNumber)
-                    $("input[name=phoneNumber]").val(order.phoneNumber)
-                    $("textarea[name=comment]").val(order.comment)
+                    $("#editOrderModal #inputConsultant").val(order.consultant)
+                    $("#editOrderModal #inputSignedDate").val(moment(new Date(order.signedDate)).format("YYYY-MM-DD"));
+                    $("#editOrderModal #inputName").val(order.name)
+                    $("#editOrderModal #inputFarmName").val(order.farmName)
+                    $("#editOrderModal #inputStreet").val(order.address.street)
+                    $("#editOrderModal #inputCity").val(order.address.city)
+                    $("#editOrderModal #inputZip").val(order.address.zip)
+                    $("#editOrderModal #inputLandlineNumber").val(order.landlineNumber)
+                    $("#editOrderModal #inputPhoneNumber").val(order.phoneNumber)
+                    $("#editOrderModal #inputComment").val(order.comment)
+                    $("#editOrderModal #inputSampleDensity").val(order.sampleDensity)
+                    $("#editOrderModal #inputSamePlanAsLast")[0].checked = order.samePlanAsLast
+                    $("#editOrderModal #inputTakeOwnSamples")[0].checked = order.takeOwnSamples
+                    $("#editOrderModal #inputArea").val(order.area)
 
                     editForm[0].setAttribute("data-order-id", orderId)
 
@@ -305,7 +338,18 @@
 
                 const orderId = editForm[0].getAttribute("data-order-id")
                 const order = convertFormToObject(editForm[0])
+                order.samePlanAsLast = $("#editOrderModal #inputSamePlanAsLast")[0].checked
+                order.takeOwnSamples = $("#editOrderModal #inputTakeOwnSamples")[0].checked
                 order._id = orderId
+
+                order.address = {
+                    street: order.street,
+                    city: order.city,
+                    zip: order.zip
+                }
+                delete order.street
+                delete order.city
+                delete order.zip
 
                 $.ajax({
                     type: 'POST',

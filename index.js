@@ -4,6 +4,8 @@ const mongoose = require("mongoose");
 const moment = require("moment");
 const hbs = require("hbs");
 
+const CONSULTANTS = ["MH","MJ","NK","NL","MHL"]
+
 const { search } = require("./models/search");
 
 mongoose.connect("mongodb://localhost:27017/super-octo-spoon");
@@ -24,7 +26,8 @@ app.get("/", (req,res) => {
         const data = {
             orders: search(orders, query)
                 .map(o => Object.assign(o, { signedDate: moment(o.signedDate).format("DD-MM-YYYY") })),
-            query
+            query,
+            consultants: CONSULTANTS
         }
         res.render("overview", data)
     })
