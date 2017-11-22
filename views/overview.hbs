@@ -15,7 +15,7 @@
 
         function convertFormToObject(form) {
             const data = {};
-            var f = new FormData(form);
+            const f = new FormData(form);
             for (const [key,value] of f.entries()) {
                 data[key] = value;
             }
@@ -55,17 +55,17 @@
                 $("#inputComment").val("");
             }
 
-        
-            var form = document.getElementById('orderCreateForm');
+
+            const form = document.getElementById('orderCreateForm');
             form.addEventListener('submit', function(event) {
                 event.preventDefault();
                 event.stopPropagation();
 
-                var landline = $("#inputLandlineNumber");
-                var mobile = $("#inputPhoneNumber");
+                const landline = $("#inputLandlineNumber");
+                const mobile = $("#inputPhoneNumber");
 
-                landline[0].setCustomValidity("")
-                mobile[0].setCustomValidity("")
+                landline[0].setCustomValidity("");
+                mobile[0].setCustomValidity("");
 
                 if(!(landline[0].validity.valid && landline.val()) && !(mobile[0].validity.valid && mobile.val())){
                     landline[0].setCustomValidity("Mindst et telefonnummer skal angives");
@@ -76,7 +76,7 @@
                 }
 
                 if (form.checkValidity() === true) {
-                    const data = convertFormToObject(form)
+                    const data = convertFormToObject(form);
                     $.ajax({
                         url: "/order/create",
                         method: "POST",
@@ -163,6 +163,7 @@
 </div>
 
 <!-- Create order modal -->
+<!-- Larsen comment: Hvordan håndterer vi tilføjede felter ved oprettelse? Enten må vi automatisk tilføje dem til 'Opret Ordre' blokken (forneden) eller tilføje en måde at opdatere nye kolonner -->
 <div class="modal fade" id="createOrderModal" tabindex="-1" role="dialog" aria-labelledby="createOrderModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -217,11 +218,11 @@
 
                     <div class="form-row">
                         <div class="col form-group">
-                            <label for="inputLandlineNumber">Fastnet nummer</label>
+                            <label for="inputLandlineNumber">Fastnet tlf.</label>
                             <input name="landlineNumber" type="tel" id="inputLandlineNumber" class="form-control" placeholder="Fastnet telefon" pattern="^[\s()+-]*([0-9][\s()+-]*){6,20}$">
                         </div>
                         <div class="col form-group">
-                            <label for="inputPhoneNumber">Mobil nummer</label>
+                            <label for="inputPhoneNumber">Mobil tlf.</label>
                             <input name="phoneNumber" type="tel" id="inputPhoneNumber" class="form-control" placeholder="Mobil telefon" pattern="^[\s()+-]*([0-9][\s()+-]*){6,20}$">
                         </div>
                     </div>
