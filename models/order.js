@@ -34,7 +34,23 @@ var order = new Schema({
             required:   true
         }
     },
-    comment: String
-});
+    comment: String,
+    sampleDensity: {
+        type: Number,
+        min: 0
+    },
+    samePlanAsLast: {
+        type: Boolean,
+        default: false
+    },
+    takeOwnSamples: {
+        type: Boolean,
+        default: false
+    },
+    area: {
+        type: Number,
+        min: 0
+    }
+}, { strict: true });
 
 module.exports = mongoose.model('Order', order);
