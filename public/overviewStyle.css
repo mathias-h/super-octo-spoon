@@ -2,10 +2,6 @@
     text-transform: capitalize;
 }
 
-tbody {
-    overflow-y: auto;
-}
-
 .navbar {
     text-transform: capitalize;
 }
@@ -21,4 +17,10 @@ tbody {
 
 #inputSampleDensity {
     display: inline-block;
+}
+
+#search {
+    position: absolute;
+    top: 0;
+    right: 7px;
 }
