@@ -11,7 +11,7 @@ const { search } = require("./models/search");
 mongoose.connect("mongodb://localhost:27017/super-octo-spoon");
 mongoose.Promise = global.Promise;
 
-var Order = require('./models/order');
+const Order = require('./models/order');
 
 const app = express();
 app.set('view engine', 'hbs');
@@ -22,13 +22,13 @@ app.use(bodyParser.json());
 
 app.get("/", (req,res) => {
     Order.find().sort({ signedDate: -1 }).lean().exec((err, orders) => {
-        const query = req.query.query
+        const query = req.query.query;
         const data = {
             orders: search(orders, query)
                 .map(o => Object.assign(o, { signedDate: moment(o.signedDate).format("DD-MM-YYYY") })),
             query,
             consultants: CONSULTANTS
-        }
+        };
         res.render("overview", data)
     })
 });
@@ -37,18 +37,18 @@ app.post("/order/create", (req, res) => {
     console.log("POST");
     if(req.body.landlineNumber || req.body.phoneNumber) {
         try {
-            var order = new Order({
-                consultant:     req.body.consultant,
-                signedDate:     req.body.signedDate,
+            const order = new Order({
+                consultant: req.body.consultant,
+                signedDate: req.body.signedDate,
                 landlineNumber: req.body.landlineNumber,
-                phoneNumber:    req.body.phoneNumber,
-                name:           req.body.name,
-                address:        {
-                    street:     req.body.street,
-                    city:       req.body.city,
-                    zip:        req.body.zip
+                phoneNumber: req.body.phoneNumber,
+                name: req.body.name,
+                address: {
+                    street: req.body.street,
+                    city: req.body.city,
+                    zip: req.body.zip
                 },
-                comment:        req.body.comment
+                comment: req.body.comment
             });
 
             order.save().then(() => res.json({message: "Ordre oprettet i database."}))
@@ -67,22 +67,22 @@ app.post("/order/create", (req, res) => {
 });
 
 app.get("/order/:orderId", (req,res) => {
-    const orderId = req.params.orderId
+    const orderId = req.params.orderId;
     Order.findOne({ _id: orderId }).then(order => {
-        if (!order) res.status(404).send("order not found")
+        if (!order) res.status(404).send("order not found");
         else res.json(order)
     })
-})
+});
 
 app.post("/order", (req,res) => {
-    const order = req.body
+    const order = req.body;
 
     Order.findOneAndUpdate({ _id: order._id }, { $set: order }).then(() => {
         res.end("order updated")
     }).catch(err => {
         res.status(500).json(err)
     })
-})
+});
 
 app.listen(1024);
 
