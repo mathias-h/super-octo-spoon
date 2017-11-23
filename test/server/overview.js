@@ -5,7 +5,7 @@ const { createApp } = require("../../app")
 describe("overview view", () => {
     it("should get view", () => {
         const order = { name: "ORDER_NAME" }
-        const Order = {
+        const OrderMock = {
             getAll(queryParams) {
                 expect(queryParams).to.deep.eq({ query: "test" })
                 return Promise.resolve([order])
@@ -14,7 +14,7 @@ describe("overview view", () => {
                 return Promise.resolve({ totalSamples: 0, totalTaken: 0 })
             }
         }
-        const app = createApp(Order)
+        const app = createApp(OrderMock)
         
         return request(app)
             .get("/?query=test")

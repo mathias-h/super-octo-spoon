@@ -10,13 +10,13 @@ describe("Order integration tests", () => {
                 _id: orderId,
                 order: "order"
             }
-            const Order = { 
+            const OrderMock = { 
                 findOne(query) {
                     expect(query._id).to.eq(orderId)
                     return Promise.resolve(order)
                 }
             }
-            const app = createApp(Order)
+            const app = createApp(OrderMock)
 
             return request(app)
                 .get("/order/" + orderId)
@@ -30,11 +30,11 @@ describe("Order integration tests", () => {
             const order = {
                 _id: orderId
             }
-            const Order = { 
+            const OrderMock = { 
                 findOne: () => Promise.resolve(null)
             }
 
-            const app = createApp(Order)
+            const app = createApp(OrderMock)
 
             return request(app)
                 .get("/order/" + orderId)
@@ -49,14 +49,14 @@ describe("Order integration tests", () => {
             _id: orderId,
             order: "order"
         }
-        const Order = { 
+        const OrderMock = { 
             editOrder(o) {
                 expect(o).to.deep.eq(order)
                 return Promise.resolve()
             }
         }
         
-        const app = createApp(Order)
+        const app = createApp(OrderMock)
 
         return request(app)
             .post("/order")

@@ -1,5 +1,4 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+const { Schema } = require("mongoose");
 const { search } = require("./search");
 const { sort } = require("./sort")
 const moment = require("moment");
@@ -67,7 +66,7 @@ const Order = new Schema({
 }, { strict: true });
 
 Order.statics.editOrder = function updateOrder(order) {
-    return this.findOneAndUpdate({ _id: order._id }, { $set: order });
+    return this.findOneAndUpdate({ _id: order._id }, { $set: order }).exec()
 }
 Order.statics.createOrder = function createOrder(orderData) {
     if(orderData.landlineNumber || orderData.phoneNumber) {
@@ -112,9 +111,7 @@ Order.statics.getAll = function getAll({query, sortBy="date"}) {
         return sort(search(orders, query), sortBy, "asc").map(o => Object.assign(o, {
             signedDate: moment(o.signedDate).format("DD-MM-YYYY")
         }))
-    }
-    //TODO Add asc/desc + arrow to gui
-        );
+    });
 }
 
-module.exports = mongoose.model('Order', Order);
+module.exports.Order = Order
