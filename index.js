@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const moment = require("moment");
 const hbs = require("hbs");
 
-const CONSULTANTS = ["MH","MJ","NK","NL","MHL"]
+const CONSULTANTS = ["MH","MJ","NK","NL","MHL"];
 
 const { search } = require("./models/search");
 
@@ -13,7 +13,7 @@ mongoose.Promise = global.Promise;
 
 const Order = require('./models/order');
 
-hbs.registerPartial("editOrderModal", require("fs").readFileSync(__dirname + "/views/editOrderModal.hbs").toString())
+hbs.registerPartial("editOrderModal", require("fs").readFileSync(__dirname + "/views/editOrderModal.hbs").toString());
 
 const app = express();
 app.set('view engine', 'hbs');

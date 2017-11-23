@@ -1,5 +1,5 @@
-const { expect } = require("chai")
-const { search } = require("../models/search")
+const { expect } = require("chai");
+const { search } = require("../models/search");
 const testOrders = [
     {
         consultant: "CONSULTANT1",
