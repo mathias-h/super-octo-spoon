@@ -95,8 +95,16 @@
     <script defer>
         onload = () => {
             $(".sortable").click(function () {
-
-                console.log($(this).attr("id"))
+                var id = $(this).attr("id");
+                var ls = location.search;
+                if (ls.length === 0 || (ls.indexOf("sortBy")!==-1 && ls.indexOf("query") === -1)){
+                    location.search = "sortBy=" + id;
+                }
+                else if (ls.indexOf("query") !== -1 && ls.indexOf("sortBy") === -1){
+                    location.search += "&sortBy=" + id;
+                }else {
+                    location.search = location.search.substring(0,location.search.indexOf("&")) + "&sortBy=" + id;
+                }
             })
         }
         </script>

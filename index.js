@@ -3,10 +3,12 @@ const express = require("express");
 const mongoose = require("mongoose");
 const moment = require("moment");
 const hbs = require("hbs");
+const { URL } = require("url");
 
 const CONSULTANTS = ["MH","MJ","NK","NL","MHL"]
 
 const { search } = require("./models/search");
+const { sort } = require("./models/sort");
 
 mongoose.connect("mongodb://localhost:27017/super-octo-spoon");
 mongoose.Promise = global.Promise;
@@ -25,9 +27,14 @@ app.use(bodyParser.json());
 app.get("/", (req,res) => {
     Order.find().sort({ signedDate: -1 }).lean().exec((err, orders) => {
         const query = req.query.query;
+        var sortBy = "date";
+        if (req.query.sortBy){
+            sortBy = req.query.sortBy;
+        console.log(req.query)
+        }
+        //TODO Add asc/desc + arrow to gui
         const data = {
-            orders: search(orders, query)
-                .map(o => Object.assign(o, { signedDate: moment(o.signedDate).format("DD-MM-YYYY") })),
+            orders: sort(search(orders, query), sortBy, "asc").map(o => Object.assign(o, { signedDate: moment(o.signedDate).format("DD-MM-YYYY") })),
             query,
             consultants: CONSULTANTS
         };

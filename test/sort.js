@@ -110,6 +110,16 @@ describe("Sorting tests", () => {
         correctAnswer = [sortingArray[4], sortingArray[3], sortingArray[2], sortingArray[5], sortingArray[0], sortingArray[1]];
         expect(sort(sortingArray, "name")).to.deep.eq(correctAnswer);
     });
+    it("should pass, empty list", () => {
+        correctAnswer = [];
+        sortingArray = [];
+        expect(sort(sortingArray, "name")).to.deep.eq(correctAnswer)
+    })
+    it("should pass, throws exception", () => {
+        expect(function () {
+            sort(sortingArray, "failss")
+        }).to.throw()
+    })
     it("should fail", () => {
         expect(false).to.be.false
     })

@@ -1,5 +1,6 @@
 var _ = require("lodash")
 module.exports.sort = function (orders, sortBy, order = "asc") {
+    console.log(sortBy)
     if (sortBy == "address"){
         return _.orderBy(orders, function (order) {
             return order.address.zip + order.address.city + order.address.street
@@ -18,9 +19,7 @@ module.exports.sort = function (orders, sortBy, order = "asc") {
             var names = order.name.split(" ");
             return names[names.length-1] + names[0];
         }, [order]);
-    }else if (sortBy == "xxx"){
-
-    }else if (sortBy == "xxx"){
-
- }
+    } else {
+        throw new TypeError("Illegal sorting parameter: " + sortBy)
+    }
 }
