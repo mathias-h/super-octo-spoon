@@ -118,16 +118,16 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-                <a class="nav-link" href="#">ny bruger</a>
+                <a class="nav-link" href="#" data-toggle="modal" data-target="#createOrderModal">opret ordre</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#" data-toggle="modal" data-target="#createOrderModal">ny ordre</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">statistik</a>
+                <a class="nav-link" href="#">opret bruger</a>
             </li>
         </ul>
     </div>
+
+    <span style="position: absolute; left: 50%; transform: translateX(-50%);" class="navbar-text justify-content-center">19 / 500 ordre gennemført</span>
+
     <form id="search" class="form-inline my-2 my-lg-0">
         <input class="form-control mr-sm-2" type="search" name="query" placeholder="search" aria-label="Search" value="{{query}}">
         <button class="btn btn-primary my-2 my-sm-0" type="submit">
@@ -142,8 +142,8 @@
         <tr>
             <th class="sortable" id="consultant" >konsulent</th>
             <th class="sortable" id="date">oprettet dato</th>
-            <th>fastnet nr</th>
-            <th>mobil nr</th>
+            <th>fastnet tlf.</th>
+            <th>mobil tlf.</th>
             <th class="sortable" id="name">navn</th>
             <th class="sortable" id="address">adresse</th>
             <th>kommentar</th>
@@ -248,6 +248,32 @@
                         <div class="col form-group">
                             <label for="inputComment">Kommentarer</label>
                             <textarea name="comment" id="inputComment" class="form-control" rows="5" style="min-height: 74px"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="col-3 form-group">
+                            <label for="inputSampleDensity">Prøvetæthed</label>
+                            <div class="input-group" id="sampleDensityContainer">
+                                <span class="input-group-addon">1/</span>
+                                <input name="sampleDensity" type="number" min="0" id="inputSampleDensity" class="form-control">
+                                <span class="input-group-addon">ha</span>
+                            </div>
+                        </div>
+
+                        <div class="col-3 form-group">
+                            <label for="inputArea">Areal</label>
+                            <div class="input-group" id="sampleDensityContainer">
+                                <input name="area" type="number" min="0" id="inputArea" class="form-control">
+                                <span class="input-group-addon">ha</span>
+                            </div>
+                        </div>
+
+                        <div class="col-5">
+                            <div class="form-group ml-3" style="line-height: 0; margin-bottom: 0px; margin-top: 32px;">
+                                <label for="inputSamePlanAsLast"><input name="samePlanAsLast" type="checkbox" id="inputSamePlanAsLast"> Samme plan som sidst</label>
+                                <label for="inputTakeOwnSamples"><input name="takeOwnSamples" type="checkbox" id="inputTakeOwnSamples"> Prøver selvudtaget</label>
+                            </div>
                         </div>
                     </div>
                 </div>
