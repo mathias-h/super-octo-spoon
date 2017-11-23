@@ -1,12 +1,21 @@
 class EditOrderModal {
     constructor() {
+        function updateTotal() {
+            const mgSamples = +$("#editOrderModal #inputMgSamples").val()
+            const cutSamples = +$("#editOrderModal #inputCutSamples").val()
+            const otherSamples = +$("#editOrderModal #inputOtherSamples").val()
+            const total = mgSamples + cutSamples + otherSamples
+
+            $("#totalSamplesTaken span").text(total)
+        }
+
         this.modal = $("#editOrderModal");
         this.form = $("#orderEditForm");
         const _this = this;
 
         $("tbody tr").click(function (evt) {
             const orderId = this.getAttribute("data-order-id");
-            _this.show(orderId);
+            _this.show(orderId).then(updateTotal)
         });
 
         $("#orderEditForm").submit(evt => {
@@ -22,6 +31,10 @@ class EditOrderModal {
                 this.save().then(() => location.reload());
             }
         })
+
+        $("#editOrderModal #inputMgSamples").on("change", updateTotal);
+        $("#editOrderModal #inputCutSamples").on("change", updateTotal);
+        $("#editOrderModal #inputOtherSamples").on("change", updateTotal);
     }
 
     setOrder(orderId) {
