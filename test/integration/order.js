@@ -15,14 +15,14 @@ describe("Order integration tests", () => {
                 order: "order"
             }
 
-            mock('../models/order', { 
+            mock('../../models/order', { 
                 findOne: (query) => {
                     expect(query._id).to.eq(orderId)
                     return Promise.resolve(order)
                 }
             });
 
-            const {app} = require("../index")
+            const {app} = require("../../index")
 
             request(app)
                 .get("/order/" + orderId)
@@ -37,13 +37,13 @@ describe("Order integration tests", () => {
                 _id: orderId
             }
 
-            mock('../models/order', { 
+            mock('../../models/order', { 
                 findOne: (query) => {
                     return null
                 }
             });
 
-            const {app} = require("../index")
+            const {app} = require("../../index")
 
             request(app)
                 .get("/order/" + orderId)
@@ -59,7 +59,7 @@ describe("Order integration tests", () => {
             order: "order"
         }
 
-        mock('../models/order', { 
+        mock('../../models/order', { 
             findOneAndUpdate: (query, update) => {
                 expect(query).to.deep.eq({ _id: orderId })
                 expect(update).to.deep.eq({ $set: order })
@@ -68,7 +68,7 @@ describe("Order integration tests", () => {
             }
         });
         
-        const {app} = require("../index")
+        const {app} = require("../../index")
 
         request(app)
             .post("/order")
