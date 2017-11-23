@@ -53,6 +53,16 @@ var Order = new Schema({
         type: Number,
         min: 0
     },
+    mapDate: Date,
+    mapSample: Date,
+    sampleTime: Number,
+    mgSamples: Number,
+    cutSamples: Number,
+    otherSamples: Number,
+    labDate: Date,
+    fromLabDate: Date,
+    mO: Date,
+    receptApproved: Date,
     dynamic: [{
         name: {
             type: String,

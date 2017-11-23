@@ -41,6 +41,17 @@ class EditOrderModal {
             $("#editOrderModal #inputSamePlanAsLast")[0].checked = order.samePlanAsLast;
             $("#editOrderModal #inputTakeOwnSamples")[0].checked = order.takeOwnSamples;
             $("#editOrderModal #inputArea").val(order.area);
+            $("#editOrderModal #inputMapDate").val(moment(new Date(order.mapDate)).format("YYYY-MM-DD"));
+            $("#editOrderModal #inputMapSample").val(moment(new Date(order.mapSample)).format("YYYY-MM-DD"));
+            $("#editOrderModal #inputSampleTime").val(order.sampleTime);
+            $("#editOrderModal #inputMgSamples").val(order.mgSamples);
+            $("#editOrderModal #inputCutSamples").val(order.cutSamples);
+            $("#editOrderModal #inputOtherSamples").val(order.otherSamples);
+            $("#editOrderModal #inputLabDate").val(moment(new Date(order.labDate)).format("YYYY-MM-DD"));
+            $("#editOrderModal #inputFromLabDate").val(moment(new Date(order.fromLabDate)).format("YYYY-MM-DD"));
+            $("#editOrderModal #inputMO").val(moment(new Date(order.mO)).format("YYYY-MM-DD"));
+            $("#editOrderModal #inputReceptApproved").val(moment(new Date(order.receptApproved)).format("YYYY-MM-DD"));
+            $("#editOrderModal #inputMO").val(moment(new Date(order.mO)).format("YYYY-MM-DD"));
         });
     }
 
