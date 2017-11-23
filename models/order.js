@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 const { search } = require("./search");
+const { sort } = require("./sort")
 const moment = require("moment");
 
 var Order = new Schema({
@@ -91,11 +92,14 @@ Order.statics.createOrder = function createOrder(orderData) {
         throw new Error("Intet telefonnummer angivet.");
     }
 }
-Order.statics.getAll = function getAll({query}) {
-    return this.find().sort({ signedDate: -1 }).lean().exec().then(orders =>
-        search(orders, query).map(o => Object.assign(o, {
+Order.statics.getAll = function getAll({query, sortBy="date"}) {
+    return this.find().lean().exec().then(orders => {
+        return sort(search(orders, query), sortBy, "asc").map(o => Object.assign(o, {
             signedDate: moment(o.signedDate).format("DD-MM-YYYY")
-        })));
+        }))
+    }
+    //TODO Add asc/desc + arrow to gui
+        );
 }
 
 module.exports = mongoose.model('Order', Order);
