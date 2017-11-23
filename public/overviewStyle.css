@@ -4,6 +4,7 @@
 
 .navbar {
     text-transform: capitalize;
+    padding: 0.5rem;
 }
 
 .form-control {
