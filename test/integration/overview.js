@@ -23,7 +23,7 @@ describe("overview view", () => {
             }
         })
 
-        const { app } = require("../index")
+        const { app } = require("../../index")
 
         request(app)
             .get("/")

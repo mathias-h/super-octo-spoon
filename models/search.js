@@ -1,7 +1,7 @@
 module.exports.search = function search(orders, query) {
-    if (!query) return orders
+    if (!query) return orders;
     
-    const words = query.split(" ")
+    const words = query.split(" ");
 
     return orders
         .map(order => {
@@ -11,7 +11,7 @@ module.exports.search = function search(orders, query) {
                 if (order.consultant.match(reg)) {
                     matches += 1
                 }
-                if (order.address.zip.match(reg)) {
+                if (order.address.zip.toString().match(reg)) {
                     matches += 1
                 }
                 if (order.address.city.match(reg)) {
@@ -32,5 +32,5 @@ module.exports.search = function search(orders, query) {
         })
         .filter(({matches}) => matches >= 1)
         .sort((a,b) => b.matches-a.matches)
-        .map(({ order }) => order)
-}
+        .map(({ order }) => order);
+};
