@@ -62,14 +62,7 @@ var Order = new Schema({
     labDate: Date,
     fromLabDate: Date,
     mO: Date,
-    receptApproved: Date,
-    dynamic: [{
-        name: {
-            type: String,
-            required: true
-        },
-        value: String
-    }]
+    receptApproved: Date
 }, { strict: true });
 
 Order.statics.updateOrder = function updateOrder(order) {
