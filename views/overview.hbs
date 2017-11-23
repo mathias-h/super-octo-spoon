@@ -19,11 +19,11 @@
             for (const [key,value] of f.entries()) {
                 data[key] = value;
             }
-            return data
+            return data;
         }
 
         window.addEventListener('load', function() {
-            new EditOrderModal()
+            new EditOrderModal();
 
             $("#inputSignedDate").val(moment(new Date()).format("YYYY-MM-DD"));
             $("#inputSignedDate").val(moment(new Date()).format("YYYY-MM-DD"));
@@ -130,6 +130,10 @@
             <th>navn</th>
             <th>adresse</th>
             <th>kommentar</th>
+            <th>Prøve tæthed</th>
+            <th>Areal</th>
+            <th>Samme plan som sidst</th>
+            <th>Selvudtag</th>
         </tr>
         </thead>
         <tbody>
@@ -155,6 +159,24 @@
                     </td>
                     <td>
                         {{comment}}
+                    </td>
+                    <td>
+                        {{#if sampleDensity}}
+                            1/{{sampleDensity}}ha
+                        {{else}}
+                            ikke sat
+                        {{/if}}
+                    </td>
+                    <td>{{area}}ha</td>
+                    <td>
+                        {{#if samePlanAsLast}}
+                            <img src="/check.svg" alt="flueben"/>
+                        {{/if}}
+                    </td>
+                    <td>
+                        {{#if takeOwnSamples}}
+                            <img src="/check.svg" alt="flueben"/>
+                        {{/if}}
                     </td>
                 </tr>
             {{/each}}

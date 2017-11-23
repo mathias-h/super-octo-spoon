@@ -20,7 +20,8 @@
 }
 
 #search {
-    /*position: absolute; <-- satte search fast, i stedet for at følge reponsive*/
-    top: 7px; /* <-- i stedet foor 0, er den sat til den samme margin, som når den bliver lille - og dermed aldrig blivr */
+    position: absolute !important;
+    top: 0px;
     right: 7px;
+    margin: 7px 0 !important;
 }
