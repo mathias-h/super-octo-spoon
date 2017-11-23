@@ -1,6 +1,6 @@
 const request = require('supertest');
 const { expect } = require("chai");
-const { createApp } = require("../../app")
+const { createApp } = require("../../app");
 
 describe("Order integration tests", () => {
     describe("getOrder", () => {
