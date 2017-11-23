@@ -5,9 +5,9 @@ module.exports.search = function search(orders, query) {
 
     return orders
         .map(order => {
-            let matches = 0
+            let matches = 0;
             for (const word of words) {
-                const reg = new RegExp(word, "i")
+                const reg = new RegExp(word, "i");
                 if (order.consultant.match(reg)) {
                     matches += 1
                 }

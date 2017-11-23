@@ -1,9 +1,9 @@
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 const { search } = require("./search");
 const moment = require("moment");
 
-var Order = new Schema({
+const Order = new Schema({
     consultant: {
         type: String,
         required: true
@@ -91,16 +91,10 @@ Order.statics.createOrder = function createOrder(orderData) {
             console.error(e)
             throw new Error("Ordre kunne ikke oprettes i database.");
         }
-    }else{
+    } else {
         throw new Error("Intet telefonnummer angivet.");
     }
-}
-Order.statics.getAll = function getAll({query}) {
-    return this.find().sort({ signedDate: -1 }).lean().exec().then(orders =>
-        search(orders, query).map(o => Object.assign(o, {
-            signedDate: moment(o.signedDate).format("DD-MM-YYYY")
-        })));
-}
+};
 
 Order.statics.sampleTotals = function sampleTotals() {
     const startOfYear = moment(new Date()).startOf("year").toDate()
@@ -111,6 +105,13 @@ Order.statics.sampleTotals = function sampleTotals() {
             totalTaken: orders.reduce((total, order) => total + (order.mgSamples || 0) + (order.cutSamples || 0) + (order.otherSamples || 0), 0),   
         })
     })
+}
+
+Order.statics.getAll = function getAll({query}) {
+    return this.find().sort({ signedDate: -1 }).lean().exec().then(orders =>
+        search(orders, query).map(o => Object.assign(o, {
+            signedDate: moment(o.signedDate).format("DD-MM-YYYY")
+        })));
 }
 
 module.exports = mongoose.model('Order', Order);

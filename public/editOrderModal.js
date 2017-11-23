@@ -1,5 +1,6 @@
 class EditOrderModal {
     constructor() {
+
         function updateTotal() {
             const mgSamples = +$("#editOrderModal #inputMgSamples").val()
             const cutSamples = +$("#editOrderModal #inputCutSamples").val()
