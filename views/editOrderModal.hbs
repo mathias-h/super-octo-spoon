@@ -52,11 +52,11 @@
 
                     <div class="form-row">
                         <div class="col form-group">
-                            <label for="inputLandlineNumber">Fastnet nummer</label>
+                            <label for="inputLandlineNumber">Fastnet tlf.</label>
                             <input name="landlineNumber" type="tel" id="inputLandlineNumber" class="form-control" placeholder="Fastnet telefon" pattern="^[\s()+-]*([0-9][\s()+-]*){6,20}$">
                         </div>
                         <div class="col form-group">
-                            <label for="inputPhoneNumber">Mobil nummer</label>
+                            <label for="inputPhoneNumber">Mobil tlf.</label>
                             <input name="phoneNumber" type="tel" id="inputPhoneNumber" class="form-control" placeholder="Mobil telefon" pattern="^[\s()+-]*([0-9][\s()+-]*){6,20}$">
                         </div>
                     </div>
@@ -71,28 +71,25 @@
                     <div class="form-row">
                         <div class="col-3 form-group">
                             <label for="inputSampleDensity">Prøvetæthed</label>
-                            <div id="sampleDensityContainer">
-                                <span>1/</span>
+                            <div class="input-group" id="sampleDensityContainer">
+                                <span class="input-group-addon">1/</span>
                                 <input name="sampleDensity" type="number" min="0" id="inputSampleDensity" class="form-control">
-                                <span>ha</span>
+                                <span class="input-group-addon">ha</span>
                             </div>
                         </div>
 
                         <div class="col-3 form-group">
                             <label for="inputArea">Areal</label>
-                            <div id="sampleDensityContainer">
+                            <div class="input-group" id="sampleDensityContainer">
                                 <input name="area" type="number" min="0" id="inputArea" class="form-control">
-                                <span>ha</span>
+                                <span class="input-group-addon">ha</span>
                             </div>
                         </div>
-                        <div class="col-5 ml-3">
-                            <div class="form-row form-group">
-                                <label for="inputSamePlanAsLast">Samme plan som sidst</label>
-                                <input name="samePlanAsLast" type="checkbox" id="inputSamePlanAsLast" class="form-control">
-                            </div>
-                            <div class="form-row form-group">
-                                <label for="inputTakeOwnSamples">Prøver selvudtaget</label>
-                                <input name="takeOwnSamples" type="checkbox" id="inputTakeOwnSamples" class="form-control">
+
+                        <div class="col-5">
+                            <div class="form-group ml-3" style="line-height: 0; margin-bottom: 0px; margin-top: 32px;">
+                                <label for="inputSamePlanAsLast"><input name="samePlanAsLast" type="checkbox" id="inputSamePlanAsLast"> Samme plan som sidst</label>
+                                <label for="inputTakeOwnSamples"><input name="takeOwnSamples" type="checkbox" id="inputTakeOwnSamples"> Prøver selvudtaget</label>
                             </div>
                         </div>
                     </div>
