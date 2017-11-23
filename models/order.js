@@ -1,37 +1,37 @@
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-var order = new Schema({
-    consultant:     {
-        type:       String,
-        required:   true
+const order = new Schema({
+    consultant: {
+        type: String,
+        required: true
     },
-    signedDate:     {
-        type:       Date,
-        required:   true
+    signedDate: {
+        type: Date,
+        required: true
     },
     landlineNumber: String,
-    phoneNumber:    String,
-    name:           {
-        type:       String,
-        required:   true
+    phoneNumber: String,
+    name: {
+        type: String,
+        required: true
     },
     farmName: {
         type: String,
         require: true
     },
-    address:    {
+    address: {
         street: {
-            type:       String,
-            required:   true
+            type: String,
+            required: true
         },
-        city:   {
-            type:       String,
-            required:   true
+        city: {
+            type: String,
+            required: true
         },
-        zip:    {
-            type:       Number,
-            required:   true
+        zip: {
+            type: Number,
+            required: true
         }
     },
     comment: String,
@@ -51,6 +51,6 @@ var order = new Schema({
         type: Number,
         min: 0
     }
-}, { strict: true });
+}, {strict: true});
 
 module.exports = mongoose.model('Order', order);

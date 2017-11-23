@@ -23,7 +23,7 @@
         }
 
         window.addEventListener('load', function() {
-            new EditOrderModal()
+            new EditOrderModal();
 
             $("#inputSignedDate").val(moment(new Date()).format("YYYY-MM-DD"));
             $("#inputSignedDate").val(moment(new Date()).format("YYYY-MM-DD"));
@@ -37,7 +37,7 @@
             });
 
             $(document).keyup((e) => {
-                if(e.which == 27){
+                if(e.which === 27){
                     clearOrderCreate();
                 }
             });
