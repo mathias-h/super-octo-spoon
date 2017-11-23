@@ -74,6 +74,7 @@ Order.statics.createOrder = function createOrder(orderData) {
                 landlineNumber: orderData.landlineNumber,
                 phoneNumber: orderData.phoneNumber,
                 name: orderData.name,
+                farmName: orderData.farmName,
                 address: {
                     street: orderData.street,
                     city: orderData.city,
