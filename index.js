@@ -43,6 +43,7 @@ app.post("/order/create", (req, res) => {
                 landlineNumber: req.body.landlineNumber,
                 phoneNumber: req.body.phoneNumber,
                 name: req.body.name,
+                farmName: req.body.farmName,
                 address: {
                     street: req.body.street,
                     city: req.body.city,
