@@ -66,7 +66,7 @@ const Order = new Schema({
     receptApproved: Date
 }, { strict: true });
 
-Order.statics.updateOrder = function updateOrder(order) {
+Order.statics.editOrder = function updateOrder(order) {
     return this.findOneAndUpdate({ _id: order._id }, { $set: order });
 }
 Order.statics.createOrder = function createOrder(orderData) {
@@ -106,6 +106,7 @@ Order.statics.sampleTotals = function sampleTotals() {
         })
     })
 }
+
 Order.statics.getAll = function getAll({query, sortBy="date"}) {
     return this.find().lean().exec().then(orders => {
         return sort(search(orders, query), sortBy, "asc").map(o => Object.assign(o, {

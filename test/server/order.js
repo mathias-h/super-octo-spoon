@@ -1,10 +1,6 @@
-const mock = require('mock-require');
 const request = require('supertest');
-const { expect } = require("chai")
-
-mock("mongoose", {
-    connect() {}
-})
+const { expect } = require("chai");
+const { createApp } = require("../../app")
 
 describe("Order integration tests", () => {
     describe("getOrder", () => {
@@ -14,19 +10,17 @@ describe("Order integration tests", () => {
                 _id: orderId,
                 order: "order"
             }
-
-            mock('../../models/order', { 
-                findOne: (query) => {
+            const Order = { 
+                findOne(query) {
                     expect(query._id).to.eq(orderId)
                     return Promise.resolve(order)
                 }
-            });
+            }
+            const app = createApp(Order)
 
-            const {app} = require("../../index")
-
-            request(app)
+            return request(app)
                 .get("/order/" + orderId)
-                .expect("Content-Type", "application/json")
+                .expect("Content-Type", /application\/json/)
                 .expect(200)
                 .expect(JSON.stringify(order))
         })
@@ -36,18 +30,15 @@ describe("Order integration tests", () => {
             const order = {
                 _id: orderId
             }
+            const Order = { 
+                findOne: () => Promise.resolve(null)
+            }
 
-            mock('../../models/order', { 
-                findOne: (query) => {
-                    return null
-                }
-            });
+            const app = createApp(Order)
 
-            const {app} = require("../../index")
-
-            request(app)
+            return request(app)
                 .get("/order/" + orderId)
-                .expect("Content-Type", "text/plain")
+                .expect("Content-Type", /text\/plain/)
                 .expect(404)
                 .expect("order not found")
         })
@@ -58,21 +49,19 @@ describe("Order integration tests", () => {
             _id: orderId,
             order: "order"
         }
-
-        mock('../../models/order', { 
-            findOneAndUpdate: (query, update) => {
-                expect(query).to.deep.eq({ _id: orderId })
-                expect(update).to.deep.eq({ $set: order })
-
+        const Order = { 
+            editOrder(o) {
+                expect(o).to.deep.eq(order)
                 return Promise.resolve()
             }
-        });
+        }
         
-        const {app} = require("../../index")
+        const app = createApp(Order)
 
-        request(app)
+        return request(app)
             .post("/order")
             .send(order)
+            .expect("Content-Type", /text\/plain/)
             .expect(200)
             .expect("order updated")
     })
