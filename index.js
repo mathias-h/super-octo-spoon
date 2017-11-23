@@ -3,7 +3,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const hbs = require("hbs");
 
-const CONSULTANTS = ["MH","MJ","NK","NL","MHL"]
+const CONSULTANTS = ["MH","MJ","NK","NL","MHL"];
 
 
 mongoose.connect("mongodb://localhost:27017/super-octo-spoon");
@@ -21,14 +21,17 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
 app.get("/", (req,res) => {
-
-    Order.getAll(req.query).then(orders => {
-        const data = {
-            orders,
-            query: req.query.query,
-            consultants: CONSULTANTS
-        };
-        res.render("overview", data);
+    Order.sampleTotals().then(({ totalSamples, totalTaken }) => {
+        Order.getAll(req.query).then(orders => {
+            const data = {
+                orders,
+                totalSamples,
+                totalTaken,
+                query: req.query.query,
+                consultants: CONSULTANTS
+            };
+            res.render("overview", data);
+        })
     })
 });
 

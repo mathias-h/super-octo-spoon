@@ -1,10 +1,10 @@
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 const { search } = require("./search");
 const { sort } = require("./sort")
 const moment = require("moment");
 
-var Order = new Schema({
+const Order = new Schema({
     consultant: {
         type: String,
         required: true
@@ -54,13 +54,16 @@ var Order = new Schema({
         type: Number,
         min: 0
     },
-    dynamic: [{
-        name: {
-            type: String,
-            required: true
-        },
-        value: String
-    }]
+    mapDate: Date,
+    mapSample: Date,
+    sampleTime: Number,
+    mgSamples: Number,
+    cutSamples: Number,
+    otherSamples: Number,
+    labDate: Date,
+    fromLabDate: Date,
+    mO: Date,
+    receptApproved: Date
 }, { strict: true });
 
 Order.statics.updateOrder = function updateOrder(order) {
@@ -88,9 +91,20 @@ Order.statics.createOrder = function createOrder(orderData) {
             console.error(e)
             throw new Error("Ordre kunne ikke oprettes i database.");
         }
-    }else{
+    } else {
         throw new Error("Intet telefonnummer angivet.");
     }
+};
+
+Order.statics.sampleTotals = function sampleTotals() {
+    const startOfYear = moment(new Date()).startOf("year").toDate()
+
+    return this.find({ signedDate: { $gte: startOfYear }}).exec().then(orders => {
+        return ({
+            totalSamples: orders.reduce((total, order) => total + order.area,0),
+            totalTaken: orders.reduce((total, order) => total + (order.mgSamples || 0) + (order.cutSamples || 0) + (order.otherSamples || 0), 0),
+        })
+    })
 }
 Order.statics.getAll = function getAll({query, sortBy="date"}) {
     return this.find().lean().exec().then(orders => {

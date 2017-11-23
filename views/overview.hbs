@@ -19,11 +19,11 @@
             for (const [key,value] of f.entries()) {
                 data[key] = value;
             }
-            return data
+            return data;
         }
 
         window.addEventListener('load', function() {
-            new EditOrderModal()
+            new EditOrderModal();
 
             $("#inputSignedDate").val(moment(new Date()).format("YYYY-MM-DD"));
             $("#inputSignedDate").val(moment(new Date()).format("YYYY-MM-DD"));
@@ -90,10 +90,6 @@
                 form.classList.add('was-validated');
             }, false);
 
-        });
-    </script>
-    <script defer>
-        onload = () => {
             $(".sortable").click(function () {
                 var id = $(this).attr("id");
                 var ls = location.search;
@@ -106,8 +102,8 @@
                     location.search = location.search.substring(0,location.search.indexOf("&")) + "&sortBy=" + id;
                 }
             })
-        }
-        </script>
+        });
+    </script>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -126,7 +122,7 @@
         </ul>
     </div>
 
-    <span style="position: absolute; left: 50%; transform: translateX(-50%);" class="navbar-text justify-content-center">19 / 500 ordre gennemført</span>
+    <span style="position: absolute; left: 50%; transform: translateX(-50%);" class="navbar-text justify-content-center">{{totalTaken}} / {{totalSamples}}</span>
 
     <form id="search" class="form-inline my-2 my-lg-0">
         <input class="form-control mr-sm-2" type="search" name="query" placeholder="search" aria-label="Search" value="{{query}}">
@@ -147,6 +143,10 @@
             <th class="sortable" id="name">navn</th>
             <th class="sortable" id="address">adresse</th>
             <th>kommentar</th>
+            <th>Prøve tæthed</th>
+            <th>Areal</th>
+            <th>Samme plan som sidst</th>
+            <th>Selvudtag</th>
         </tr>
         </thead>
         <tbody>
@@ -172,6 +172,24 @@
                     </td>
                     <td>
                         {{comment}}
+                    </td>
+                    <td>
+                        {{#if sampleDensity}}
+                            1/{{sampleDensity}}ha
+                        {{else}}
+                            ikke sat
+                        {{/if}}
+                    </td>
+                    <td>{{area}}ha</td>
+                    <td>
+                        {{#if samePlanAsLast}}
+                            <img src="/check.svg" alt="flueben"/>
+                        {{/if}}
+                    </td>
+                    <td>
+                        {{#if takeOwnSamples}}
+                            <img src="/check.svg" alt="flueben"/>
+                        {{/if}}
                     </td>
                 </tr>
             {{/each}}
