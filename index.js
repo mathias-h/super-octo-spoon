@@ -13,6 +13,8 @@ mongoose.Promise = global.Promise;
 
 const Order = require('./models/order');
 
+hbs.registerPartial("editOrderModal", require("fs").readFileSync(__dirname + "/views/editOrderModal.hbs").toString())
+
 const app = express();
 app.set('view engine', 'hbs');
 
