@@ -1,33 +1,24 @@
-const mock = require('mock-require');
 const request = require('supertest');
 const { expect } = require("chai")
+const { createApp } = require("../app")
 
 describe("overview view", () => {
     it("should get view", () => {
         const order = { name: "ORDER_NAME" }
-
-        mock("../models/order", {
-            find() {
-                return this
+        const Order = {
+            getAll(queryParams) {
+                expect(queryParams).to.deep.eq({ query: "test" })
+                return Promise.resolve([order])
             },
-            sort(order) {
-                expect(order).to.eq({ signedDate: -1 })
-
-                return this
-            },
-            lean() {
-                return this
-            },
-            exec(f) {
-                f(null, [order])
+            sampleTotals() {
+                return Promise.resolve({ totalSamples: 0, totalTaken: 0 })
             }
-        })
-
-        const { app } = require("../../index")
-
-        request(app)
-            .get("/")
-            .expect("Content-Type", "text/html")
+        }
+        const app = createApp(Order)
+        
+        return request(app)
+            .get("/?query=test")
+            .expect("Content-Type", /text\/html/)
             .expect(200)
             .expect(/ORDER_NAME/)
     })
