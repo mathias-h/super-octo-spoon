@@ -2,8 +2,12 @@ const bodyParser = require('body-parser');
 const express = require("express");
 const mongoose = require("mongoose");
 const hbs = require("hbs");
+const { URL } = require("url");
 
-const CONSULTANTS = ["MH","MJ","NK","NL","MHL"];
+const CONSULTANTS = ["MH","MJ","NK","NL","MHL"]
+
+const { search } = require("./models/search");
+const { sort } = require("./models/sort");
 
 mongoose.connect("mongodb://localhost:27017/super-octo-spoon");
 mongoose.Promise = global.Promise;

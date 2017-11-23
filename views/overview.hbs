@@ -89,8 +89,21 @@
 
                 form.classList.add('was-validated');
             }, false);
+
+            $(".sortable").click(function () {
+                var id = $(this).attr("id");
+                var ls = location.search;
+                if (ls.length === 0 || (ls.indexOf("sortBy")!==-1 && ls.indexOf("query") === -1)){
+                    location.search = "sortBy=" + id;
+                }
+                else if (ls.indexOf("query") !== -1 && ls.indexOf("sortBy") === -1){
+                    location.search += "&sortBy=" + id;
+                }else {
+                    location.search = location.search.substring(0,location.search.indexOf("&")) + "&sortBy=" + id;
+                }
+            })
         });
-    </script>  
+    </script>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -123,12 +136,12 @@
     <table class="table table-fixed table-striped">
         <thead>
         <tr>
-            <th>konsulent</th>
-            <th>dato oprettet</th>
+            <th class="sortable" id="consultant" >konsulent</th>
+            <th class="sortable" id="date">oprettet dato</th>
             <th>fastnet tlf.</th>
             <th>mobil tlf.</th>
-            <th>navn</th>
-            <th>adresse</th>
+            <th class="sortable" id="name">navn</th>
+            <th class="sortable" id="address">adresse</th>
             <th>kommentar</th>
             <th>Prøve tæthed</th>
             <th>Areal</th>
@@ -285,7 +298,7 @@
                 <div class="modal-footer">
                     <div class="form-row float-right">
                         <div class="col form-group">
-                            <button id="orderCreateCancel" class="btn btn-secondary" data-dismiss="modal" style="cursor: pointer">Annuller</button>
+                            <button id="orderCreateCancel" class="btn btn-secondary" data-dismiss="modal" style="cursor: pointer">Annuller ordre</button>
                             <button type="submit" class="btn btn-primary" style="cursor: pointer;">Opret ordre</button>
                         </div>
                     </div>
@@ -296,7 +309,6 @@
 </div>
 
 {{> editOrderModal}}
-
 
 </body>
 </html>
