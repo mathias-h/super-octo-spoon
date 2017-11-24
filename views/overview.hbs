@@ -152,8 +152,8 @@
                 <th>kommentar</th>
                 <th>Prøve tæthed</th>
                 <th>Areal</th>
-                <th>Samme plan som sidst</th>
-                <th class="sortable" id="self">Selvudtag</th>
+                <th class="text-center">Samme plan<br />som sidst</th>
+                <th class="sortable text-center" id="self">Selvudtag</th>
             </tr>
         </thead>
         <tbody>
@@ -188,12 +188,12 @@
                         {{/if}}
                     </td>
                     <td>{{area}}ha</td>
-                    <td>
+                    <td class="text-center">
                         {{#if samePlanAsLast}}
                             <img src="/check.svg" alt="flueben"/>
                         {{/if}}
                     </td>
-                    <td>
+                    <td class="text-center">
                         {{#if takeOwnSamples}}
                             <img src="/check.svg" alt="flueben"/>
                         {{/if}}
