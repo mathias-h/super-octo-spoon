@@ -22,11 +22,11 @@ describe("order integration test", () => {
         rimraf.sync(dataPath)
         fs.mkdirSync(dataPath)
 
-        db = childProcess.spawn("mongod", ["--dbpath", dataPath])
+        db = childProcess.spawn("mongod", ["--port", "27018", "--dbpath", dataPath])
         
         await sleep(10)
 
-        mongoose.connect("mongodb://localhost:27017/super-octo-spoon");
+        mongoose.connect("mongodb://localhost:27018/super-octo-spoon");
         mongoose.Promise = global.Promise;
 
         server = createApp(OrderModel).listen(1024)
