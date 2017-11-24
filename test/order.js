@@ -1,29 +1,29 @@
-const { expect } = require("chai")
-const mongoose = require("mongoose")
-const {Order} = require("../models/order")
+const { expect } = require("chai");
+const mongoose = require("mongoose");
+const {Order} = require("../models/order");
 
-mongoose.Promise = global.Promise
+mongoose.Promise = global.Promise;
 
 describe("order", () => {
     it("should edit order", () => {
-        const orderId = mongoose.Types.ObjectId()
+        const orderId = mongoose.Types.ObjectId();
         const newOrder = {
             _id: orderId,
             order: "order"
-        }
+        };
 
         Order.statics.findOneAndUpdate = function findOneAndUpdateMock(query, update) {
-            expect(query).to.deep.eq({ _id: orderId })
-            expect(update).to.deep.eq({ $set: newOrder })
+            expect(query).to.deep.eq({ _id: orderId });
+            expect(update).to.deep.eq({ $set: newOrder });
 
             return { exec: () => Promise.resolve() }
-        }
+        };
 
         return Order.statics.editOrder(newOrder)
-    })
+    });
     it("should create order", () => {
         
-    })
+    });
     describe("sample totals", () => {
         it("should get sample totals", () => {
             const orders = [
@@ -39,11 +39,11 @@ describe("order", () => {
                     cutSamples: 20,
                     otherSamples: 10
                 }
-            ]
+            ];
     
             Order.statics.find = function findMock(query) {
                 return { exec: () => Promise.resolve(orders) }
-            }
+            };
     
             return Order.statics.sampleTotals().then(result => {
                 expect(result).to.deep.eq({
@@ -51,7 +51,7 @@ describe("order", () => {
                     totalTaken: 120
                 })
             })
-        })
+        });
 
         it("should handle missing values", () => {
             const orders = [
@@ -75,11 +75,11 @@ describe("order", () => {
                     cutSamples: 10,
                     otherSamples: 10
                 }
-            ]
+            ];
     
             Order.statics.find = function findMock(query) {
                 return { exec: () => Promise.resolve(orders) }
-            }
+            };
     
             return Order.statics.sampleTotals().then(result => {
                 expect(result).to.deep.eq({
@@ -88,9 +88,9 @@ describe("order", () => {
                 })
             })
         })
-    })
+    });
     
     it("should get all orders", () => {
 
     })
-})
+});

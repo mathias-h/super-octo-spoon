@@ -76,14 +76,19 @@ Order.statics.createOrder = function createOrder(orderData) {
             landlineNumber: orderData.landlineNumber,
             phoneNumber: orderData.phoneNumber,
             name: orderData.name,
+            farmName: orderData.farmName,
             address: {
                 street: orderData.street,
                 city: orderData.city,
                 zip: orderData.zip
             },
-            comment: orderData.comment
-            });
-            return order.save();
+            comment: orderData.comment,
+            sampleDensity: orderData.sampleDensity,
+            area: orderData.area,
+            samePlanAsLast: orderData.samePlanAsLast,
+            takeOwnSamples: orderData.takeOwnSamples
+        });
+        return order.save();
     } else {
         return Promise.reject(new Error("no landline or phone number"));
     }

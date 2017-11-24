@@ -54,7 +54,7 @@ describe("Order integration tests", () => {
                 expect(o).to.deep.eq(order)
                 return Promise.resolve()
             }
-        }
+        };
         
         const app = createApp(OrderMock)
 
@@ -64,7 +64,7 @@ describe("Order integration tests", () => {
             .expect("Content-Type", /text\/plain/)
             .expect(200)
             .expect("order updated")
-    })
+    });
     describe("create order", () => {
         it("should create order", () => {
             const order = {
@@ -80,14 +80,14 @@ describe("Order integration tests", () => {
                     zip: '1234'
                 },
                 comment: 'COMMENT'
-            }
+            };
 
             const OrderMock = {
                 createOrder(o) {
                     expect(o).to.deep.eq(order);
                     return Promise.resolve();
                 }
-            }
+            };
 
             const app = createApp(OrderMock);
 
@@ -102,14 +102,14 @@ describe("Order integration tests", () => {
         it('should handle create requests, which are missing all data', () => {
             const order = {
                 _id: "ORDER_ID"
-            }
+            };
 
             const OrderMock = {
                 createOrder(o) {
                     expect(o).to.deep.eq(order);
                     return Promise.reject();
                 }
-            }
+            };
 
             const app = createApp(OrderMock);
 
@@ -123,14 +123,14 @@ describe("Order integration tests", () => {
             const order = {
                 _id: "ORDER_ID",
                 landlineNumber: 11223344
-            }
+            };
 
             const OrderMock = {
                 createOrder(o){
                     expect(o).to.deep.eq(order);
                     return Promise.reject();
                 }
-            }
+            };
 
             const app = createApp(OrderMock);
 
@@ -141,4 +141,4 @@ describe("Order integration tests", () => {
                 .expect(500)
         });
     })
-})
+});
