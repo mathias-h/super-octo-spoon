@@ -76,11 +76,12 @@ describe("Order integration tests", () => {
 
         it("should get orders", () =>
             browser.newPage().then(page => page.goto("http://localhost:1024")
-                .then(() => page.evaluate(function () {
-                    return Array.from(document.querySelectorAll("tr.order"))
-                        .map(orderEl => orderEl.getAttribute("data-order-id"))
-                })
-                .then(orderIds => expect(orderIds).to.deep.eq([orderId1.toHexString(),orderId2.toHexString()]))
-                .then(() => browser.close()))))
+                .then(() =>
+                    page.evaluate(function () {
+                        return Array.from(document.querySelectorAll("tr.order"))
+                            .map(orderEl => orderEl.getAttribute("data-order-id"))
+                    })
+                    .then(orderIds => expect(orderIds).to.deep.eq([orderId1.toHexString(),orderId2.toHexString()]))
+                    .then(() => page.close()))))
     })
 })

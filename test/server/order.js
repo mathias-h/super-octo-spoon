@@ -65,4 +65,80 @@ describe("Order integration tests", () => {
             .expect(200)
             .expect("order updated")
     })
+    describe("create order", () => {
+        it("should create order", () => {
+            const order = {
+                _id: "ORDER_ID",
+                consultant: "CONSULTANT",
+                signedDate: 2017-11-24,
+                landlineNumber: 11223344,
+                phoneNumber: 55667788,
+                name: 'NAME',
+                address: {
+                    street: 'STREET',
+                    city: 'CITY',
+                    zip: '1234'
+                },
+                comment: 'COMMENT'
+            }
+
+            const OrderMock = {
+                createOrder(o) {
+                    expect(o).to.deep.eq(order);
+                    return Promise.resolve();
+                }
+            }
+
+            const app = createApp(OrderMock);
+
+            return request(app)
+                .post('/order/create')
+                .send(order)
+                .expect('Content-Type', /text\/plain/)
+                .expect(200)
+                .expect('order created');
+        });
+
+        it('should handle create requests, which are missing all data', () => {
+            const order = {
+                _id: "ORDER_ID"
+            }
+
+            const OrderMock = {
+                createOrder(o) {
+                    expect(o).to.deep.eq(order);
+                    return Promise.reject();
+                }
+            }
+
+            const app = createApp(OrderMock);
+
+            return request(app)
+                .post('/order/create')
+                .send(order)
+                .expect('Content-Type', /application\/json/)
+                .expect(500);
+        });
+        it('should handle create requests, which are missing all data but phone number', () => {
+            const order = {
+                _id: "ORDER_ID",
+                landlineNumber: 11223344
+            }
+
+            const OrderMock = {
+                createOrder(o){
+                    expect(o).to.deep.eq(order);
+                    return Promise.reject();
+                }
+            }
+
+            const app = createApp(OrderMock);
+
+            return request(app)
+                .post('/order/create')
+                .send(order)
+                .expect('Content-Type', /application\/json/)
+                .expect(500)
+        });
+    })
 })
