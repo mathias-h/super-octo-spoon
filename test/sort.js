@@ -18,6 +18,8 @@ describe("Sorting tests", () => {
                    zip: "8123"
                },
                comment: "Ring efter høst"
+               ,
+               takeOwnSamples: false
            },
            {
                consultant: "CONSULANT2",
@@ -30,7 +32,8 @@ describe("Sorting tests", () => {
                    city: "Bondeby",
                    zip: "8123"
                },
-               comment: "Ring før høst"
+               comment: "Ring før høst",
+               takeOwnSamples: false
            },
            {
                consultant: "CONSULANT4",
@@ -43,7 +46,8 @@ describe("Sorting tests", () => {
                    city: "TestAArhus",
                    zip: "8000"
                },
-               comment: "Ring under høst"
+               comment: "Ring under høst",
+               takeOwnSamples: true
            },
            {
                consultant: "CONSULANT5",
@@ -56,7 +60,8 @@ describe("Sorting tests", () => {
                    city: "Arhus",
                    zip: "8000"
                },
-               comment: "Ring under høst"
+               comment: "Ring under høst",
+               takeOwnSamples: false
            },
            {
                consultant: "CONSULANT1",
@@ -69,29 +74,26 @@ describe("Sorting tests", () => {
                    city: "Bondeby",
                    zip: "8123"
                },
-               comment: "Ring under høst"
+               comment: "Ring under høst",
+               takeOwnSamples: true
            }
        ]
     });
     it("should pass, sorted by address", () => {
         correctAnswer = [sortingArray[3],sortingArray[2],sortingArray[0],sortingArray[1],sortingArray[4]]
-        expect(sort(sortingArray, "address")).to.deep.eq(correctAnswer)
-    });
-    it("should pass, sorted by address", () => {
-        correctAnswer = [sortingArray[4], sortingArray[1], sortingArray[0], sortingArray[2], sortingArray[3]]
-        expect(sort(sortingArray, "address", "desc")).to.deep.eq(correctAnswer)
+        expect(sort(sortingArray, "address", "asc")).to.deep.eq(correctAnswer)
     });
     it("should pass, sorted by consultant", () => {
         correctAnswer = [sortingArray[4], sortingArray[1],sortingArray[2], sortingArray[3], sortingArray[0]];
-        expect(sort(sortingArray, "consultant")).to.deep.eq(correctAnswer)
+        expect(sort(sortingArray, "consultant", "asc")).to.deep.eq(correctAnswer)
     });
     it("should pass, sorted by date", () => {
        correctAnswer = [sortingArray[2], sortingArray[4],sortingArray[1], sortingArray[0], sortingArray[3]];
-        expect(sort(sortingArray, "date")).to.deep.eq(correctAnswer);
+        expect(sort(sortingArray, "date", "asc")).to.deep.eq(correctAnswer);
     });
     it("should pass, sorted by name", () => {
         correctAnswer =[sortingArray[4], sortingArray[3],sortingArray[2], sortingArray[0], sortingArray[1]];
-        expect(sort(sortingArray, "name")).to.deep.eq(correctAnswer);
+        expect(sort(sortingArray, "name", "asc")).to.deep.eq(correctAnswer);
     })
     it("should pass, sorted by name (firstName test)", () => {
         farmerBo = {
@@ -108,19 +110,28 @@ describe("Sorting tests", () => {
         }
         sortingArray.push(farmerBo);
         correctAnswer = [sortingArray[4], sortingArray[3], sortingArray[2], sortingArray[5], sortingArray[0], sortingArray[1]];
-        expect(sort(sortingArray, "name")).to.deep.eq(correctAnswer);
+        expect(sort(sortingArray, "name", "asc")).to.deep.eq(correctAnswer);
     });
     it("should pass, empty list", () => {
         correctAnswer = [];
         sortingArray = [];
-        expect(sort(sortingArray, "name")).to.deep.eq(correctAnswer)
+        expect(sort(sortingArray, "name", "asc")).to.deep.eq(correctAnswer)
     })
     it("should pass, throws exception", () => {
         expect(function () {
-            sort(sortingArray, "failss")
+            sort(sortingArray, "failss", "asc")
         }).to.throw()
     })
-    it("should fail", () => {
+    it("should pass - no sorting if no order", () => {
+        correctAnswer = [sortingArray[0], sortingArray[1], sortingArray[2], sortingArray[3], sortingArray[4]];
+        expect(sort(sortingArray, "name")).to.deep.eq(correctAnswer)
+    } )
+    it ("should pass, sort by self sampling", () => {
+        correctAnswer = [sortingArray[2], sortingArray[4], sortingArray[1], sortingArray[0], sortingArray[3]];
+        console.log(sort(sortingArray, "self", "desc"))
+        expect(sort(sortingArray, "self", "desc")).to.deep.eq(correctAnswer);
+    })
+    it("should pass - last Method - can remove", () => {
         expect(false).to.be.false
     })
 })

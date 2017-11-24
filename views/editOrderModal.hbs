@@ -1,14 +1,17 @@
-<div class="modal fade" id="editOrderModal" tabindex="-1" role="dialog" aria-labelledby="editOrderModalLabel" aria-hidden="true">
+<div class="modal fade" id="editOrderModal" tabindex="-1" role="dialog" aria-labelledby="editOrderModalLabel"
+     aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="editOrderModalLabel">Ret ordre</h5>
-                <button type="button" class="close" id="orderEditClose" data-dismiss="modal" aria-label="Close" style="cursor: pointer;">
+                <button type="button" class="close" id="orderEditClose" data-dismiss="modal" aria-label="Close"
+                        style="cursor: pointer;">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <form id="orderEditForm" novalidate>
                 <div class="modal-body">
+                    <h5 class="lead">Fase 1</h5>
                     <div class="form-row">
                         <div class="col form-group">
                             <label for="inputConsultant">Konsulent</label>
@@ -27,44 +30,52 @@
                     <div class="form-row">
                         <div class="col-9 form-group">
                             <label for="inputName">Navn</label>
-                            <input name="name" type="text" id="inputName" class="form-control" placeholder="Navn" required>
+                            <input name="name" type="text" id="inputName" class="form-control" placeholder="Navn"
+                                   required>
                         </div>
                         <div class="col form-group">
                             <label for="inputFarmName">Gårdnavn</label>
-                            <input name="farmName" type="text" id="inputFarmName" class="form-control" placeholder="Gårdnavn" required>
+                            <input name="farmName" type="text" id="inputFarmName" class="form-control"
+                                   placeholder="Gårdnavn" required>
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="col-6 form-group">
                             <label for="inputStreet">Adresse</label>
-                            <input name="street" type="text" id="inputStreet" class="form-control" placeholder="Adresse" required>
+                            <input name="street" type="text" id="inputStreet" class="form-control" placeholder="Adresse"
+                                   required>
                         </div>
                         <div class="col form-group">
                             <label for="inputZip">Postnummer</label>
-                            <input name="zip" type="number" id="inputZip" class="form-control" placeholder="Postnummer" required>
+                            <input name="zip" type="number" id="inputZip" class="form-control" placeholder="Postnummer"
+                                   required>
                         </div>
                         <div class="col form-group">
                             <label for="inputCity">By</label>
-                            <input name="city" type="text" id="inputCity" class="form-control" placeholder="By" required>
+                            <input name="city" type="text" id="inputCity" class="form-control" placeholder="By"
+                                   required>
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="col form-group">
                             <label for="inputLandlineNumber">Fastnet tlf.</label>
-                            <input name="landlineNumber" type="tel" id="inputLandlineNumber" class="form-control" placeholder="Fastnet telefon" pattern="^[\s()+-]*([0-9][\s()+-]*){6,20}$">
+                            <input name="landlineNumber" type="tel" id="inputLandlineNumber" class="form-control"
+                                   placeholder="Fastnet telefon" pattern="^[\s()+-]*([0-9][\s()+-]*){6,20}$">
                         </div>
                         <div class="col form-group">
                             <label for="inputPhoneNumber">Mobil tlf.</label>
-                            <input name="phoneNumber" type="tel" id="inputPhoneNumber" class="form-control" placeholder="Mobil telefon" pattern="^[\s()+-]*([0-9][\s()+-]*){6,20}$">
+                            <input name="phoneNumber" type="tel" id="inputPhoneNumber" class="form-control"
+                                   placeholder="Mobil telefon" pattern="^[\s()+-]*([0-9][\s()+-]*){6,20}$">
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="col form-group">
                             <label for="inputComment">Kommentarer</label>
-                            <textarea name="comment" id="inputComment" class="form-control" rows="5" style="min-height: 74px"></textarea>
+                            <textarea name="comment" id="inputComment" class="form-control" rows="5"
+                                      style="min-height: 74px"></textarea>
                         </div>
                     </div>
 
@@ -73,7 +84,8 @@
                             <label for="inputSampleDensity">Prøvetæthed</label>
                             <div class="input-group" id="sampleDensityContainer">
                                 <span class="input-group-addon">1/</span>
-                                <input name="sampleDensity" type="number" min="0" id="inputSampleDensity" class="form-control">
+                                <input name="sampleDensity" type="number" min="0" id="inputSampleDensity"
+                                       class="form-control">
                                 <span class="input-group-addon">ha</span>
                             </div>
                         </div>
@@ -88,63 +100,84 @@
 
                         <div class="col-5">
                             <div class="form-group ml-3" style="line-height: 0; margin-bottom: 0px; margin-top: 32px;">
-                                <label for="inputSamePlanAsLast"><input name="samePlanAsLast" type="checkbox" id="inputSamePlanAsLast"> Samme plan som sidst</label>
-                                <label for="inputTakeOwnSamples"><input name="takeOwnSamples" type="checkbox" id="inputTakeOwnSamples"> Prøver selvudtaget</label>
+                                <label for="inputSamePlanAsLast"><input name="samePlanAsLast" type="checkbox"
+                                                                        id="inputSamePlanAsLast"> Samme plan som
+                                    sidst</label>
+                                <label for="inputTakeOwnSamples"><input name="takeOwnSamples" type="checkbox"
+                                                                        id="inputTakeOwnSamples"> Prøver
+                                    selvudtaget</label>
                             </div>
                         </div>
                     </div>
-
                     <hr/>
+                    <h5 class="modal-title">Fase 2</h5>
+                    <div class="form-row">
+                        <div class="col-3 form-group">
+                            <label for="inputMapDate">kort til udtagn. dato</label>
+                            <input name="mapDate" type="date" id="inputMapDate" class="form-control">
+                        </div>
+                        <div class="col-3 form-group">
+                            <label for="inputMapSample">udtagn. dato</label>
+                            <input name="mapSample" type="date" id="inputMapSample" class="form-control">
+                        </div>
+                        <div class="col-3 form-group">
+                            <label for="inputSampleTime">udtagning timer</label>
+                            <input name="sampleTime" type="number" id="inputSampleTime" class="form-control"
+                                   placeholder="timer">
+                        </div>
+                        <div class="col-3 form-group">
+                            <label for="inputMgSamples">Mg stk.</label>
+                            <input name="mgSamples" type="number" min="0" id="inputMgSamples" class="form-control"
+                                   placeholder="Mg stk.">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-3 form-group">
+                            <label for="inputCutSamples">Cut stk.</label>
+                            <input name="cutSamples" type="number" min="0" id="inputCutSamples" class="form-control"
+                                   placeholder="Cut stk.">
+                        </div>
+                        <div class="col-3 form-group">
+                            <label for="inputOtherSamples">Andre stk.</label>
+                            <input name="otherSamples" type="number" min="0" id="inputOtherSamples" class="form-control"
+                                   placeholder="andre stk.">
+                        </div>
+                        <div class="col-3">
 
-                    <div class="col-3 form-group">
-                        <label for="inputMapDate">kort til udtagn. dato</label>
-                        <input name="mapDate" type="date" id="inputMapDate" class="form-control">
+                        </div>
+                        <div class="col-3 form-group">
+                            <label id="totalSamplesTaken">udtaget ialt: <span>0</span></label>
+                        </div>
                     </div>
-                    <div class="col-3 form-group">
-                        <label for="inputMapSample">udtagn. dato</label>
-                        <input name="mapSample" type="date" id="inputMapSample" class="form-control">
+                    <div class="form-row">
+                        <div class="col-3 form-group">
+                            <label for="inputLabDate">til labdato</label>
+                            <input name="labDate" type="date" id="inputLabDate" class="form-control">
+                        </div>
+                        <div class="col-3 form-group">
+                            <label for="inputFromLabDate">modtaget fra lab</label>
+                            <input name="fromLabDate" type="date" id="inputFromLabDate" class="form-control">
+                        </div>
+                        <div class="col-3 form-group">
+                            <label for="inputMO">send til maranalyseonline</label>
+                            <input name="mO" type="date" id="inputMO" class="form-control">
+                        </div>
+                        <div class="col-3 form-group">
+                            <label for="inputReceptApproved">faktura godkendt</label>
+                            <input name="receptApproved" type="date" id="inputReceptApproved" class="form-control">
+                        </div>
                     </div>
-                    <div class="col-3 form-group">
-                        <label for="inputSampleTime">udtagning timer</label>
-                        <input name="sampleTime" type="number" id="inputSampleTime" class="form-control" placeholder="timer">
-                    </div>
-                    <div class="col-3 form-group">
-                        <label for="inputMgSamples">Mg stk.</label>
-                        <input name="mgSamples" type="number" min="0" id="inputMgSamples" class="form-control" placeholder="Mg stk.">
-                    </div>
-                    <div class="col-3 form-group">
-                        <label for="inputCutSamples">Cut stk.</label>
-                        <input name="cutSamples" type="number" min="0" id="inputCutSamples" class="form-control" placeholder="Cut stk.">
-                    </div>
-                    <div class="col-3 form-group">
-                        <label for="inputOtherSamples">Andre stk.</label>
-                        <input name="otherSamples" type="number" min="0" id="inputOtherSamples" class="form-control" placeholder="andre stk.">
-                    </div>
-                    <div class="col-3 form-group">
-                        <label id="totalSamplesTaken">udtaget ialt: <span>0</span></label>
-                    </div>
-                    <div class="col-3 form-group">
-                        <label for="inputLabDate">til lab dato</label>
-                        <input name="labDate" type="date" id="inputLabDate" class="form-control">
-                    </div>
-                    <div class="col-3 form-group">
-                        <label for="inputFromLabDate">modtaget fra lab</label>
-                        <input name="fromLabDate" type="date" id="inputFromLabDate" class="form-control">
-                    </div>
-                    <div class="col-3 form-group">
-                        <label for="inputMO">send til maranalyseonline</label>
-                        <input name="mO" type="date" id="inputMO" class="form-control">
-                    </div>
-                    <div class="col-3 form-group">
-                        <label for="inputReceptApproved">faktura godkendt</label>
-                        <input name="receptApproved" type="date" id="inputReceptApproved" class="form-control">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <div class="form-row float-right">
-                        <div class="col form-group">
-                            <button id="orderEditCancel" class="btn btn-secondary" data-dismiss="modal" style="cursor: pointer">Annuller</button>
-                            <button if="orderEditSave" type="submit" class="btn btn-primary" style="cursor: pointer;">Gem ordre</button>
+                    <div class="modal-footer">
+                        <div class="form-row float-right">
+                            <div class="col form-group">
+                                <button id="orderEditCancel" class="btn btn-secondary" data-dismiss="modal"
+                                        style="cursor: pointer">Annuller
+                                </button>
+                                <button id="orderEditSave" type="submit" class="btn btn-primary"
+                                        style="cursor: pointer;">
+                                    Gem ordre
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>

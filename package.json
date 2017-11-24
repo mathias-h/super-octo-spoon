@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test/*.js test/*/*.js",
+    "test": "mocha test/*.js test/*/*.js --timeout=5000",
     "start": "node index"
   },
   "keywords": [],
@@ -23,6 +23,7 @@
     "chai": "^4.1.2",
     "mocha": "^4.0.1",
     "puppeteer": "^0.13.0",
+    "rimraf": "^2.6.2",
     "supertest": "^3.0.0"
   }
 }

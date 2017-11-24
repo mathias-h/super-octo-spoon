@@ -16,13 +16,13 @@
         function convertFormToObject(form) {
             const data = {};
             const f = new FormData(form);
-            for (const [key, value] of f.entries()) {
+            for (const [key,value] of f.entries()) {
                 data[key] = value;
             }
             return data;
         }
 
-        window.addEventListener('load', function () {
+        window.addEventListener('load', function() {
             new EditOrderModal();
 
             $("#inputSignedDate").val(moment(new Date()).format("YYYY-MM-DD"));
@@ -37,12 +37,12 @@
             });
 
             $(document).keyup((e) => {
-                if (e.which == 27) {
+                if(e.which == 27){
                     clearOrderCreate();
                 }
             });
 
-            function clearOrderCreate() {
+            function clearOrderCreate(){
                 // TODO: Sæt konsulent tilbage til bruger
                 $("#inputSignedDate").val("2017-11-21");
                 $("#inputName").val("");
@@ -57,7 +57,7 @@
 
 
             const form = document.getElementById('orderCreateForm');
-            form.addEventListener('submit', function (event) {
+            form.addEventListener('submit', function(event) {
                 event.preventDefault();
                 event.stopPropagation();
 
@@ -67,10 +67,10 @@
                 landline[0].setCustomValidity("");
                 mobile[0].setCustomValidity("");
 
-                if (!(landline[0].validity.valid && landline.val()) && !(mobile[0].validity.valid && mobile.val())) {
+                if(!(landline[0].validity.valid && landline.val()) && !(mobile[0].validity.valid && mobile.val())){
                     landline[0].setCustomValidity("Mindst et telefonnummer skal angives");
                     mobile[0].setCustomValidity("Mindst et telefonnummer skal angives");
-                } else {
+                }else{
                     landline[0].setCustomValidity("");
                     mobile[0].setCustomValidity("");
                 }
@@ -93,13 +93,14 @@
             $(".sortable").click(function () {
                 var id = $(this).attr("id");
                 var ls = location.search;
-                if (ls.length === 0 || (ls.indexOf("sortBy") !== -1 && ls.indexOf("query") === -1)) {
-                    location.search = "sortBy=" + id;
+                var order = (ls.indexOf("order=asc")!==-1) ? "&order=desc" : "&order=asc";
+                if (ls.length === 0 || (ls.indexOf("sortBy")!==-1 && ls.indexOf("query") === -1)){
+                    location.search = "sortBy=" + id + order;
                 }
-                else if (ls.indexOf("query") !== -1 && ls.indexOf("sortBy") === -1) {
-                    location.search += "&sortBy=" + id;
-                } else {
-                    location.search = location.search.substring(0, location.search.indexOf("&")) + "&sortBy=" + id;
+                else if (ls.indexOf("query") !== -1 && ls.indexOf("sortBy") === -1){
+                    location.search += "&sortBy=" + id + order;
+                }else {
+                    location.search = location.search.substring(0,location.search.indexOf("&")) + "&sortBy=" + id + order;
                 }
             })
         });
@@ -126,7 +127,6 @@
               class="navbar-text justify-content-center">{{totalTaken}} / {{totalSamples}}</span>
     </div>
 
-
     <form id="search" class="form-inline my-4 my-sm-0">
         <div class="input-group">
             <input class="form-control" type="search" name="query" placeholder="Søg..." aria-label="Search" value="{{query}}">
@@ -152,54 +152,54 @@
                 <th>kommentar</th>
                 <th>Prøve tæthed</th>
                 <th>Areal</th>
-                <th class="text-center">Samme plan<br />som sidst</th>
-                <th class="text-center">Selvudtag</th>
+                <th>Samme plan som sidst</th>
+                <th class="sortable" id="self">Selvudtag</th>
             </tr>
         </thead>
         <tbody>
-        {{#each orders}}
-            <tr class="order" data-order-id="{{_id}}">
-                <td>
-                    {{consultant}}
-                </td>
-                <td>
-                    {{signedDate}}
-                </td>
-                <td>
-                    {{landlineNumber}}
-                </td>
-                <td>
-                    {{phoneNumber}}
-                </td>
-                <td>
-                    {{name}}
-                </td>
-                <td>
-                    {{farmName}}, {{address.street}}, {{address.city}}, {{address.zip}}
-                </td>
-                <td>
-                    {{comment}}
-                </td>
-                <td>
-                    {{#if sampleDensity}}
-                        1/{{sampleDensity}}ha
-                    {{else}}
-                        ikke sat
-                    {{/if}}
-                </td>
-                <td>{{area}}ha</td>
-                <td class="text-center">
-                    {{#if samePlanAsLast}}
-                        <img src="/check.svg" alt="flueben"/>
-                    {{/if}}
-                </td>
-                <td class="text-center">
-                    {{#if takeOwnSamples}}
-                        <img src="/check.svg" alt="flueben"/>
-                    {{/if}}
-                </td>
-            </tr>
-        {{/each}}
+            {{#each orders}}
+                <tr class="order" data-order-id="{{_id}}">
+                    <td>
+                        {{consultant}}
+                    </td>
+                    <td>
+                        {{signedDate}}
+                    </td>
+                    <td>
+                        {{landlineNumber}}
+                    </td>
+                    <td>
+                        {{phoneNumber}}
+                    </td>
+                    <td>
+                        {{name}}
+                    </td>
+                    <td>
+                        {{farmName}}, {{address.street}}, {{address.city}}, {{address.zip}}
+                    </td>
+                    <td>
+                        {{comment}}
+                    </td>
+                    <td>
+                        {{#if sampleDensity}}
+                            1/{{sampleDensity}}ha
+                        {{else}}
+                            ikke sat
+                        {{/if}}
+                    </td>
+                    <td>{{area}}ha</td>
+                    <td>
+                        {{#if samePlanAsLast}}
+                            <img src="/check.svg" alt="flueben"/>
+                        {{/if}}
+                    </td>
+                    <td>
+                        {{#if takeOwnSamples}}
+                            <img src="/check.svg" alt="flueben"/>
+                        {{/if}}
+                    </td>
+                </tr>
+            {{/each}}
         </tbody>
     </table>
 </div>

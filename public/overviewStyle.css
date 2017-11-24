@@ -25,3 +25,9 @@ thead tr th{
     padding-right: 12px;
     padding-left: 4px;
 }
+
+.sortable {
+    cursor: pointer;
+    position: relative;
+}
+
