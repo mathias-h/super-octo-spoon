@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test/*.js test/*/*.js",
+    "test": "mocha test/*.js test/*/*.js --timeout=3000",
     "start": "node index"
   },
   "keywords": [],
