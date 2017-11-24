@@ -1,0 +1,108 @@
+<div class="modal fade" id="createOrderModal" tabindex="-1" role="dialog" aria-labelledby="createOrderModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createOrderModalLabel">Opret ordre</h5>
+                <button type="button" class="close" id="orderCreateClose" data-dismiss="modal" aria-label="Close" style="cursor: pointer;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="orderCreateForm" novalidate>
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="col form-group">
+                            <label for="inputConsultant">Konsulent</label>
+                            <select name="consultant" id="inputConsultant" class="form-control" required>
+                                {{#each consultants}}
+                                    <option value="{{this}}">{{this}}</option>
+                                {{/each}}
+                            </select>
+                        </div>
+                        <div class="col form-group">
+                            <label for="inputSignedDate">Indgået dato</label>
+                            <input name="signedDate" type="date" id="inputSignedDate" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="col-9 form-group">
+                            <label for="inputName">Navn</label>
+                            <input name="name" type="text" id="inputName" class="form-control" placeholder="Navn" required>
+                        </div>
+                        <div class="col form-group">
+                            <label for="inputFarmName">Gårdnavn</label>
+                            <input name="farmName" type="text" id="inputFarmName" class="form-control" placeholder="Gårdnavn" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="col-6 form-group">
+                            <label for="inputStreet">Adresse</label>
+                            <input name="street" type="text" id="inputStreet" class="form-control" placeholder="Adresse" required>
+                        </div>
+                        <div class="col form-group">
+                            <label for="inputZip">Postnummer</label>
+                            <input name="zip" type="number" id="inputZip" class="form-control" placeholder="Postnummer" required>
+                        </div>
+                        <div class="col form-group">
+                            <label for="inputCity">By</label>
+                            <input name="city" type="text" id="inputCity" class="form-control" placeholder="By" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="col form-group">
+                            <label for="inputLandlineNumber">Fastnet tlf.</label>
+                            <input name="landlineNumber" type="tel" id="inputLandlineNumber" class="form-control" placeholder="Fastnet telefon" pattern="^[\s()+-]*([0-9][\s()+-]*){6,20}$">
+                        </div>
+                        <div class="col form-group">
+                            <label for="inputPhoneNumber">Mobil tlf.</label>
+                            <input name="phoneNumber" type="tel" id="inputPhoneNumber" class="form-control" placeholder="Mobil telefon" pattern="^[\s()+-]*([0-9][\s()+-]*){6,20}$">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="col form-group">
+                            <label for="inputComment">Kommentarer</label>
+                            <textarea name="comment" id="inputComment" class="form-control" rows="5" style="min-height: 74px"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="col-3 form-group">
+                            <label for="inputSampleDensity">Prøvetæthed</label>
+                            <div class="input-group" id="sampleDensityContainer">
+                                <span class="input-group-addon">1/</span>
+                                <input name="sampleDensity" type="number" min="0" id="inputSampleDensity" class="form-control">
+                                <span class="input-group-addon">ha</span>
+                            </div>
+                        </div>
+
+                        <div class="col-3 form-group">
+                            <label for="inputArea">Areal</label>
+                            <div class="input-group" id="sampleDensityContainer">
+                                <input name="area" type="number" min="0" id="inputArea" class="form-control">
+                                <span class="input-group-addon">ha</span>
+                            </div>
+                        </div>
+
+                        <div class="col-5">
+                            <div class="form-group ml-3" style="line-height: 0; margin-bottom: 0px; margin-top: 32px;">
+                                <label for="inputSamePlanAsLast"><input name="samePlanAsLast" type="checkbox" id="inputSamePlanAsLast"> Samme plan som sidst</label>
+                                <label for="inputTakeOwnSamples"><input name="takeOwnSamples" type="checkbox" id="inputTakeOwnSamples"> Prøver selvudtaget</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="form-row float-right">
+                        <div class="col form-group">
+                            <button id="orderCreateCancel" class="btn btn-secondary" data-dismiss="modal" style="cursor: pointer">Annuller</button>
+                            <button type="submit" class="btn btn-primary" style="cursor: pointer;">Opret ordre</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

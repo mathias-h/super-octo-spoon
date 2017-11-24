@@ -19,7 +19,6 @@ describe("order", () => {
             return { exec: () => Promise.resolve() }
         };
 
-
         return Order.statics.editOrder(newOrder)
     });
     it("should create order", () => {
