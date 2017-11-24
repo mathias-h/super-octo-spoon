@@ -24,7 +24,7 @@ describe("order integration test", () => {
 
         db = childProcess.spawn("mongod", ["--port", "27018", "--dbpath", dataPath])
         
-        await sleep(10)
+        await sleep(100)
 
         mongoose.connect("mongodb://localhost:27018/super-octo-spoon");
         mongoose.Promise = global.Promise;
