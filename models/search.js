@@ -23,7 +23,13 @@ module.exports.search = function search(orders, query) {
                 if (order.landlineNumber.match(reg)) {
                     matches += 1
                 }
+                if (order.phoneNumber.match(reg)) {
+                    matches += 1
+                }
                 if (order.name.match(reg)) {
+                    matches += 1
+                }
+                if (order.farmName.match(reg)) {
                     matches += 1
                 }
             }
