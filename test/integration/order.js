@@ -39,40 +39,42 @@ describe("Order integration tests", () => {
 
     describe("overview tests", () => {
         const orderId1 = mongoose.Types.ObjectId()
-        const order1 = new Order({
-            _id: orderId1,
-            consultant: "MH",
-            signedDate: new Date(),
-            landlineNumber: "88888888",
-            phoneNumber: "88888888",
-            name: "NAME",
-            farmName: "FARM_NAME",
-            address: {
-                city: "CITY",
-                street: "STREET",
-                zip: "9999"
-            }
-        })
         const orderId2 = mongoose.Types.ObjectId()
-        const order2 = new Order({
-            _id: orderId2,
-            consultant: "MH",
-            signedDate: new Date(),
-            landlineNumber: "88888888",
-            phoneNumber: "88888888",
-            name: "NAME",
-            farmName: "FARM_NAME",
-            address: {
-                city: "CITY",
-                street: "STREET",
-                zip: "9999"
-            }
-        })
 
-        beforeEach(() =>
-            Order.remove().exec()
+        beforeEach(() => {
+            const order1 = new Order({
+                _id: orderId1,
+                consultant: "MH",
+                signedDate: new Date(),
+                landlineNumber: "88888888",
+                phoneNumber: "88888888",
+                name: "NAME",
+                farmName: "FARM_NAME",
+                address: {
+                    city: "CITY",
+                    street: "STREET",
+                    zip: "9999"
+                }
+            })
+            const order2 = new Order({
+                _id: orderId2,
+                consultant: "MH",
+                signedDate: new Date(),
+                landlineNumber: "88888888",
+                phoneNumber: "88888888",
+                name: "NAME",
+                farmName: "FARM_NAME",
+                address: {
+                    city: "CITY",
+                    street: "STREET",
+                    zip: "9999"
+                }
+            })
+
+            return Order.remove().exec()
                 .then(() => order1.save())
-                .then(() => order2.save()))
+                .then(() => order2.save())
+        })
 
         it("should get orders", () =>
             browser.newPage().then(page => page.goto("http://localhost:1024")
