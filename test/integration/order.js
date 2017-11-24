@@ -12,6 +12,7 @@ const sleep = time => new Promise(resolve => setTimeout(resolve, time))
 describe("Order integration tests", () => {
     let dbProcess
     let server
+    let browser
     const Order = mongoose.model("Order", OrderSchema)
     before(() => {
         const dataPath = __dirname + "/../test-data"
@@ -21,18 +22,19 @@ describe("Order integration tests", () => {
         dbProcess = childProcess.spawn("mongod", ["--dbpath", dataPath])
         mongoose.Promise = global.Promise;
 
-
         return sleep(200)
             .then(() => mongoose.connect("mongodb://localhost:27017/super-octo-spoon"))
             .then(() => {
                 app = createApp(Order);
-                server = app.listen(1024);
-            })
+                server = app.listen(1024)
+            }).then(() => puppeteer.launch()).then(b => browser = b)
     })
 
     after(() => {
         server.close();
-        return mongoose.disconnect().then(() => dbProcess.kill());
+        return mongoose.disconnect()
+            .then(() => dbProcess.kill())
+            .then(() => browser.close());
     })
 
     describe("overview tests", () => {
@@ -73,14 +75,12 @@ describe("Order integration tests", () => {
                 .then(() => order2.save()))
 
         it("should get orders", () =>
-            puppeteer.launch({ headless: false })
-                .then(browser => browser.newPage()
-                    .then(page => page.goto("http://localhost:1024")
-                        .then(() => page.evaluate(function () {
-                            return Array.from(document.querySelectorAll("tr.order"))
-                                .map(orderEl => orderEl.getAttribute("data-order-id"))
-                        })
-                            .then(orderIds => expect(orderIds).to.deep.eq([orderId1.toHexString(),orderId2.toHexString()]))))))
-        .timeout(50000)
+            browser.newPage().then(page => page.goto("http://localhost:1024")
+                .then(() => page.evaluate(function () {
+                    return Array.from(document.querySelectorAll("tr.order"))
+                        .map(orderEl => orderEl.getAttribute("data-order-id"))
+                })
+                .then(orderIds => expect(orderIds).to.deep.eq([orderId1.toHexString(),orderId2.toHexString()]))
+                .then(() => browser.close()))))
     })
 })
