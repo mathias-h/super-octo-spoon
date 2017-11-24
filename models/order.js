@@ -70,28 +70,22 @@ Order.statics.editOrder = function updateOrder(order) {
 }
 Order.statics.createOrder = function createOrder(orderData) {
     if(orderData.landlineNumber || orderData.phoneNumber) {
-        try {
-            const order = new this({
-                consultant: orderData.consultant,
-                signedDate: orderData.signedDate,
-                landlineNumber: orderData.landlineNumber,
-                phoneNumber: orderData.phoneNumber,
-                name: orderData.name,
-                address: {
-                    street: orderData.street,
-                    city: orderData.city,
-                    zip: orderData.zip
-                },
-                comment: orderData.comment
+        const order = new this({
+            consultant: orderData.consultant,
+            signedDate: orderData.signedDate,
+            landlineNumber: orderData.landlineNumber,
+            phoneNumber: orderData.phoneNumber,
+            name: orderData.name,
+            address: {
+                street: orderData.street,
+                city: orderData.city,
+                zip: orderData.zip
+            },
+            comment: orderData.comment
             });
-
             return order.save();
-        } catch(e) {
-            console.error(e)
-            throw new Error("Ordre kunne ikke oprettes i database.");
-        }
     } else {
-        throw new Error("Intet telefonnummer angivet.");
+        return Promise.reject(new Error("no landline or phone number"));
     }
 };
 

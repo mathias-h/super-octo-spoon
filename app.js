@@ -30,9 +30,10 @@ module.exports.createApp = function createApp(Order) {
     
     app.post("/order/create", (req, res) => {
         Order.createOrder(req.body).then(() => {
-            res.end("Ordre oprettet")
+            res.header("Content-Type", "text/plain");
+            res.send("order created");
         }).catch(e => {
-            res.status(500).json(e)
+            res.status(500).json(e);
         })
     });
     
