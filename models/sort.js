@@ -1,5 +1,8 @@
 var _ = require("lodash")
-module.exports.sort = function (orders, sortBy, order = "asc") {
+module.exports.sort = function (orders, sortBy, order) {
+    if (!order){
+        return orders;
+    }
     if (sortBy == "address"){
         return _.orderBy(orders, function (order) {
             return order.address.zip + order.address.city + order.address.street

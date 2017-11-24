@@ -105,9 +105,12 @@ Order.statics.sampleTotals = function sampleTotals() {
     })
 }
 
-Order.statics.getAll = function getAll({query, sortBy="date"}) {
+Order.statics.getAll = function getAll({query, sortBy="date", order}) {
     return this.find().lean().exec().then(orders => {
-        return sort(search(orders, query), sortBy, "asc").map(o => Object.assign(o, {
+        if (!query && !sortBy){
+            order = "desc";
+        }
+        return sort(search(orders, query), sortBy, order).map(o => Object.assign(o, {
             signedDate: moment(o.signedDate).format("DD-MM-YYYY")
         }))
     });

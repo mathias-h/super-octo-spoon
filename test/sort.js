@@ -120,6 +120,10 @@ describe("Sorting tests", () => {
             sort(sortingArray, "failss")
         }).to.throw()
     })
+    it("should pass - no sorting if no order", () => {
+        correctAnswer = [sortingArray[0], sortingArray[1], sortingArray[2], sortingArray[3], sortingArray[4]];
+        expect(sort(sortingArray), "name").to.deep.eq(correctAnswer)
+    } )
     it("should fail", () => {
         expect(false).to.be.false
     })
