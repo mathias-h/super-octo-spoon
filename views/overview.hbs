@@ -121,37 +121,40 @@
                 <a class="nav-link" href="#">opret bruger</a>
             </li>
         </ul>
+
+        <span id="navbar-statistics" style="position: absolute; left: 50%; transform: translateX(-50%);"
+              class="navbar-text justify-content-center">{{totalTaken}} / {{totalSamples}}</span>
     </div>
 
-    <span style="position: absolute; left: 50%; transform: translateX(-50%);"
-          class="navbar-text justify-content-center">{{totalTaken}} / {{totalSamples}}</span>
 
-
-    <form id="search" class="form-inline my-2 my-sm-0">
-        <input class="form-control mr-sm-2" type="search" name="query" placeholder="search" aria-label="Search"
-               value="{{query}}">
-        <button class="btn btn-primary my-2 hidden-sm-down" type="submit">
-            <img src="/search.svg" alt="search icon">
-        </button>
+    <form id="search" class="form-inline my-4 my-sm-0">
+        <div class="input-group">
+            <input class="form-control" type="search" name="query" placeholder="Søg..." aria-label="Search" value="{{query}}">
+            <span class="input-group-btn">
+                <button class="btn btn-primary" type="submit" style="cursor: pointer;">
+                    <img src="/search.svg" alt="search icon">
+                </button>
+            </span>
+        </div>
     </form>
 </nav>
 
 <div id="contentData">
     <table class="table table-fixed table-striped">
         <thead>
-        <tr>
-            <th class="sortable" id="consultant">konsulent</th>
-            <th class="sortable" id="date">oprettet dato</th>
-            <th>fastnet tlf.</th>
-            <th>mobil tlf.</th>
-            <th class="sortable" id="name">navn</th>
-            <th class="sortable" id="address">adresse</th>
-            <th>kommentar</th>
-            <th>Prøve tæthed</th>
-            <th>Areal</th>
-            <th>Samme plan som sidst</th>
-            <th>Selvudtag</th>
-        </tr>
+            <tr>
+                <th class="sortable" id="consultant">konsulent</th>
+                <th class="sortable" id="date">oprettet dato</th>
+                <th>fastnet tlf.</th>
+                <th>mobil tlf.</th>
+                <th class="sortable" id="name">navn</th>
+                <th class="sortable" id="address">adresse</th>
+                <th>kommentar</th>
+                <th>Prøve tæthed</th>
+                <th>Areal</th>
+                <th class="text-center">Samme plan<br />som sidst</th>
+                <th class="text-center">Selvudtag</th>
+            </tr>
         </thead>
         <tbody>
         {{#each orders}}
@@ -185,12 +188,12 @@
                     {{/if}}
                 </td>
                 <td>{{area}}ha</td>
-                <td>
+                <td class="text-center">
                     {{#if samePlanAsLast}}
                         <img src="/check.svg" alt="flueben"/>
                     {{/if}}
                 </td>
-                <td>
+                <td class="text-center">
                     {{#if takeOwnSamples}}
                         <img src="/check.svg" alt="flueben"/>
                     {{/if}}
