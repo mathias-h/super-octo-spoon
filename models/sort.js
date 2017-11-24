@@ -21,6 +21,10 @@ module.exports.sort = function (orders, sortBy, order) {
             var names = order.name.split(" ");
             return names[names.length-1] + names[0];
         }, [order]);
+    } else if (sortBy == "self") {
+        return _.orderBy(orders, function (order) {
+            return order.takeOwnSamples - order.signedDate;
+        }, [order]);
     } else {
         throw new TypeError("Illegal sorting parameter: " + sortBy)
     }
