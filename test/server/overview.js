@@ -1,20 +1,20 @@
 const request = require('supertest');
-const { expect } = require("chai")
-const { createApp } = require("../../app")
+const { expect } = require("chai");
+const { createApp } = require("../../app");
 
 describe("overview view", () => {
     it("should get view", () => {
-        const order = { name: "ORDER_NAME" }
+        const order = { name: "ORDER_NAME" };
         const OrderMock = {
             getAll(queryParams) {
-                expect(queryParams).to.deep.eq({ query: "test" })
+                expect(queryParams).to.deep.eq({ query: "test" });
                 return Promise.resolve([order])
             },
             sampleTotals() {
                 return Promise.resolve({ totalSamples: 0, totalTaken: 0 })
             }
-        }
-        const app = createApp(OrderMock)
+        };
+        const app = createApp(OrderMock);
         
         return request(app)
             .get("/?query=test")
@@ -22,4 +22,4 @@ describe("overview view", () => {
             .expect(200)
             .expect(/ORDER_NAME/)
     })
-})
+});
