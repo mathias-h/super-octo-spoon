@@ -93,13 +93,19 @@ Order.statics.createOrder = function createOrder(orderData) {
     }
 };
 
-Order.statics.sampleTotals = function sampleTotals() {
+Order.statics.sampleTotals = async function sampleTotals() {
     const startOfYear = moment(new Date()).startOf("year").toDate()
 
-    return this.find({ signedDate: { $gte: startOfYear }}).exec().then(orders => ({
-        totalSamples: orders.reduce((total, order) => total + order.area,0),
-        totalTaken: orders.reduce((total, order) => total + (order.mgSamples || 0) + (order.cutSamples || 0) + (order.otherSamples || 0), 0),
-    }))
+    return (await this.aggregate([
+        { $match: {
+            signedDate: { $gte: startOfYear }
+        }},
+        { $group: {
+            _id: null,
+            totalSamples: { $sum:"$area" },
+            totalTaken: { $sum:{$add:["$mgSamples","$cutSamples","$otherSamples"] }
+        }}}
+    ]).exec())[0] || {}
 }
 
 Order.statics.getAll = async function getAll({query, sortBy="date", order}) {

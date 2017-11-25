@@ -1,5 +1,6 @@
 const { expect } = require("chai");
 const mongoose = require("mongoose");
+const moment = require("moment")
 
 mongoose.Promise = global.Promise;
 
@@ -29,69 +30,26 @@ describe("order", () => {
     it("should create order", () => {
         
     });
-    describe("sample totals", () => {
-        it("should get sample totals", () => {
-            const orders = [
-                {
-                    area: 100,
-                    mgSamples: 10,
-                    cutSamples: 20,
-                    otherSamples: 30
-                },
-                {
-                    area: 200,
-                    mgSamples: 30,
-                    cutSamples: 20,
-                    otherSamples: 10
-                }
-            ];
-    
-            Order.statics.find = function findMock(query) {
-                return { exec: () => Promise.resolve(orders) }
-            };
-    
-            return Order.statics.sampleTotals().then(result => {
-                expect(result).to.deep.eq({
-                    totalSamples: 300,
-                    totalTaken: 120
-                })
-            })
-        });
+    it("sample totals", async () => {
+        Order.statics.aggregate = function aggretageMock([match,group]) {
+            expect(match).to.deep.eq({ $match: {
+                signedDate: { $gte: moment(new Date("2017-01-01")).startOf("year").toDate() }
+            }})
+            expect(group).to.deep.eq({ $group: {
+                _id: null,
+                totalSamples: { $sum:"$area" },
+                totalTaken: { $sum:{$add:["$mgSamples","$cutSamples","$otherSamples"] }
+            }}})
 
-        it("should handle missing values", () => {
-            const orders = [
-                {
-                    area: 1,
-                    mgSamples: 10,
-                    cutSamples: 10,
-                },
-                {
-                    area: 1,
-                    mgSamples: 10,
-                    otherSamples: 10
-                },
-                {
-                    area: 1,
-                    mgSamples: 10,
-                    cutSamples: 10,
-                },
-                {
-                    area: 1,
-                    cutSamples: 10,
-                    otherSamples: 10
-                }
-            ];
-    
-            Order.statics.find = function findMock(query) {
-                return { exec: () => Promise.resolve(orders) }
-            };
-    
-            return Order.statics.sampleTotals().then(result => {
-                expect(result).to.deep.eq({
-                    totalSamples: 4,
-                    totalTaken: 80
-                })
-            })
+            return { exec: async () => [{ _id: null, totalSamples: 100, totalTaken: 50 }] }
+        }
+
+        const result = await Order.statics.sampleTotals()
+
+        expect(result).to.deep.eq({
+            _id: null,
+            totalSamples: 100,
+            totalTaken: 50
         })
     });
     

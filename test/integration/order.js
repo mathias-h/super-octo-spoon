@@ -48,7 +48,7 @@ describe("order integration test", () => {
         const order = new OrderModel({
             _id: orderId1,
             consultant: "CONTULTANT",
-            signedDate: new Date("1970-01-02"),
+            signedDate: new Date("2017-01-02"),
             name: "NAME",
             farmName: "FARM_NAME",
             address: {
@@ -61,7 +61,7 @@ describe("order integration test", () => {
         const order1 = new OrderModel({
             _id: orderId2,
             consultant: "CONTULTANT",
-            signedDate: new Date("1970-01-01"),
+            signedDate: new Date("2017-01-01"),
             name: "NAME",
             farmName: "FARM_NAME",
             address: {
