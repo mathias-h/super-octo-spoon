@@ -1,10 +1,15 @@
 const { expect } = require("chai");
 const mongoose = require("mongoose");
-const {Order} = require("../models/order");
 
 mongoose.Promise = global.Promise;
 
 describe("order", () => {
+    let Order
+
+    beforeEach(() => {
+        Order = require("../models/order").Order
+    })
+
     it("should edit order", () => {
         const orderId = mongoose.Types.ObjectId();
         const newOrder = {
@@ -90,7 +95,75 @@ describe("order", () => {
         })
     });
     
-    it("should get all orders", () => {
+    describe("get all", () => {
+        it("should search", async () => {
+            const query = "A 9999"
+            const orders = [
+                { _id: 1, name: "A", zip: 9999 }
+            ]
+            Order.statics.find = function findMock(q, project) {
+                expect(q).to.deep.eq({$text:{$search:query}})
+                expect(project).to.deep.eq({score: {$meta: "textScore"}})
+                return this
+            }
+            Order.statics.lean = function leanMock() {
+                return this
+            }
+            Order.statics.sort = function sortMock(sort) {
+                expect(sort).to.deep.eq({score: {$meta: "textScore"}})
+                return this
+            } 
+            Order.statics.exec = async () => orders
 
+            const result = await Order.statics.getAll({ query })
+
+            expect(result).to.deep.eq(orders)
+        })
+        it("should sort results asc", async () => {
+            const orders = [
+                { _id: 1, name: "B" },
+                { _id: 2, name: "A" }
+            ]
+            Order.statics.find = () => ({ sort: () => ({ lean: () => ({ exec: () => orders })}) })
+
+            const result = await Order.statics.getAll({ sortBy: "name", order: "asc" })
+
+            expect(result[0]._id).to.eq(2)
+            expect(result[1]._id).to.eq(1)
+        })
+        it("should sort results desc", async () => {
+            const orders = [
+                { _id: 1, name: "A" },
+                { _id: 2, name: "B" }
+            ]
+            Order.statics.find = () => ({ sort: () => ({ lean: () => ({ exec: () => orders })}) })
+
+            const result = await Order.statics.getAll({ sortBy: "name", order: "desc" })
+
+            expect(result[0]._id).to.eq(2)
+            expect(result[1]._id).to.eq(1)
+        })
+        it("should sort by singed date by default", async () => {
+            const orders = [
+                { _id: 1, signedDate: new Date("1970-01-01") },
+                { _id: 2, signedDate: new Date("1970-01-02") }
+            ]
+            Order.statics.find = () => ({ sort: () => ({ lean: () => ({ exec: () => orders })}) })
+
+            const result = await Order.statics.getAll({})
+
+            expect(result[0]._id).to.eq(2)
+            expect(result[1]._id).to.eq(1)
+        })
+        it("should format singed date", async () => {
+            const orders = [
+                { _id: 1, signedDate: new Date("1970-01-01") }
+            ]
+            Order.statics.find = () => ({ sort: () => ({ lean: () => ({ exec: () => orders })}) })
+
+            const result = await Order.statics.getAll({})
+
+            expect(result[0].signedDate).to.eq("01-01-1970")
+        })
     })
 });
