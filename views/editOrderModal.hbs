@@ -11,7 +11,6 @@
             </div>
             <form id="orderEditForm" novalidate>
                 <div class="modal-body">
-                    <h5 class="lead">Fase 1</h5>
                     <div class="form-row">
                         <div class="col form-group">
                             <label for="inputConsultant">Konsulent</label>
@@ -33,7 +32,7 @@
                             <input name="name" type="text" id="inputName" class="form-control" placeholder="Navn"
                                    required>
                         </div>
-                        <div class="col form-group">
+                        <div class="col-3 form-group">
                             <label for="inputFarmName">Gårdnavn</label>
                             <input name="farmName" type="text" id="inputFarmName" class="form-control"
                                    placeholder="Gårdnavn" required>
@@ -46,12 +45,12 @@
                             <input name="street" type="text" id="inputStreet" class="form-control" placeholder="Adresse"
                                    required>
                         </div>
-                        <div class="col form-group">
+                        <div class="col-3 form-group">
                             <label for="inputZip">Postnummer</label>
                             <input name="zip" type="number" id="inputZip" class="form-control" placeholder="Postnummer"
                                    required>
                         </div>
-                        <div class="col form-group">
+                        <div class="col-3 form-group">
                             <label for="inputCity">By</label>
                             <input name="city" type="text" id="inputCity" class="form-control" placeholder="By"
                                    required>
@@ -85,7 +84,7 @@
                             <div class="input-group" id="sampleDensityContainer">
                                 <span class="input-group-addon">1/</span>
                                 <input name="sampleDensity" type="number" min="0" id="inputSampleDensity"
-                                       class="form-control">
+                                       class="form-control" placeholder="Mængde">
                                 <span class="input-group-addon">ha</span>
                             </div>
                         </div>
@@ -93,7 +92,8 @@
                         <div class="col-3 form-group">
                             <label for="inputArea">Areal</label>
                             <div class="input-group" id="sampleDensityContainer">
-                                <input name="area" type="number" min="0" id="inputArea" class="form-control">
+                                <input name="area" type="number" min="0" id="inputArea" class="form-control"
+                                       placeholder="Størrelse">
                                 <span class="input-group-addon">ha</span>
                             </div>
                         </div>
@@ -110,60 +110,73 @@
                         </div>
                     </div>
                     <hr/>
-                    <h5 class="modal-title">Fase 2</h5>
                     <div class="form-row">
+                        <!-- Larsen: Labels er copy-pastet fra Excel; i tvivl om hvad forskellige celler betyder, retter til asap. -->
                         <div class="col-3 form-group">
-                            <label for="inputMapDate">kort til udtagn. dato</label>
+                            <label for="inputMapDate">Markgrænser på M samt kort til udtagn. Dato(???)</label>
                             <input name="mapDate" type="date" id="inputMapDate" class="form-control">
                         </div>
                         <div class="col-3 form-group">
-                            <label for="inputMapSample">udtagn. dato</label>
+                            <label for="inputMapSample">Udtagning</label>
                             <input name="mapSample" type="date" id="inputMapSample" class="form-control">
                         </div>
                         <div class="col-3 form-group">
-                            <label for="inputSampleTime">udtagning timer</label>
-                            <input name="sampleTime" type="number" id="inputSampleTime" class="form-control"
-                                   placeholder="timer">
+                            <label for="inputSampleTime">Udtagning</label>
+                            <div class="input-group">
+                                <input name="sampleTime" type="number" id="inputSampleTime" class="form-control"
+                                       placeholder="Antal">
+                                <span class="input-group-addon">timer</span>
+                            </div>
                         </div>
                         <div class="col-3 form-group">
-                            <label for="inputMgSamples">Mg stk.</label>
-                            <input name="mgSamples" type="number" min="0" id="inputMgSamples" class="form-control"
-                                   placeholder="Mg stk.">
+                            <label for="inputMgSamples">Std. m.</label>
+                            <div class="input-group">
+                                <input name="mgSamples" type="number" min="0" id="inputMgSamples" class="form-control"
+                                       placeholder="Mængde">
+                                <span class="input-group-addon">mg/stk</span>
+                            </div>
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="col-3 form-group">
-                            <label for="inputCutSamples">Cut stk.</label>
-                            <input name="cutSamples" type="number" min="0" id="inputCutSamples" class="form-control"
-                                   placeholder="Cut stk.">
+                            <label for="inputCutSamples">Cut</label>
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <input name="cutSamples" type="number" min="0" id="inputCutSamples"
+                                           class="form-control"
+                                           placeholder="Antal">
+                                    <span class="input-group-addon">stk</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <input name="otherSamples" type="number" min="0" id="inputOtherSamples"
+                                       class="form-control"
+                                       placeholder="Andre">
+                                <span class="input-group-addon">stk</span>
+                            </div>
                         </div>
                         <div class="col-3 form-group">
-                            <label for="inputOtherSamples">Andre stk.</label>
-                            <input name="otherSamples" type="number" min="0" id="inputOtherSamples" class="form-control"
-                                   placeholder="andre stk.">
-                        </div>
-                        <div class="col-3">
-
+                            <label for="inputSamplesTaken">Udtaget</label>
+                            <div class="input-group">
+                                <input name="samplesTaken" type="number" min="0" id="inputSamplesTaken"
+                                       class="form-control" placeholder="Mængde">
+                                <span class="input-group-addon">ha</span>
+                            </div>
                         </div>
                         <div class="col-3 form-group">
-                            <label id="totalSamplesTaken">udtaget ialt: <span>0</span></label>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="col-3 form-group">
-                            <label for="inputLabDate">til labdato</label>
+                            <label for="inputLabDate">Send til Lab</label>
                             <input name="labDate" type="date" id="inputLabDate" class="form-control">
-                        </div>
-                        <div class="col-3 form-group">
-                            <label for="inputFromLabDate">modtaget fra lab</label>
+                            <label for="inputFromLabDate">Modtaget fra lab</label>
                             <input name="fromLabDate" type="date" id="inputFromLabDate" class="form-control">
                         </div>
                         <div class="col-3 form-group">
-                            <label for="inputMO">send til maranalyseonline</label>
+                            <label for="inputMO">Send til Markedsanalyse</label>
                             <input name="mO" type="date" id="inputMO" class="form-control">
                         </div>
+                    </div>
+                    <div class="form-row">
                         <div class="col-3 form-group">
-                            <label for="inputReceptApproved">faktura godkendt</label>
+                            <label for="inputReceptApproved">Faktura godkendt</label>
                             <input name="receptApproved" type="date" id="inputReceptApproved" class="form-control">
                         </div>
                     </div>
