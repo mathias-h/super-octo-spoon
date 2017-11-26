@@ -4,11 +4,7 @@
     }
 }
 
-html, body{
-    min-width: 1190px;
-}
-
-tbody tr{
+tbody td{
     cursor: pointer;
 }
 
@@ -16,18 +12,7 @@ thead tr th{
     vertical-align: middle !important;
 }
 
-#contentData thead th {
-    text-transform: capitalize;
-}
-
 .navbar {
-    text-transform: capitalize;
     padding-right: 12px;
     padding-left: 4px;
 }
-
-.sortable {
-    cursor: pointer;
-    position: relative;
-}
-
