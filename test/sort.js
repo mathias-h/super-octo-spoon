@@ -9,7 +9,8 @@ describe("Sorting tests", () => {
            {
                consultant: "CONSULANT7",
                signedDate: new Date("2017-02-24"),
-               landlineNumber: "88888888",
+               landlineNumber: "28888888",
+               mobile: "2222222",
                name: "Niels Hansen",
                farmName: "Bondegården",
                address: {
@@ -19,12 +20,14 @@ describe("Sorting tests", () => {
                },
                comment: "Ring efter høst"
                ,
-               takeOwnSamples: false
+               takeOwnSamples: false,
+               samePlanAsLast: true
            },
            {
                consultant: "CONSULANT2",
                signedDate: new Date("2017-02-23"),
-               landlineNumber: "88888889",
+               landlineNumber: "18888889",
+               mobile: "3222222",
                name: "Alan Jensen",
                farmName: "Bondegården",
                address: {
@@ -33,12 +36,14 @@ describe("Sorting tests", () => {
                    zip: "8123"
                },
                comment: "Ring før høst",
-               takeOwnSamples: false
+               takeOwnSamples: false,
+               samePlanAsLast: false
            },
            {
                consultant: "CONSULANT4",
                signedDate: new Date("2017-01-23"),
-               landlineNumber: "88888888",
+               landlineNumber: "48888888",
+               mobile: "1122222",
                name: "Niels Adamsen",
                farmName: "Bondegården",
                address: {
@@ -47,12 +52,14 @@ describe("Sorting tests", () => {
                    zip: "8000"
                },
                comment: "Ring under høst",
-               takeOwnSamples: true
+               takeOwnSamples: true,
+               samePlanAsLast: false
            },
            {
                consultant: "CONSULANT5",
                signedDate: new Date("2017-06-23"),
-               landlineNumber: "88888888",
+               landlineNumber: "11888888",
+               mobile: "2888222",
                name: "Lars A. Adamsen",
                farmName: "Bondegården",
                address: {
@@ -61,12 +68,14 @@ describe("Sorting tests", () => {
                    zip: "8000"
                },
                comment: "Ring under høst",
-               takeOwnSamples: false
+               takeOwnSamples: false,
+               samePlanAsLast: true
            },
            {
                consultant: "CONSULANT1",
                signedDate: new Date("2017-02-15"),
-               landlineNumber: "88888888",
+               landlineNumber: "98888888",
+               mobile: "11111111",
                name: "Bo Adamsen",
                farmName: "Bondegården",
                address: {
@@ -75,7 +84,8 @@ describe("Sorting tests", () => {
                    zip: "8123"
                },
                comment: "Ring under høst",
-               takeOwnSamples: true
+               takeOwnSamples: true,
+               samePlanAsLast: false
            }
        ]
     });
@@ -127,9 +137,20 @@ describe("Sorting tests", () => {
         expect(sort(sortingArray, "name")).to.deep.eq(correctAnswer)
     } )
     it ("should pass, sort by self sampling", () => {
-        correctAnswer = [sortingArray[2], sortingArray[4], sortingArray[1], sortingArray[0], sortingArray[3]];
-        console.log(sort(sortingArray, "self", "desc"))
+        correctAnswer = [sortingArray[4], sortingArray[2], sortingArray[3], sortingArray[0], sortingArray[1]];
         expect(sort(sortingArray, "self", "desc")).to.deep.eq(correctAnswer);
+    })
+    it("should pass, sort by same plan as last year", () => {
+        correctAnswer = [sortingArray[3], sortingArray[0], sortingArray[1], sortingArray[4], sortingArray[2]]
+        expect(sort(sortingArray, "sameAsLast", "desc")).to.deep.eq(correctAnswer)
+    })
+    it ("should pass, sort by landline", () => {
+        correctAnswer = [sortingArray[3], sortingArray[1], sortingArray[0], sortingArray[2], sortingArray[4]]
+        expect(sort(sortingArray, "landline", "asc")).to.deep.eq(correctAnswer)
+    })
+    it ("should pass, sort by mobile", () => {
+        correctAnswer = [sortingArray[4], sortingArray[2], sortingArray[0], sortingArray[3], sortingArray[1]]
+        expect(sort(sortingArray, "mobile", "asc")).to.deep.eq(correctAnswer)
     })
     it("should pass - last Method - can remove", () => {
         expect(false).to.be.false
