@@ -2,7 +2,7 @@ const request = require('supertest');
 const { expect } = require("chai");
 const { createApp } = require("../../app");
 
-describe("Order integration tests", () => {
+describe("Order server tests", () => {
     describe("getOrder", () => {
         it("should get order", () => {
             const orderId = "ORDER_ID"

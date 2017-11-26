@@ -116,10 +116,10 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-                <a class="nav-link" href="#" data-toggle="modal" data-target="#createOrderModal">opret ordre</a>
+                <a class="nav-link" href="#" data-toggle="modal" data-target="#createOrderModal">Opret Ordre</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">opret bruger</a>
+                <a class="nav-link" href="#">Opret Bruger</a>
             </li>
         </ul>
 
@@ -143,13 +143,13 @@
     <table class="table table-fixed table-striped">
         <thead>
             <tr>
-                <th class="sortable" id="consultant">konsulent</th>
-                <th class="sortable" id="date">oprettet dato</th>
-                <th class="sortable" id="landline">fastnet tlf.</th>
-                <th class="sortable" id="mobile">mobil tlf.</th>
-                <th class="sortable" id="name">navn</th>
-                <th class="sortable" id="address">adresse</th>
-                <th>kommentar</th>
+                <th class="sortable" id="consultant">Konsulent</th>
+                <th class="sortable" id="date">Oprettet dato</th>
+                <th class="sortable" id="landline">Fastnet tlf.</th>
+                <th class="sortable" id="mobile">Mobil tlf.</th>
+                <th class="sortable" id="name">Navn</th>
+                <th class="sortable" id="address">Adresse</th>
+                <th>Kommentar</th>
                 <th>Prøve tæthed</th>
                 <th class="sortable" id="area">Areal</th>
                 <th class="sortable" id="sameAsLast">Samme plan som sidst</th>
@@ -188,12 +188,12 @@
                         {{/if}}
                     </td>
                     <td>{{area}}ha</td>
-                    <td>
+                    <td class="text-center">
                         {{#if samePlanAsLast}}
                             <img src="/check.svg" alt="flueben"/>
                         {{/if}}
                     </td>
-                    <td>
+                    <td class="text-center">
                         {{#if takeOwnSamples}}
                             <img src="/check.svg" alt="flueben"/>
                         {{/if}}
