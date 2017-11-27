@@ -57,21 +57,21 @@ describe("order", () => {
         it("should search", async () => {
             const query = "A 9999"
             const orders = [
-                { _id: 1, name: "A", zip: 9999 }
+                { 
+                    _id: 1,
+                    name: "NAME",
+                    address: {
+                        zip: 9999,
+                        city: "CITY",
+                        street: "STREET"
+                    },
+                    consultant: "CONSULTANT",
+                    landlineNumber: "88888888",
+                    phoneNumber: "88888888",
+                    farmName: "FARM_NAME"
+                }
             ]
-            Order.statics.find = function findMock(q, project) {
-                expect(q).to.deep.eq({$text:{$search:query}})
-                expect(project).to.deep.eq({score: {$meta: "textScore"}})
-                return this
-            }
-            Order.statics.lean = function leanMock() {
-                return this
-            }
-            Order.statics.sort = function sortMock(sort) {
-                expect(sort).to.deep.eq({score: {$meta: "textScore"}})
-                return this
-            } 
-            Order.statics.exec = async () => orders
+            Order.statics.find = () => ({ lean: () => ({ exec: () => orders }) })
 
             const result = await Order.statics.getAll({ query })
 
@@ -82,7 +82,7 @@ describe("order", () => {
                 { _id: 1, name: "B" },
                 { _id: 2, name: "A" }
             ]
-            Order.statics.find = () => ({ sort: () => ({ lean: () => ({ exec: () => orders })}) })
+            Order.statics.find = () => ({ lean: () => ({ exec: () => orders }) })
 
             const result = await Order.statics.getAll({ sortBy: "name", order: "asc" })
 
@@ -94,7 +94,7 @@ describe("order", () => {
                 { _id: 1, name: "A" },
                 { _id: 2, name: "B" }
             ]
-            Order.statics.find = () => ({ sort: () => ({ lean: () => ({ exec: () => orders })}) })
+            Order.statics.find = () => ({ lean: () => ({ exec: () => orders }) })
 
             const result = await Order.statics.getAll({ sortBy: "name", order: "desc" })
 
@@ -106,7 +106,7 @@ describe("order", () => {
                 { _id: 1, signedDate: new Date("1970-01-01") },
                 { _id: 2, signedDate: new Date("1970-01-02") }
             ]
-            Order.statics.find = () => ({ sort: () => ({ lean: () => ({ exec: () => orders })}) })
+            Order.statics.find = () => ({ lean: () => ({ exec: () => orders }) })
 
             const result = await Order.statics.getAll({})
 
@@ -117,7 +117,7 @@ describe("order", () => {
             const orders = [
                 { _id: 1, signedDate: new Date("1970-01-01") }
             ]
-            Order.statics.find = () => ({ sort: () => ({ lean: () => ({ exec: () => orders })}) })
+            Order.statics.find = () => ({ lean: () => ({ exec: () => orders }) })
 
             const result = await Order.statics.getAll({})
 

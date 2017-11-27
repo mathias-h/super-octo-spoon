@@ -1,5 +1,6 @@
 const { Schema } = require("mongoose");
-const { sort } = require("./sort")
+const { sort } = require("./sort");
+const { search } = require("./search");
 const moment = require("moment");
 
 const Order = new Schema({
@@ -110,14 +111,13 @@ Order.statics.sampleTotals = async function sampleTotals() {
 }
 
 Order.statics.getAll = async function getAll({query, sortBy="date", order}) {
-    const orders = await this.find(query ? {$text:{$search:query}} : {}, {score: {$meta: "textScore"}})
-        .sort({score: {$meta: "textScore"}}).lean().exec()
+    const orders = await this.find().lean().exec()
 
     if (!query & !order){
         order = "desc";
     }
 
-    return sort(orders, sortBy, order).map(o => Object.assign(o, {
+    return sort(search(orders, query), sortBy, order).map(o => Object.assign(o, {
         signedDate: moment(o.signedDate).format("DD-MM-YYYY")
     }))
 }
