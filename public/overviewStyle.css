@@ -8,6 +8,10 @@ tbody td{
     cursor: pointer;
 }
 
+.sortable {
+    cursor: pointer;
+}
+
 thead tr th{
     vertical-align: middle !important;
 }
