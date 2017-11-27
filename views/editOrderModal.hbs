@@ -97,7 +97,6 @@
                                 <span class="input-group-addon">ha</span>
                             </div>
                         </div>
-
                         <div class="col-5">
                             <div class="form-group ml-3" style="line-height: 0; margin-bottom: 0px; margin-top: 32px;">
                                 <label for="inputSamePlanAsLast"><input name="samePlanAsLast" type="checkbox"
@@ -111,9 +110,8 @@
                     </div>
                     <hr/>
                     <div class="form-row">
-                        <!-- Larsen: Labels er copy-pastet fra Excel; i tvivl om hvad forskellige celler betyder, retter til asap. -->
                         <div class="col-3 form-group">
-                            <label for="inputMapDate">Markgrænser på M samt kort til udtagn. Dato(???)</label>
+                            <label for="inputMapDate">Kort til udtagning</label>
                             <input name="mapDate" type="date" id="inputMapDate" class="form-control">
                         </div>
                         <div class="col-3 form-group">
@@ -129,25 +127,31 @@
                             </div>
                         </div>
                         <div class="col-3 form-group">
-                            <label for="inputMgSamples">Std. m.</label>
+                            <label for="inputSamplesTaken">Udtaget</label>
                             <div class="input-group">
-                                <input name="mgSamples" type="number" min="0" id="inputMgSamples" class="form-control"
-                                       placeholder="Mængde">
-                                <span class="input-group-addon">mg/stk</span>
+                                <input name="samplesTaken" type="number" min="0" id="inputSamplesTaken"
+                                       class="form-control" placeholder="Mængde">
+                                <span class="input-group-addon">ha</span>
                             </div>
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="col-3 form-group">
                             <label for="inputCutSamples">Cut</label>
-                            <div class="form-group">
                                 <div class="input-group">
                                     <input name="cutSamples" type="number" min="0" id="inputCutSamples"
                                            class="form-control"
                                            placeholder="Antal">
                                     <span class="input-group-addon">stk</span>
                                 </div>
-                            </div>
+                            <label for="inputMgSamples">Mg</label>
+                                <div class="input-group">
+                                    <input name="mgSamples" type="number" min="0" id="inputMgSamples"
+                                           class="form-control"
+                                           placeholder="Mængde">
+                                    <span class="input-group-addon">stk</span>
+                                </div>
+                            <label for="inputOtherSamples">Andre</label>
                             <div class="input-group">
                                 <input name="otherSamples" type="number" min="0" id="inputOtherSamples"
                                        class="form-control"
@@ -156,26 +160,17 @@
                             </div>
                         </div>
                         <div class="col-3 form-group">
-                            <label for="inputSamplesTaken">Udtaget</label>
-                            <div class="input-group">
-                                <input name="samplesTaken" type="number" min="0" id="inputSamplesTaken"
-                                       class="form-control" placeholder="Mængde">
-                                <span class="input-group-addon">ha</span>
-                            </div>
+
                         </div>
                         <div class="col-3 form-group">
-                            <label for="inputLabDate">Send til Lab</label>
+                            <label for="inputLabDate">Send til lab</label>
                             <input name="labDate" type="date" id="inputLabDate" class="form-control">
                             <label for="inputFromLabDate">Modtaget fra lab</label>
                             <input name="fromLabDate" type="date" id="inputFromLabDate" class="form-control">
                         </div>
                         <div class="col-3 form-group">
-                            <label for="inputMO">Send til Markedsanalyse</label>
+                            <label for="inputMO">Send til marksanalyse</label>
                             <input name="mO" type="date" id="inputMO" class="form-control">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="col-3 form-group">
                             <label for="inputReceptApproved">Faktura godkendt</label>
                             <input name="receptApproved" type="date" id="inputReceptApproved" class="form-control">
                         </div>
