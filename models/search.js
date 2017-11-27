@@ -5,9 +5,9 @@ module.exports.search = function search(orders, query) {
 
     return orders
         .map(order => {
-            let matches = 0
+            let matches = 0;
             for (const word of words) {
-                const reg = new RegExp(word, "i")
+                const reg = new RegExp(word, "i");
                 if (order.consultant.match(reg)) {
                     matches += 1
                 }
@@ -23,7 +23,13 @@ module.exports.search = function search(orders, query) {
                 if (order.landlineNumber.match(reg)) {
                     matches += 1
                 }
+                if (order.phoneNumber.match(reg)) {
+                    matches += 1
+                }
                 if (order.name.match(reg)) {
+                    matches += 1
+                }
+                if (order.farmName.match(reg)) {
                     matches += 1
                 }
             }
@@ -33,4 +39,4 @@ module.exports.search = function search(orders, query) {
         .filter(({matches}) => matches >= 1)
         .sort((a,b) => b.matches-a.matches)
         .map(({ order }) => order);
-};
+};   

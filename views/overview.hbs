@@ -1,253 +1,210 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Djursland Landboforening</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
-    <script src="https://code.jquery.com/jquery-3.2.1.js" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" async defer></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" defer></script>
-    <script src="https://momentjs.com/downloads/moment.min.js" async defer></script>
-    <script src="/editOrderModal.js" async defer></script>
-    <link rel="stylesheet" type="text/css" href="/overviewStyle.css">
-    <script defer>
-        'use strict';
+    <head>
+        <meta charset="UTF-8">
 
-        function convertFormToObject(form) {
-            const data = {};
-            const f = new FormData(form);
-            for (const [key,value] of f.entries()) {
-                data[key] = value;
-            }
-            return data
-        }
+        <title>Djursland Landboforening</title>
 
-        window.addEventListener('load', function() {
-            new EditOrderModal()
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="/overviewStyle.css">
 
-            $("#inputSignedDate").val(moment(new Date()).format("YYYY-MM-DD"));
-            $("#inputSignedDate").val(moment(new Date()).format("YYYY-MM-DD"));
+        <script src="https://code.jquery.com/jquery-3.2.1.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" defer></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" defer></script>
+        <script src="https://momentjs.com/downloads/moment.min.js" defer></script>
+        <script src="/createOrderModal.js" defer></script>
+        <script src="/editOrderModal.js" defer></script>
+        <script src="/createUser.js" defer></script>
 
-            $("#orderCreateCancel").click(() => {
-                clearOrderCreate();
-            });
-
-            $("#orderCreateClose").click(() => {
-                clearOrderCreate();
-            });
-
-            $(document).keyup((e) => {
-                if(e.which == 27){
-                    clearOrderCreate();
+        <style>
+            @media screen and (max-width: 991px){
+                #navbar-statistics{
+                    display: none;
                 }
-            });
-
-            function clearOrderCreate(){
-                // TODO: Sæt konsulent tilbage til bruger
-                $("#inputSignedDate").val("2017-11-21");
-                $("#inputName").val("");
-                $("#inputFarmName").val("");
-                $("#inputStreet").val("");
-                $("#inputZip").val("");
-                $("#inputCity").val("");
-                $("#inputLandlineNumber").val("");
-                $("#inputPhoneNumber").val("");
-                $("#inputComment").val("");
             }
 
+            html, body {
+                min-width: 1190px;
+            }
 
-            const form = document.getElementById('orderCreateForm');
-            form.addEventListener('submit', function(event) {
-                event.preventDefault();
-                event.stopPropagation();
+            tbody tr {
+                cursor: pointer;
+            }
 
-                const landline = $("#inputLandlineNumber");
-                const mobile = $("#inputPhoneNumber");
+            .sortable {
+                cursor: pointer;
+            }
 
-                landline[0].setCustomValidity("");
-                mobile[0].setCustomValidity("");
+            thead tr th{
+                vertical-align: middle !important;
+            }
 
-                if(!(landline[0].validity.valid && landline.val()) && !(mobile[0].validity.valid && mobile.val())){
-                    landline[0].setCustomValidity("Mindst et telefonnummer skal angives");
-                    mobile[0].setCustomValidity("Mindst et telefonnummer skal angives");
-                }else{
-                    landline[0].setCustomValidity("");
-                    mobile[0].setCustomValidity("");
+            .navbar {
+                padding-right: 12px;
+                padding-left: 4px;
+            }
+            #contentData thead th {
+                text-transform: capitalize;
+            }
+            .arrow-asc {
+                width: 0;
+                height: 0;
+                border-left: 7px solid transparent;
+                border-right: 7px solid transparent;
+                border-bottom: 7px solid black;
+                display: inline-block;
+            }
+
+            .arrow-desc {
+                width: 0;
+                height: 0;
+                border-left: 7px solid transparent;
+                border-right: 7px solid transparent;
+                border-top: 7px solid black;
+                display: inline-block;
+            }
+
+
+            /* maybe?? */
+            .form-control:valid {
+                border-color: #ced4da !important;
+            }
+
+            .form-control:valid:focus {
+                border-color: #80bdff !important;
+                box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25) !important;
+            }
+        </style>
+
+        <script defer>
+            onload = () => {
+                $(".sortable").click(function () {
+                    var id = $(this).attr("id");
+                    var ls = location.search;
+                    var order = (ls.indexOf("order=asc")!==-1) ? "&order=desc" : "&order=asc";
+                    if (ls.length === 0 || (ls.indexOf("sortBy")!==-1 && ls.indexOf("query") === -1)){
+                        location.search = "sortBy=" + id + order;
+                    }
+                    else if (ls.indexOf("query") !== -1 && ls.indexOf("sortBy") === -1){
+                        location.search += "&sortBy=" + id + order;
+                    }else {
+                        location.search = location.search.substring(0,location.search.indexOf("&")) + "&sortBy=" + id + order;
+                    }
+                })
+                if (location.search.indexOf("sortBy") !== -1){
+                    var url = new URL(location.href)
+                    var sortBy = url.searchParams.get("sortBy").toString()
+                    var orderBy = url.searchParams.get("order").toString()
+
+                    if (orderBy == "asc"){
+                        $("#"+sortBy).append("     "+"<div class='arrow-asc'></div>")
+                    }else {
+                        $("#"+sortBy).append("     "+"<div class='arrow-desc'></div>")
+                    }
                 }
-
-                if (form.checkValidity() === true) {
-                    const data = convertFormToObject(form);
-                    $.ajax({
-                        url: "/order/create",
-                        method: "POST",
-                        data: JSON.stringify(data),
-                        headers: {
-                            "content-type": "application/json"
-                        }
-                    }).then(location.reload());
-                }
-
-                form.classList.add('was-validated');
-            }, false);
-        });
-    </script>  
-</head>
-<body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
-                <a class="nav-link" href="#">ny bruger</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#" data-toggle="modal" data-target="#createOrderModal">ny ordre</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">statistik</a>
-            </li>
-        </ul>
-    </div>
-    <form id="search" class="form-inline my-2 my-lg-0">
-        <input class="form-control mr-sm-2" type="search" name="query" placeholder="search" aria-label="Search" value="{{query}}">
-        <button class="btn btn-primary my-2 my-sm-0" type="submit">
-            <img src="/search.svg" alt="search icon">
+            }
+        </script>
+    </head>
+    <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" style="cursor: pointer">
+            <span class="navbar-toggler-icon"></span>
         </button>
-    </form>
-</nav>
 
-<div id="contentData">
-    <table class="table table-fixed table-striped">
-        <thead>
-        <tr>
-            <th>konsulent</th>
-            <th>dato oprettet</th>
-            <th>fastnet nr</th>
-            <th>mobil nr</th>
-            <th>navn</th>
-            <th>adresse</th>
-            <th>kommentar</th>
-        </tr>
-        </thead>
-        <tbody>
-            {{#each orders}}
-                <tr class="order" data-order-id="{{_id}}">
-                    <td>
-                        {{consultant}}
-                    </td>
-                    <td>
-                        {{signedDate}}
-                    </td>
-                    <td>
-                        {{landlineNumber}}
-                    </td>
-                    <td>
-                        {{phoneNumber}}
-                    </td>
-                    <td>
-                        {{name}}
-                    </td>
-                    <td>
-                        {{farmName}}, {{address.street}}, {{address.city}}, {{address.zip}}
-                    </td>
-                    <td>
-                        {{comment}}
-                    </td>
-                </tr>
-            {{/each}}
-        </tbody>
-    </table>
-</div>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item mr-5">
+                    <a class="nav-link" href="#" data-toggle="modal" data-target="#createOrderModal">Opret Ordre</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-toggle="modal" data-target="#createUserModal">Opret Bruger</a>
+                </li>
+            </ul>
 
-<!-- Create order modal -->
-<!-- Larsen comment: Hvordan håndterer vi tilføjede felter ved oprettelse? Enten må vi automatisk tilføje dem til 'Opret Ordre' blokken (forneden) eller tilføje en måde at opdatere nye kolonner -->
-<div class="modal fade" id="createOrderModal" tabindex="-1" role="dialog" aria-labelledby="createOrderModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="createOrderModalLabel">Opret ordre</h5>
-                <button type="button" class="close" id="orderCreateClose" data-dismiss="modal" aria-label="Close" style="cursor: pointer;">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form id="orderCreateForm" novalidate>
-                <div class="modal-body">
-                    <div class="form-row">
-                        <div class="col form-group">
-                            <label for="inputConsultant">Konsulent</label>
-                            <select name="consultant" id="inputConsultant" class="form-control" required>
-                                {{#each consultants}}
-                                    <option value="{{this}}">{{this}}</option>
-                                {{/each}}
-                            </select>
-                        </div>
-                        <div class="col form-group">
-                            <label for="inputSignedDate">Indgået dato</label>
-                            <input name="signedDate" type="date" id="inputSignedDate" class="form-control" required>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="col-9 form-group">
-                            <label for="inputName">Navn</label>
-                            <input name="name" type="text" id="inputName" class="form-control" placeholder="Navn" required>
-                        </div>
-                        <div class="col form-group">
-                            <label for="inputFarmName">Gårdnavn</label>
-                            <input name="farmName" type="text" id="inputFarmName" class="form-control" placeholder="Gårdnavn" required>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="col-6 form-group">
-                            <label for="inputStreet">Adresse</label>
-                            <input name="street" type="text" id="inputStreet" class="form-control" placeholder="Adresse" required>
-                        </div>
-                        <div class="col form-group">
-                            <label for="inputZip">Postnummer</label>
-                            <input name="zip" type="number" id="inputZip" class="form-control" placeholder="Postnummer" required>
-                        </div>
-                        <div class="col form-group">
-                            <label for="inputCity">By</label>
-                            <input name="city" type="text" id="inputCity" class="form-control" placeholder="By" required>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="col form-group">
-                            <label for="inputLandlineNumber">Fastnet tlf.</label>
-                            <input name="landlineNumber" type="tel" id="inputLandlineNumber" class="form-control" placeholder="Fastnet telefon" pattern="^[\s()+-]*([0-9][\s()+-]*){6,20}$">
-                        </div>
-                        <div class="col form-group">
-                            <label for="inputPhoneNumber">Mobil tlf.</label>
-                            <input name="phoneNumber" type="tel" id="inputPhoneNumber" class="form-control" placeholder="Mobil telefon" pattern="^[\s()+-]*([0-9][\s()+-]*){6,20}$">
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="col form-group">
-                            <label for="inputComment">Kommentarer</label>
-                            <textarea name="comment" id="inputComment" class="form-control" rows="5" style="min-height: 74px"></textarea>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <div class="form-row float-right">
-                        <div class="col form-group">
-                            <button id="orderCreateCancel" class="btn btn-secondary" data-dismiss="modal" style="cursor: pointer">Annuller ordre</button>
-                            <button type="submit" class="btn btn-primary" style="cursor: pointer;">Opret ordre</button>
-                        </div>
-                    </div>
-                </div>
-            </form>
+            <span id="navbar-statistics" style="position: absolute; left: 50%; transform: translateX(-50%);"
+                  class="navbar-text justify-content-center">prøver taget: {{totalTaken}} / {{totalSamples}}</span>
         </div>
+
+        <form id="search" class="form-inline my-4 my-sm-0">
+            <div class="input-group">
+                <input class="form-control" type="search" name="query" placeholder="Søg..." aria-label="Search" value="{{query}}">
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit" style="cursor: pointer;">
+                        <img src="/search.svg" alt="search icon">
+                    </button>
+                </span>
+            </div>
+        </form>
+    </nav>
+
+    <div id="contentData">
+        <table class="table table-fixed table-striped">
+            <thead>
+                <tr>
+                    <th class="sortable" id="consultant">Konsulent</th>
+                    <th class="sortable" id="date">Oprettet dato</th>
+                    <th class="sortable" id="landline">Fastnet tlf.</th>
+                    <th class="sortable" id="mobile">Mobil tlf.</th>
+                    <th class="sortable" id="name">Navn</th>
+                    <th class="sortable" id="address">Adresse</th>
+                    <th>Kommentar</th>
+                    <th>Prøve tæthed</th>
+                    <th class="sortable" id="area">Areal</th>
+                    <th class="sortable" id="sameAsLast">Samme plan som sidst</th>
+                    <th class="sortable" id="self">Selvudtag</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each orders}}
+                    <tr class="order" data-order-id="{{_id}}">
+                        <td>
+                            {{consultant}}
+                        </td>
+                        <td>
+                            {{signedDate}}
+                        </td>
+                        <td>
+                            {{landlineNumber}}
+                        </td>
+                        <td>
+                            {{phoneNumber}}
+                        </td>
+                        <td>
+                            {{name}}
+                        </td>
+                        <td>
+                            {{farmName}}, {{address.street}}, {{address.zip}} {{address.city}}
+                        </td>
+                        <td>
+                            {{comment}}
+                        </td>
+                        <td>
+                            {{#if sampleDensity}}
+                                1/{{sampleDensity}}ha
+                            {{else}}
+                                ikke sat
+                            {{/if}}
+                        </td>
+                        <td>{{area}}ha</td>
+                        <td class="text-center">
+                            {{#if samePlanAsLast}}
+                                <img src="/check.svg" alt="flueben"/>
+                            {{/if}}
+                        </td>
+                        <td class="text-center">
+                            {{#if takeOwnSamples}}
+                                <img src="/check.svg" alt="flueben"/>
+                            {{/if}}
+                        </td>
+                    </tr>
+                {{/each}}
+            </tbody>
+        </table>
     </div>
-</div>
 
-{{> editOrderModal}}
+    {{> createOrderModal}}
+    {{> editOrderModal}}
+    {{> createUserModal}}
 
-</body>
+    </body>
 </html>

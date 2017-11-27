@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test/**/*.js",
+    "test": "mocha test/*.js test/*/*.js --timeout=5000",
     "start": "node index"
   },
   "keywords": [],
@@ -15,14 +15,18 @@
     "body-parser": "^1.18.2",
     "express": "^4.16.2",
     "hbs": "^4.0.1",
+    "jquery": "^3.2.1",
     "lodash": "^4.17.4",
     "moment": "^2.19.2",
-    "mongoose": "^4.13.4"
+    "mongoose": "^4.13.5",
+    "type-detect": "^4.0.5",
+    "url": "^0.11.0"
   },
   "devDependencies": {
     "chai": "^4.1.2",
     "mocha": "^4.0.1",
-    "mock-require": "^2.0.2",
+    "puppeteer": "^0.13.0",
+    "rimraf": "^2.6.2",
     "supertest": "^3.0.0"
   }
 }

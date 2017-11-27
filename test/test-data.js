@@ -89,6 +89,6 @@ const testOrders = [
         takeOwnSamples: true,
         area: 100
     }
-]
+];
 
 module.exports = testOrders;
