@@ -1,119 +1,150 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Djursland Landboforening</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
-    <script src="https://code.jquery.com/jquery-3.2.1.js" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" defer></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" defer></script>
-    <script src="https://momentjs.com/downloads/moment.min.js" defer></script>
-    <script src="/createOrderModal.js" defer></script>
-    <script src="/editOrderModal.js" defer></script>
-    <script src="/createUser.js" defer></script>
+    <head>
+        <meta charset="UTF-8">
 
-    <link rel="stylesheet" type="text/css" href="/overviewStyle.css">
-</head>
-<body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" style="cursor: pointer">
-        <span class="navbar-toggler-icon"></span>
-    </button>
+        <title>Djursland Landboforening</title>
 
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item mr-5">
-                <a class="nav-link" href="#" data-toggle="modal" data-target="#createOrderModal">Opret Ordre</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#" data-toggle="modal" data-target="#createUserModal">Opret Bruger</a>
-            </li>
-        </ul>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="/overviewStyle.css">
 
-        <span id="navbar-statistics" style="position: absolute; left: 50%; transform: translateX(-50%);"
-              class="navbar-text justify-content-center">{{totalTaken}} / {{totalSamples}}</span>
+        <script src="https://code.jquery.com/jquery-3.2.1.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" defer></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" defer></script>
+        <script src="https://momentjs.com/downloads/moment.min.js" defer></script>
+        <script src="/createOrderModal.js" defer></script>
+        <script src="/editOrderModal.js" defer></script>
+        <script src="/createUser.js" defer></script>
+
+        <script defer>
+            onload = () => {
+                $(".sortable").click(function () {
+                    var id = $(this).attr("id");
+                    var ls = location.search;
+                    var order = (ls.indexOf("order=asc")!==-1) ? "&order=desc" : "&order=asc";
+                    if (ls.length === 0 || (ls.indexOf("sortBy")!==-1 && ls.indexOf("query") === -1)){
+                        location.search = "sortBy=" + id + order;
+                    }
+                    else if (ls.indexOf("query") !== -1 && ls.indexOf("sortBy") === -1){
+                        location.search += "&sortBy=" + id + order;
+                    }else {
+                        location.search = location.search.substring(0,location.search.indexOf("&")) + "&sortBy=" + id + order;
+                    }
+                })
+                if (location.search.indexOf("sortBy") !== -1){
+                    var url = new URL(location.href)
+                    var sortBy = url.searchParams.get("sortBy").toString()
+                    var orderBy = url.searchParams.get("order").toString()
+
+                    if (orderBy == "asc"){
+                        $("#"+sortBy).append("     "+"<div class='arrow-asc'></div>")
+                    }else {
+                        $("#"+sortBy).append("     "+"<div class='arrow-desc'></div>")
+                    }
+                }
+            }
+        </script>
+    </head>
+    <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" style="cursor: pointer">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item mr-5">
+                    <a class="nav-link" href="#" data-toggle="modal" data-target="#createOrderModal">Opret Ordre</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-toggle="modal" data-target="#createUserModal">Opret Bruger</a>
+                </li>
+            </ul>
+
+            <span id="navbar-statistics" style="position: absolute; left: 50%; transform: translateX(-50%);"
+                  class="navbar-text justify-content-center">prøver taget: {{totalTaken}} / {{totalSamples}}</span>
+        </div>
+
+        <form id="search" class="form-inline my-4 my-sm-0">
+            <div class="input-group">
+                <input class="form-control" type="search" name="query" placeholder="Søg..." aria-label="Search" value="{{query}}">
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit" style="cursor: pointer;">
+                        <img src="/search.svg" alt="search icon">
+                    </button>
+                </span>
+            </div>
+        </form>
+    </nav>
+
+    <div id="contentData">
+        <table class="table table-fixed table-striped">
+            <thead>
+                <tr>
+                    <th class="sortable" id="consultant">Konsulent</th>
+                    <th class="sortable" id="date">Oprettet dato</th>
+                    <th class="sortable" id="landline">Fastnet tlf.</th>
+                    <th class="sortable" id="mobile">Mobil tlf.</th>
+                    <th class="sortable" id="name">Navn</th>
+                    <th class="sortable" id="address">Adresse</th>
+                    <th>Kommentar</th>
+                    <th>Prøve tæthed</th>
+                    <th class="sortable" id="area">Areal</th>
+                    <th class="sortable" id="sameAsLast">Samme plan som sidst</th>
+                    <th class="sortable" id="self">Selvudtag</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each orders}}
+                    <tr class="order" data-order-id="{{_id}}">
+                        <td>
+                            {{consultant}}
+                        </td>
+                        <td>
+                            {{signedDate}}
+                        </td>
+                        <td>
+                            {{landlineNumber}}
+                        </td>
+                        <td>
+                            {{phoneNumber}}
+                        </td>
+                        <td>
+                            {{name}}
+                        </td>
+                        <td>
+                            {{farmName}}, {{address.street}}, {{address.zip}} {{address.city}}
+                        </td>
+                        <td>
+                            {{comment}}
+                        </td>
+                        <td>
+                            {{#if sampleDensity}}
+                                1/{{sampleDensity}}ha
+                            {{else}}
+                                ikke sat
+                            {{/if}}
+                        </td>
+                        <td>{{area}}ha</td>
+                        <td class="text-center">
+                            {{#if samePlanAsLast}}
+                                <img src="/check.svg" alt="flueben"/>
+                            {{/if}}
+                        </td>
+                        <td class="text-center">
+                            {{#if takeOwnSamples}}
+                                <img src="/check.svg" alt="flueben"/>
+                            {{/if}}
+                        </td>
+                    </tr>
+                {{/each}}
+            </tbody>
+        </table>
     </div>
 
-    <form id="search" class="form-inline my-4 my-sm-0">
-        <div class="input-group">
-            <input class="form-control" type="search" name="query" placeholder="Søg..." aria-label="Search" value="{{query}}">
-            <span class="input-group-btn">
-                <button class="btn btn-primary" type="submit" style="cursor: pointer;">
-                    <img src="/search.svg" alt="search icon">
-                </button>
-            </span>
-        </div>
-    </form>
-</nav>
+    {{> createOrderModal}}
+    {{> editOrderModal}}
+    {{> createUserModal}}
 
-<div id="contentData">
-    <table class="table table-fixed table-striped">
-        <thead>
-            <tr>
-                <th class="sortable" id="consultant">Konsulent</th>
-                <th class="sortable" id="date">Oprettet dato</th>
-                <th class="sortable" id="landline">Fastnet tlf.</th>
-                <th class="sortable" id="mobile">Mobil tlf.</th>
-                <th class="sortable" id="name">Navn</th>
-                <th class="sortable" id="address">Adresse</th>
-                <th>Kommentar</th>
-                <th>Prøve tæthed</th>
-                <th class="sortable" id="area">Areal</th>
-                <th class="sortable" id="sameAsLast">Samme plan som sidst</th>
-                <th class="sortable" id="self">Selvudtag</th>
-            </tr>
-        </thead>
-        <tbody>
-            {{#each orders}}
-                <tr class="order" data-order-id="{{_id}}">
-                    <td>
-                        {{consultant}}
-                    </td>
-                    <td>
-                        {{signedDate}}
-                    </td>
-                    <td>
-                        {{landlineNumber}}
-                    </td>
-                    <td>
-                        {{phoneNumber}}
-                    </td>
-                    <td>
-                        {{name}}
-                    </td>
-                    <td>
-                        {{farmName}}, {{address.street}}, {{address.city}}, {{address.zip}}
-                    </td>
-                    <td>
-                        {{comment}}
-                    </td>
-                    <td>
-                        {{#if sampleDensity}}
-                            1/{{sampleDensity}}ha
-                        {{else}}
-                            ikke sat
-                        {{/if}}
-                    </td>
-                    <td>{{area}}ha</td>
-                    <td class="text-center">
-                        {{#if samePlanAsLast}}
-                            <img src="/check.svg" alt="flueben"/>
-                        {{/if}}
-                    </td>
-                    <td class="text-center">
-                        {{#if takeOwnSamples}}
-                            <img src="/check.svg" alt="flueben"/>
-                        {{/if}}
-                    </td>
-                </tr>
-            {{/each}}
-        </tbody>
-    </table>
-</div>
-
-{{> createOrderModal}}
-{{> editOrderModal}}
-{{> createUserModal}}
-
-</body>
+    </body>
 </html>

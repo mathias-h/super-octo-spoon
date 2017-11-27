@@ -53,7 +53,7 @@ const Order = new Schema({
         min: 0
     },
     mapDate: Date,
-    mapSample: Date,
+    sampleDate: Date,
     sampleTime: Number,
     mgSamples: Number,
     cutSamples: Number,
@@ -61,7 +61,8 @@ const Order = new Schema({
     labDate: Date,
     fromLabDate: Date,
     mO: Date,
-    receptApproved: Date
+    receptApproved: Date,
+    samplesTaken: Number
 }, { strict: true });
 
 Order.statics.editOrder = function updateOrder(order) {

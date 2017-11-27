@@ -3,14 +3,18 @@ const express = require("express");
 const hbs = require("hbs");
 const CONSULTANTS = ["MH","MJ","NK","NL","MHL"];
 
-hbs.registerPartial("createOrderModal", require("fs").readFileSync(__dirname + "/views/createOrderModal.hbs").toString());
-hbs.registerPartial("editOrderModal", require("fs").readFileSync(__dirname + "/views/editOrderModal.hbs").toString());
-hbs.registerPartial("createUserModal", require("fs").readFileSync(__dirname + "/views/createUserModal.hbs").toString());
-
 module.exports.createApp = function createApp(Order) {
     const app = express();
     app.set('view engine', 'hbs');
     
+    // temp reload fix
+    app.use((req,res, next) => {
+        hbs.registerPartial("createOrderModal", require("fs").readFileSync(__dirname + "/views/createOrderModal.hbs").toString());
+        hbs.registerPartial("editOrderModal", require("fs").readFileSync(__dirname + "/views/editOrderModal.hbs").toString());
+        hbs.registerPartial("createUserModal", require("fs").readFileSync(__dirname + "/views/createUserModal.hbs").toString());
+        next()
+    })
+
     app.use(express.static(__dirname + '/public'));
     app.use(bodyParser.urlencoded({extended: true}));
     app.use(bodyParser.json());

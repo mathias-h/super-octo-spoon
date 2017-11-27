@@ -4,7 +4,15 @@
     }
 }
 
-tbody td{
+html, body {
+    min-width: 1190px;
+}
+
+tbody tr {
+    cursor: pointer;
+}
+
+.sortable {
     cursor: pointer;
 }
 
@@ -15,4 +23,24 @@ thead tr th{
 .navbar {
     padding-right: 12px;
     padding-left: 4px;
+}
+#contentData thead th {
+    text-transform: capitalize;
+}
+.arrow-asc {
+    width: 0;
+    height: 0;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-bottom: 7px solid black;
+    display: inline-block;
+}
+
+.arrow-desc {
+    width: 0;
+    height: 0;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-top: 7px solid black;
+    display: inline-block;
 }
