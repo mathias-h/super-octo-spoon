@@ -51,10 +51,14 @@ class EditOrderModal {
     }
 
     setOrder(orderId) {
+        function setDate(input, date) {
+            if (!date) input.val("")
+            else input.val(moment(new Date(date)).format("YYYY-MM-DD"));
+        }
         return $.get(`/order/${orderId}`).then(order => {
             this.orderId = orderId;
             $("#editOrderModal #inputConsultant").val(order.consultant);
-            $("#editOrderModal #inputSignedDate").val(moment(new Date(order.signedDate)).format("YYYY-MM-DD"));
+            setDate($("#editOrderModal #inputSignedDate"), order.signedDate)
             $("#editOrderModal #inputName").val(order.name);
             $("#editOrderModal #inputFarmName").val(order.farmName);
             $("#editOrderModal #inputStreet").val(order.address.street);
@@ -67,17 +71,16 @@ class EditOrderModal {
             $("#editOrderModal #inputSamePlanAsLast")[0].checked = order.samePlanAsLast;
             $("#editOrderModal #inputTakeOwnSamples")[0].checked = order.takeOwnSamples;
             $("#editOrderModal #inputArea").val(order.area);
-            $("#editOrderModal #inputMapDate").val(moment(new Date(order.mapDate)).format("YYYY-MM-DD"));
-            $("#editOrderModal #inputMapSample").val(moment(new Date(order.mapSample)).format("YYYY-MM-DD"));
+            setDate($("#editOrderModal #inputMapDate"), order.mapDate)
+            setDate($("#editOrderModal #inputMapSample"), order.mapSample)
             $("#editOrderModal #inputSampleTime").val(order.sampleTime);
             $("#editOrderModal #inputMgSamples").val(order.mgSamples);
             $("#editOrderModal #inputCutSamples").val(order.cutSamples);
             $("#editOrderModal #inputOtherSamples").val(order.otherSamples);
-            $("#editOrderModal #inputLabDate").val(moment(new Date(order.labDate)).format("YYYY-MM-DD"));
-            $("#editOrderModal #inputFromLabDate").val(moment(new Date(order.fromLabDate)).format("YYYY-MM-DD"));
-            $("#editOrderModal #inputMO").val(moment(new Date(order.mO)).format("YYYY-MM-DD"));
-            $("#editOrderModal #inputReceptApproved").val(moment(new Date(order.receptApproved)).format("YYYY-MM-DD"));
-            $("#editOrderModal #inputMO").val(moment(new Date(order.mO)).format("YYYY-MM-DD"));
+            setDate($("#editOrderModal #inputLabDate"), order.labDate)
+            setDate($("#editOrderModal #inputFromLabDate"), order.fromLabDate)
+            setDate($("#editOrderModal #inputMO"), order.mO)
+            setDate($("#editOrderModal #inputReceptApproved"), order.receptApproved)
         });
     }
 
