@@ -5,10 +5,10 @@
     <title>Djursland Landboforening</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.2.1.js" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" async defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" defer></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" defer></script>
-    <script src="https://momentjs.com/downloads/moment.min.js" async defer></script>
-    <script src="/editOrderModal.js" async defer></script>
+    <script src="https://momentjs.com/downloads/moment.min.js"defer></script>
+    <script src="/editOrderModal.js"defer></script>
     <link rel="stylesheet" type="text/css" href="/overviewStyle.css">
     <script defer>
         'use strict';
@@ -104,6 +104,21 @@
                 }
             })
         });
+    </script>
+    <script defer>
+        onload = () => {
+            if (location.search.indexOf("sortBy") !== -1){
+                var url = new URL(location.href)
+                var sortBy = url.searchParams.get("sortBy").toString()
+                var orderBy = url.searchParams.get("order").toString()
+
+                if (orderBy == "asc"){
+                    $("#"+sortBy).append("     "+"<div class='arrow-asc'></div>")
+                }else {
+                    $("#"+sortBy).append("     "+"<div class='arrow-desc'></div>")
+                }
+            }
+        }
     </script>
 </head>
 <body>
