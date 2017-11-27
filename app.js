@@ -5,6 +5,7 @@ const CONSULTANTS = ["MH","MJ","NK","NL","MHL"];
 
 hbs.registerPartial("createOrderModal", require("fs").readFileSync(__dirname + "/views/createOrderModal.hbs").toString());
 hbs.registerPartial("editOrderModal", require("fs").readFileSync(__dirname + "/views/editOrderModal.hbs").toString());
+hbs.registerPartial("createUserModal", require("fs").readFileSync(__dirname + "/views/createUserModal.hbs").toString());
 
 module.exports.createApp = function createApp(Order) {
     const app = express();
