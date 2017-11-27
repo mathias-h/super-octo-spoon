@@ -24,7 +24,7 @@ describe("order integration test", () => {
 
         db = childProcess.spawn("mongod", ["--port", "27018", "--dbpath", dataPath])
         
-        await sleep(100)
+        await sleep(200)
 
         mongoose.connect("mongodb://localhost:27018/super-octo-spoon");
         mongoose.Promise = global.Promise;
@@ -74,7 +74,7 @@ describe("order integration test", () => {
         await order1.save()
         const page = await browser.newPage()
 
-        await page.goto("http://localhost:1024/")
+        await page.goto("http://localhost:1025/")
 
         const orderIds = await page.evaluate(() =>
             Array.from(document.querySelectorAll("tr.order"))
@@ -87,7 +87,7 @@ describe("order integration test", () => {
 
     it("should create order", async () => {
         const page = await browser.newPage()
-        await page.goto("http://localhost:1024/")
+        await page.goto("http://localhost:1025/")
 
         await page.evaluate(() => {
             document.querySelector("#navbarSupportedContent > ul > li:nth-child(1) > a").click()
@@ -139,8 +139,9 @@ describe("order integration test", () => {
     })
 
     it("should edit order", async () => {
-        new OrderModel({
-            _id: orderId2,
+        const orderId = mongoose.Types.ObjectId()
+        await new OrderModel({
+            _id: orderId,
             consultant: "MH",
             signedDate: new Date("2017-01-01"),
             name: "NAME",
@@ -156,14 +157,86 @@ describe("order integration test", () => {
             sampleDensity: 1,
             area: 2,
             samePlanAsLast: true,
-            takeOwnSamples: true
-        })
+            takeOwnSamples: true,
+            mapDate: new Date("1970-01-01"),
+            sampleDate: new Date("1970-01-01"),
+            sampleTime: 1,
+            mgSamples: 1,
+            cutSamples: 1,
+            otherSamples: 1,
+            samplesTaken: 1,
+            labDate: new Date("1970-01-01"),
+            fromLabDate: new Date("1970-01-01"),
+            mO: new Date("1970-01-01"),
+            receptApproved: new Date("1970-01-01")
+        }).save()
 
-        const page = await browser.getPage()
-        await page.goto("http://localhost:1024/")
+        const page = await browser.newPage()
+        await page.goto("http://localhost:1025/")
 
         await page.evaluate(() => {
+            document.querySelector(".order").click()
+            const modal = document.getElementById("editOrderModal")
 
+            setTimeout(() => {
+                if (!modal.classList.contains("show")) {
+                    throw new Error("modal not shown")
+                }
+
+                modal.querySelector("#inputName").value = "NEW_NAME"
+                modal.querySelector("#inputFarmName").value = "NEW_FARM_NAME"
+                modal.querySelector("#inputStreet").value = "NEW_STREET"
+                modal.querySelector("#inputZip").value = 8888
+                modal.querySelector("#inputCity").value = "NEW_CITY"
+                modal.querySelector("#inputLandlineNumber").value = "77777777"
+                modal.querySelector("#inputPhoneNumber").value = "66666666"
+                modal.querySelector("#inputComment").value = "NEW_COMMENT"
+                modal.querySelector("#inputSampleDensity").value = 2
+                modal.querySelector("#inputArea").value = 3
+                modal.querySelector("#inputSamePlanAsLast").checked = false
+                modal.querySelector("#inputTakeOwnSamples").checked = false
+                modal.querySelector("#inputMapDate").value = "1970-01-02"
+                modal.querySelector("#inputSampleDate").value = "1970-01-02"
+                modal.querySelector("#inputSampleTime").value = 2
+                modal.querySelector("#inputMgSamples").value = 2
+                modal.querySelector("#inputCutSamples").value = 2
+                modal.querySelector("#inputOtherSamples").value = 2
+                modal.querySelector("#inputSamplesTaken").value = 2
+                modal.querySelector("#inputLabDate").value = "1970-01-02"
+                modal.querySelector("#inputFromLabDate").value = "1970-01-02"
+                modal.querySelector("#inputMO").value = "1970-01-02"
+                modal.querySelector("#inputReceptApproved").value = "1970-01-02"
+
+                modal.querySelector("#orderEditSave").click()
+            }, 200)
         })
+
+        await sleep(400)
+
+        const order = await OrderModel.findOne({ _id: orderId })
+
+        expect(order.name).to.eq("NEW_NAME")
+        expect(order.farmName).to.eq("NEW_FARM_NAME")
+        expect(order.address.street).to.eq("NEW_STREET")
+        expect(order.address.zip).to.eq(8888)
+        expect(order.address.city).to.eq("NEW_CITY")
+        expect(order.landlineNumber).to.eq("77777777")
+        expect(order.phoneNumber).to.eq("66666666")
+        expect(order.comment).to.eq("NEW_COMMENT")
+        expect(order.sampleDensity).to.eq(2)
+        expect(order.area).to.eq(3)
+        expect(order.samePlanAsLast).to.eq(false)
+        expect(order.takeOwnSamples).to.eq(false)
+        expect(order.mapDate).to.deep.eq(new Date("1970-01-02"))
+        expect(order.sampleDate).to.deep.eq(new Date("1970-01-02"))
+        expect(order.sampleTime).to.eq(2)
+        expect(order.mgSamples).to.eq(2)
+        expect(order.cutSamples).to.eq(2)
+        expect(order.otherSamples).to.eq(2)
+        expect(order.samplesTaken).to.eq(2)
+        expect(order.labDate).to.deep.eq(new Date("1970-01-02"))
+        expect(order.fromLabDate).to.deep.eq(new Date("1970-01-02"))
+        expect(order.mO).to.deep.eq(new Date("1970-01-02"))
+        expect(order.receptApproved).to.deep.eq(new Date("1970-01-02"))
     })
 })
