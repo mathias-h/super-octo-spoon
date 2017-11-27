@@ -10,7 +10,7 @@ describe("Sorting tests", () => {
                consultant: "CONSULANT7",
                signedDate: new Date("2017-02-24"),
                landlineNumber: "28888888",
-               mobile: "2222222",
+               phoneNumber: "22222222",
                name: "Niels Hansen",
                farmName: "Bondegården",
                address: {
@@ -27,7 +27,7 @@ describe("Sorting tests", () => {
                consultant: "CONSULANT2",
                signedDate: new Date("2017-02-23"),
                landlineNumber: "18888889",
-               mobile: "3222222",
+               phoneNumber: "3222222",
                name: "Alan Jensen",
                farmName: "Bondegården",
                address: {
@@ -43,7 +43,7 @@ describe("Sorting tests", () => {
                consultant: "CONSULANT4",
                signedDate: new Date("2017-01-23"),
                landlineNumber: "48888888",
-               mobile: "1122222",
+               phoneNumber: "1122222",
                name: "Niels Adamsen",
                farmName: "Bondegården",
                address: {
@@ -59,7 +59,7 @@ describe("Sorting tests", () => {
                consultant: "CONSULANT5",
                signedDate: new Date("2017-06-23"),
                landlineNumber: "11888888",
-               mobile: "2888222",
+               phoneNumber: "2888222",
                name: "Lars A. Adamsen",
                farmName: "Bondegården",
                address: {
@@ -75,7 +75,7 @@ describe("Sorting tests", () => {
                consultant: "CONSULANT1",
                signedDate: new Date("2017-02-15"),
                landlineNumber: "98888888",
-               mobile: "11111111",
+               phoneNumber: "11111111",
                name: "Bo Adamsen",
                farmName: "Bondegården",
                address: {
