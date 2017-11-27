@@ -11,12 +11,16 @@
     <script src="/editOrderModal.js" defer></script>
     <style>
         @media screen and (max-width: 991px) {
-            #navbar-statistics {
+            #navbar-statistics{
                 display: none;
             }
         }
 
-        tbody td {
+        html, body {
+            min-width: 1190px;
+        }
+
+        tbody tr {
             cursor: pointer;
         }
 
@@ -24,11 +28,20 @@
             vertical-align: middle !important;
         }
 
+        #contentData thead th {
+            text-transform: capitalize;
+        }
+
         .navbar {
+            text-transform: capitalize;
             padding-right: 12px;
             padding-left: 4px;
         }
 
+        .sortable {
+            cursor: pointer;
+            position: relative;
+        }
     </style>
     <script defer>
         'use strict';
@@ -144,7 +157,7 @@
         </ul>
 
         <span id="navbar-statistics" style="position: absolute; left: 50%; transform: translateX(-50%);"
-              class="navbar-text justify-content-center">{{totalTaken}} / {{totalSamples}}</span>
+              class="navbar-text justify-content-center">prøver taget: {{totalTaken}} / {{totalSamples}}</span>
     </div>
 
     <form id="search" class="form-inline my-4 my-sm-0">
@@ -195,7 +208,7 @@
                         {{name}}
                     </td>
                     <td>
-                        {{farmName}}, {{address.street}}, {{address.city}}, {{address.zip}}
+                        {{farmName}}, {{address.street}}, {{address.zip}} {{address.city}}
                     </td>
                     <td>
                         {{comment}}
