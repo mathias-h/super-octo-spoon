@@ -137,4 +137,33 @@ describe("order integration test", () => {
 
         await page.close()
     })
+
+    it("should edit order", async () => {
+        new OrderModel({
+            _id: orderId2,
+            consultant: "MH",
+            signedDate: new Date("2017-01-01"),
+            name: "NAME",
+            farmName: "FARM_NAME",
+            landlineNumber: "88888888",
+            phoneNumber: "99999999",
+            address: {
+                city: "CITY",
+                street: "STREET",
+                zip: 9999
+            },
+            comment: "COMMENT",
+            sampleDensity: 1,
+            area: 2,
+            samePlanAsLast: true,
+            takeOwnSamples: true
+        })
+
+        const page = await browser.getPage()
+        await page.goto("http://localhost:1024/")
+
+        await page.evaluate(() => {
+
+        })
+    })
 })
