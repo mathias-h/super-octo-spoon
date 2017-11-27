@@ -1,14 +1,9 @@
 class EditOrderModal {
     constructor() {
-
-        function updateTotal() {
-            const mgSamples = +$("#editOrderModal #inputMgSamples").val()
-            const cutSamples = +$("#editOrderModal #inputCutSamples").val()
-            const otherSamples = +$("#editOrderModal #inputOtherSamples").val()
-            const total = mgSamples + cutSamples + otherSamples
-
-            $("#totalSamplesTaken span").text(total)
-        }
+        const save = () =>
+            this.save().then(() => location.reload()).catch(() => {
+                // TODO handle validation error
+            });
 
         this.modal = $("#editOrderModal");
         this.form = $("#orderEditForm");
@@ -16,26 +11,43 @@ class EditOrderModal {
 
         $("tbody tr").click(function (evt) {
             const orderId = this.getAttribute("data-order-id");
-            _this.show(orderId).then(updateTotal)
+            _this.show(orderId)
         });
 
         $("#orderEditForm").submit(evt => {
             evt.preventDefault();
             evt.stopPropagation();
 
-            this.save().then(() => location.reload());
+            save()
         
             return false;
         });
         $("#orderEditForm").on("keyup", evt => {
             if (evt.key === "Enter") {
-                this.save().then(() => location.reload());
+                save()
             }
         })
 
-        $("#editOrderModal #inputMgSamples").on("change", updateTotal);
-        $("#editOrderModal #inputCutSamples").on("change", updateTotal);
-        $("#editOrderModal #inputOtherSamples").on("change", updateTotal);
+        $("#editOrderModal #inputLandlineNumber").on("input", () => this.validatePhoneNumbers());
+        $("#editOrderModal #inputPhoneNumber").on("input", () => this.validatePhoneNumbers());
+
+        this.form[0].classList.add("was-validated")
+    }
+
+    validatePhoneNumbers() {
+        const landline = $("#editOrderModal #inputLandlineNumber");
+        const mobile = $("#editOrderModal #inputPhoneNumber");
+
+        landline[0].setCustomValidity("");
+        mobile[0].setCustomValidity("");
+
+        if(!(landline[0].validity.valid && landline.val()) && !(mobile[0].validity.valid && mobile.val())){
+            landline[0].setCustomValidity("Mindst et telefonnummer skal angives");
+            mobile[0].setCustomValidity("Mindst et telefonnummer skal angives");
+        }else{
+            landline[0].setCustomValidity("");
+            mobile[0].setCustomValidity("");
+        }
     }
 
     setOrder(orderId) {
@@ -70,6 +82,10 @@ class EditOrderModal {
     }
 
     save() {
+        if (!this.form[0].checkValidity()) {
+            throw new Error("form not valid")
+        }
+
         const order = convertFormToObject(this.form[0]);
         order._id = this.orderId;
 
