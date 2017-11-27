@@ -10,86 +10,45 @@
     <script src="https://momentjs.com/downloads/moment.min.js"defer></script>
     <script src="/editOrderModal.js"defer></script>
     <link rel="stylesheet" type="text/css" href="/overviewStyle.css">
-    <script defer>
-        'use strict';
-
-        function convertFormToObject(form) {
-            const data = {};
-            const f = new FormData(form);
-            for (const [key,value] of f.entries()) {
-                data[key] = value;
+    <script src="https://momentjs.com/downloads/moment.min.js" defer></script>
+    <script src="/editOrderModal.js" defer></script>
+    <style>
+        @media screen and (max-width: 991px) {
+            #navbar-statistics{
+                display: none;
             }
-            return data;
         }
 
-        window.addEventListener('load', function() {
-            new EditOrderModal();
+        html, body {
+            min-width: 1190px;
+        }
 
-            $("#inputSignedDate").val(moment(new Date()).format("YYYY-MM-DD"));
-            $("#inputSignedDate").val(moment(new Date()).format("YYYY-MM-DD"));
+        tbody tr {
+            cursor: pointer;
+        }
 
-            $("#orderCreateCancel").click(() => {
-                clearOrderCreate();
-            });
+        thead tr th {
+            vertical-align: middle !important;
+        }
 
-            $("#orderCreateClose").click(() => {
-                clearOrderCreate();
-            });
+        #contentData thead th {
+            text-transform: capitalize;
+        }
 
-            $(document).keyup((e) => {
-                if(e.which == 27){
-                    clearOrderCreate();
-                }
-            });
+        .navbar {
+            text-transform: capitalize;
+            padding-right: 12px;
+            padding-left: 4px;
+        }
 
-            function clearOrderCreate(){
-                // TODO: Sæt konsulent tilbage til bruger
-                $("#inputSignedDate").val("2017-11-21");
-                $("#inputName").val("");
-                $("#inputFarmName").val("");
-                $("#inputStreet").val("");
-                $("#inputZip").val("");
-                $("#inputCity").val("");
-                $("#inputLandlineNumber").val("");
-                $("#inputPhoneNumber").val("");
-                $("#inputComment").val("");
-            }
-
-
-            const form = document.getElementById('orderCreateForm');
-            form.addEventListener('submit', function(event) {
-                event.preventDefault();
-                event.stopPropagation();
-
-                const landline = $("#inputLandlineNumber");
-                const mobile = $("#inputPhoneNumber");
-
-                landline[0].setCustomValidity("");
-                mobile[0].setCustomValidity("");
-
-                if(!(landline[0].validity.valid && landline.val()) && !(mobile[0].validity.valid && mobile.val())){
-                    landline[0].setCustomValidity("Mindst et telefonnummer skal angives");
-                    mobile[0].setCustomValidity("Mindst et telefonnummer skal angives");
-                }else{
-                    landline[0].setCustomValidity("");
-                    mobile[0].setCustomValidity("");
-                }
-
-                if (form.checkValidity() === true) {
-                    const data = convertFormToObject(form);
-                    $.ajax({
-                        url: "/order/create",
-                        method: "POST",
-                        data: JSON.stringify(data),
-                        headers: {
-                            "content-type": "application/json"
-                        }
-                    }).then(location.reload());
-                }
-
-                form.classList.add('was-validated');
-            }, false);
-
+        .sortable {
+            cursor: pointer;
+            position: relative;
+        }
+    </style>
+    <link rel="stylesheet" type="text/css" href="/overviewStyle.css">
+    <script defer>
+        onload = () => {
             $(".sortable").click(function () {
                 var id = $(this).attr("id");
                 var ls = location.search;
@@ -103,10 +62,6 @@
                     location.search = location.search.substring(0,location.search.indexOf("&")) + "&sortBy=" + id + order;
                 }
             })
-        });
-    </script>
-    <script defer>
-        onload = () => {
             if (location.search.indexOf("sortBy") !== -1){
                 var url = new URL(location.href)
                 var sortBy = url.searchParams.get("sortBy").toString()
@@ -139,7 +94,7 @@
         </ul>
 
         <span id="navbar-statistics" style="position: absolute; left: 50%; transform: translateX(-50%);"
-              class="navbar-text justify-content-center">{{totalTaken}} / {{totalSamples}}</span>
+              class="navbar-text justify-content-center">prøver taget: {{totalTaken}} / {{totalSamples}}</span>
     </div>
 
     <form id="search" class="form-inline my-4 my-sm-0">
@@ -190,7 +145,7 @@
                         {{name}}
                     </td>
                     <td>
-                        {{farmName}}, {{address.street}}, {{address.city}}, {{address.zip}}
+                        {{farmName}}, {{address.street}}, {{address.zip}} {{address.city}}
                     </td>
                     <td>
                         {{comment}}
