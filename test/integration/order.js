@@ -29,7 +29,7 @@ describe("order integration test", () => {
         mongoose.connect("mongodb://localhost:27018/super-octo-spoon");
         mongoose.Promise = global.Promise;
 
-        server = createApp(OrderModel).listen(1024)
+        server = createApp(OrderModel).listen(1025)
         browser = await puppeteer.launch()
     })
 
