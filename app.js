@@ -1,6 +1,9 @@
+"use strict";
+
 const bodyParser = require('body-parser');
 const express = require("express");
 const hbs = require("hbs");
+const User = require('./models/user');
 const CONSULTANTS = ["MH","MJ","NK","NL","MHL"];
 
 module.exports.createApp = function createApp(Order) {
@@ -63,6 +66,35 @@ module.exports.createApp = function createApp(Order) {
         }).catch(err => {
             res.status(500).json(err);
         });
+    });
+
+    app.post("/user/create", function (req, res) {
+        const userData = req.body;
+
+        var user = new User({userName: userData.userName, password: userData.password});
+
+        user.save().then(function (response) {
+            res.json({status: "Bruger oprettet."});
+        }).catch(function (error) {
+            res.json({error: "Kunne ikke oprette bruger."});
+        });
+
+    });
+
+    app.put('/user/setPassword', function (req, res) {
+        // TODO
+        const userData = req.body;
+
+        User.findOneAndUpdate({userName: userData.userName}, {$set: {password: userData.password}})
+            .then(function (response) {
+                console.log(response);
+                res.json({status: "Password sat."});
+            })
+            .catch(function (error) {
+                console.log(error);
+                res.json({error: "Kunne ikke sætte password."});
+            });
+
     });
 
     return app
