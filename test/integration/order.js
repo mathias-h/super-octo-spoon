@@ -15,6 +15,7 @@ describe("order integration test", () => {
     let server
     let db
     let browser
+    let page
     const OrderModel = mongoose.models.Order || mongoose.model("Order", OrderSchema)
     
     before(async () => {
@@ -31,6 +32,9 @@ describe("order integration test", () => {
 
         server = createApp(OrderModel).listen(1025)
         browser = await puppeteer.launch()
+
+        page = await browser.newPage()
+        await page.goto("http://localhost:1025/")
     })
 
     after(async () => {
@@ -72,22 +76,18 @@ describe("order integration test", () => {
         })
         await order.save()
         await order1.save()
-        const page = await browser.newPage()
 
-        await page.goto("http://localhost:1025/")
-
+        await page.reload()
+        
         const orderIds = await page.evaluate(() =>
             Array.from(document.querySelectorAll("tr.order"))
                 .map(o => o.getAttribute("data-order-id")))
 
         expect(orderIds).to.deep.eq([orderId1.toHexString(), orderId2.toHexString()])
-
-        await page.close()
     })
 
     it("should create order", async () => {
-        const page = await browser.newPage()
-        await page.goto("http://localhost:1025/")
+        await page.reload()
 
         await page.evaluate(() => {
             document.querySelector("#navbarSupportedContent > ul > li:nth-child(1) > a").click()
@@ -134,8 +134,6 @@ describe("order integration test", () => {
         expect(order.area).to.eq(2)
         expect(order.samePlanAsLast).to.be.true
         expect(order.takeOwnSamples).to.be.true
-
-        await page.close()
     })
 
     it("should edit order", async () => {
@@ -171,8 +169,7 @@ describe("order integration test", () => {
             receptApproved: new Date("1970-01-01")
         }).save()
 
-        const page = await browser.newPage()
-        await page.goto("http://localhost:1025/")
+        await page.reload()
 
         await page.evaluate(() => {
             document.querySelector(".order").click()
