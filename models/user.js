@@ -126,4 +126,4 @@ User.statics.matchPasswords = function (userName, password) {
         });
 };
 
-module.exports = mongoose.model('User', User);
+module.exports.User = User;

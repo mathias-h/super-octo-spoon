@@ -150,6 +150,14 @@ Order.statics.getAll = async function getAll({query, sortBy="date", order}) {
     }))
 }
 
+Order.statics.setDynamicField = function setDynamicField(orderId, fase, name, value) {
+    return this.findOneAndUpdate({ _id: orderId }, {
+        $set: {
+            ["dynamics." + fase + "." + name]: value
+        }
+    }).exec()
+}
+
 Order.index({
     consultant:"text",
     "address.zip":"text",

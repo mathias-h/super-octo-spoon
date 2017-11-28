@@ -260,4 +260,31 @@ describe("order", () => {
             expect(result[0].signedDate).to.eq("01-01-1970")
         })
     })
+
+    describe("set dynamic field", () => {
+        it("should set field", async () => {
+            const orderId = mongoose.Types.ObjectId();
+            const fase = 0;
+            const name = "NAME";
+            const value = "VALUE";
+            const order = {
+                _id: orderId,
+                dynamics: []
+            };
+            let wasCalled = false
+
+            Order.statics.findOneAndUpdate = function findOneAndUpdateMock(query, update) {
+                expect(query).to.deep.eq({ _id: orderId });
+                expect(update).to.deep.eq({
+                    $set: { ["dynamics." + fase + "." + name]: value }
+                });
+                wasCalled = true
+
+                return { exec: () => Promise.resolve() }
+            }
+
+            await Order.statics.setDynamicField(orderId, fase, name, value);
+            expect(wasCalled).to.be.true
+        })
+    })
 });
