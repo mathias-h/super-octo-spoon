@@ -67,11 +67,12 @@ const Order = new Schema({
     samplesTaken: Number,
     log:[{
         time: Date,
-        changes: Object
+        changes: Object,
+        consultant: String
     }]
 }, { strict: true });
 
-Order.statics.editOrder = async function updateOrder(order) {
+Order.statics.editOrder = async function updateOrder(order, user) {
     order = new this(order)._doc
     delete order.log
     const oldOrder = (await this.findOne({ _id: order._id }).exec())._doc
@@ -92,6 +93,7 @@ Order.statics.editOrder = async function updateOrder(order) {
     const logChanges = Object.assign({}, changes, addressChanges)
     const newLog = {
         time: moment(new Date()).startOf("minute").toDate(),
+        consultant: user,
         changes: logChanges
     }
 

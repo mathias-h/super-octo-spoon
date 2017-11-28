@@ -109,9 +109,9 @@ class EditOrderModal {
             }
 
             $("#log").html("<h2>Log</h2>" +
-            order.log.map(({ changes, time }) => `
+            order.log.map(({ changes, time, consultant }) => `
                 <div class="form-row">
-                    <h3>${moment(time).format("DD-MM-YYYY HH:MM")}</h3>
+                    <h3>${moment(time).format("DD-MM-YYYY HH:MM")} ${consultant}</h3>
                 </div>
                 ${Object.entries(changes).map(([k,v])=> `
                     <div class="form-row">

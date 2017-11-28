@@ -65,8 +65,9 @@ module.exports.createApp = function createApp(Order, User) {
     
     app.put("/order", (req,res) => {
         const order = req.body;
+        const currentUser = "MH" // TODO get current user
     
-        Order.editOrder(order).then(() => {
+        Order.editOrder(order, currentUser).then(() => {
             res.end("order updated");
         }).catch(err => {
             res.status(500).json(err);

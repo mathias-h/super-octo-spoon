@@ -40,6 +40,7 @@ describe("order", () => {
         });
         it("should update log", async () => {
             const orderId = mongoose.Types.ObjectId();
+            const user = "USER"
             const newOrder = {
                 _id: orderId,
                 order: "changed",
@@ -60,6 +61,7 @@ describe("order", () => {
             Order.statics.findOneAndUpdate = function findOneAndUpdateMock(query, update) {
                 expect(update.$push.log).to.deep.eq({
                     time: moment(new Date()).startOf("minute").toDate(),
+                    consultant: user,
                     changes: {
                         order: "changed",
                         new: 1
@@ -74,7 +76,7 @@ describe("order", () => {
                 return { exec: () => ({_doc:oldOrder}) }
             }
 
-            await Order.statics.editOrder(newOrder)
+            await Order.statics.editOrder(newOrder, user)
         })
 
         it("should handle address", async () => {
@@ -100,13 +102,10 @@ describe("order", () => {
             Object.assign(Order.statics, oldStatics)
 
             Order.statics.findOneAndUpdate = function findOneAndUpdateMock(query, update) {
-                expect(update.$push.log).to.deep.eq({
-                    time: moment(new Date()).startOf("minute").toDate(),
-                    changes: {
-                        city: "CITY",
-                        zip: 1,
-                        street: "STREET"
-                    }
+                expect(update.$push.log.changes).to.deep.eq({
+                    city: "CITY",
+                    zip: 1,
+                    street: "STREET"
                 })
                 
                 return { exec: () => ({}) }
@@ -147,10 +146,7 @@ describe("order", () => {
             Object.assign(Order.statics, oldStatics)
 
             Order.statics.findOneAndUpdate = function findOneAndUpdateMock(query, update) {
-                expect(update.$push.log).to.deep.eq({
-                    time: moment(new Date()).startOf("minute").toDate(),
-                    changes: {}
-                })
+                expect(update.$push.log.changes).to.deep.eq({})
                 
                 return { exec: () => ({}) }
             };
