@@ -26,7 +26,7 @@ const User = new Schema({
     },
     isDisabled: {
         required: true,
-        type, Boolean,
+        type: Boolean,
         default: false
     }
 },{
