@@ -25,7 +25,9 @@ const User = new Schema({
         default: false
     }
 },{
-    timestamps: true
+    timestamps: true,
+    strict: true
+
 });
 
 User.pre('save', function (next) {
