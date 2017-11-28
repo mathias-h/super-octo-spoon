@@ -20,8 +20,13 @@ const User = new Schema({
         type: String
     },
     isAdmin: {
-        type: Boolean,
         required: true,
+        type: Boolean,
+        default: false
+    },
+    isDisabled: {
+        required: true,
+        type, Boolean,
         default: false
     }
 },{
@@ -63,28 +68,26 @@ User.pre('save', function (next) {
 
 User.pre('findOneAndUpdate', function (next) {
 
-
-
-    const userName = this.getUpdate().$set.username;
+    const username = this.getUpdate().$set.username;
     const password = this.getUpdate().$set.password;
     const isAdmin = this.getUpdate().$set.isAdmin;
 
-    if(userName && userName === ''){
+    if(username === ''){
         return next(new Error('Username is empty.'));
     }
-    if(userName && userName && typeof userName !== 'string'){
+    if(username && typeof username !== 'string'){
         return next(new Error('Username is not a string.'));
     }
-    if(password && password === ''){
+    if(password === ''){
         return next(new Error('New password is empty.'));
     }
     if(password && typeof password !== 'string'){
         return next(new Error('New password is not a string.'));
     }
-    if(isAdmin && isAdmin=== ''){
+    if(isAdmin=== ''){
         return next(new Error('Admin level is empty.'));
     }
-    if(isAdmin && typeof isAdmin !== 'string'){
+    if(isAdmin && typeof isAdmin !== "boolean"){
         return next(new Error('Admin level is not a string.'));
     }
 
@@ -121,9 +124,6 @@ User.statics.matchPasswords = function (username, password) {
                 };
             return Promise.resolve(result);
         })
-        .catch(function (error) {
-            return Promise.reject(error);
-        });
 };
 
 module.exports = mongoose.model('User', User);
