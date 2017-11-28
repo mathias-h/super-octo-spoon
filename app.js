@@ -70,21 +70,36 @@ module.exports.createApp = function createApp(Order) {
 
     app.post("/user", function (req, res) {
 
-        var user = new User({userName: req.body.userName, password: req.body.password});
+        const user = new User({
+            username: req.body.username,
+            password: req.body.password,
+            isAdmin: req.body.isAdmin
+        });
 
         user.save().then(function (response) {
-            res.json({status: "Bruger oprettet."});
+            res.json({status: "OK", message: "User created."});
         }).catch(function (error) {
-            res.json({error: "Kunne ikke oprette bruger."});
+            res.json({status: "ERROR", message: "Could not create user."});
         });
 
     });
 
-    app.put('/user/:userName', function (req, res) {
-        // TODO
-        User.findOneAndUpdate({userName: req.params.userName}, {$set: {userName: req.body.userName, password: req.body.password}})
+    app.put('/user/:username', function (req, res) {
+
+        const condition = {
+            username: req.params.username
+        };
+
+        const update = {
+            $set: req.body
+        };
+
+        User.findOneAndUpdate(condition, update, {runValidators: true})
             .then(function (response) {
-                res.json({status: "Bruger opdateret."});
+                if(!response){
+                    res.json({status: "ERROR", message: "User not found."})
+                }
+                res.json({status: "OK", message: "User updated."});
             })
             .catch(function (error) {
                 res.json(error);
@@ -92,13 +107,13 @@ module.exports.createApp = function createApp(Order) {
     });
 
     app.post('/login', function (req, res) {
-    User.matchPasswords(req.body.userName, req.body.password)
-        .then(function (result) {
-            res.json(result);
-        })
-        .catch(function (error) {
-            res.json(error);
-        });
+        User.matchPasswords(req.body.username, req.body.password)
+            .then(function (result) {
+                res.json(result);
+            })
+            .catch(function (error) {
+                res.json(error);
+            });
     });
 
     return app;
