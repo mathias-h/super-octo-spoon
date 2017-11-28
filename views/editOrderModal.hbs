@@ -136,19 +136,27 @@
                     <div class="form-row">
                         <div class="col-3 form-group">
                             <label for="inputCutSamples">Cut</label>
-                                <div class="input-group">
-                                    <input name="cutSamples" type="number" min="0" id="inputCutSamples"
-                                           class="form-control"
-                                           placeholder="Antal">
-                                    <span class="input-group-addon">stk</span>
-                                </div>
-                            <label for="inputMgSamples">Mg</label>
-                                <div class="input-group">
-                                    <input name="mgSamples" type="number" min="0" id="inputMgSamples"
-                                           class="form-control"
-                                           placeholder="Mængde">
-                                    <span class="input-group-addon">stk</span>
-                                </div>
+                            <div class="input-group">
+                                <input name="cutSamples" type="number" min="0" id="inputCutSamples"
+                                       class="form-control"
+                                       placeholder="Antal">
+                                <span class="input-group-addon">stk</span>
+                            </div>
+                        </div>
+                        <div class="col-3 form-group">
+                            <!-- Whitespace -->
+                        </div>
+                        <div class="col-3 form-group">
+                            <label for="inputLabDate">Sendt til lab</label>
+                            <input name="labDate" type="date" id="inputLabDate" class="form-control">
+                        </div>
+                        <div class="col-3 form-group">
+                            <label for="inputMO">Sendt til markanalyse</label>
+                            <input name="mO" type="date" id="inputMO" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-3">
                             <label for="inputOtherSamples">Andre</label>
                             <div class="input-group">
                                 <input name="otherSamples" type="number" min="0" id="inputOtherSamples"
@@ -157,20 +165,27 @@
                                 <span class="input-group-addon">stk</span>
                             </div>
                         </div>
-                        <div class="col-3 form-group">
-
+                        <div class="col-3">
+                            <!-- Whitespace -->
                         </div>
                         <div class="col-3 form-group">
-                            <label for="inputLabDate">Sendt til lab</label>
-                            <input name="labDate" type="date" id="inputLabDate" class="form-control">
                             <label for="inputFromLabDate">Modtaget fra lab</label>
                             <input name="fromLabDate" type="date" id="inputFromLabDate" class="form-control">
                         </div>
                         <div class="col-3 form-group">
-                            <label for="inputMO">Sendt til markanalyse</label>
-                            <input name="mO" type="date" id="inputMO" class="form-control">
                             <label for="inputReceptApproved">Faktura godkendt</label>
                             <input name="receptApproved" type="date" id="inputReceptApproved" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-3 form-group">
+                            <label for="inputMgSamples">Mg</label>
+                            <div class="input-group">
+                                <input name="mgSamples" type="number" min="0" id="inputMgSamples"
+                                       class="form-control"
+                                       placeholder="Mængde">
+                                <span class="input-group-addon">stk</span>
+                            </div>
                         </div>
                     </div>
                     <hr>

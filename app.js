@@ -1,6 +1,9 @@
+"use strict";
+
 const bodyParser = require('body-parser');
 const express = require("express");
 const hbs = require("hbs");
+const User = require('./models/user');
 const CONSULTANTS = ["MH","MJ","NK","NL","MHL"];
 
 module.exports.createApp = function createApp(Order) {
@@ -21,7 +24,7 @@ module.exports.createApp = function createApp(Order) {
             return out
         })
         next()
-    })
+    });
 
     app.use(express.static(__dirname + '/public'));
     app.use(bodyParser.urlencoded({extended: true}));
@@ -73,5 +76,49 @@ module.exports.createApp = function createApp(Order) {
         });
     });
 
-    return app
-}
+    app.post("/user", function (req, res) {
+
+        var user = new User({userName: req.body.userName, password: req.body.password});
+
+        user.save().then(function (response) {
+            res.json({status: "Bruger oprettet."});
+        }).catch(function (error) {
+            res.json({error: "Kunne ikke oprette bruger."});
+        });
+
+    });
+
+    app.put('/user/:userName', function (req, res) {
+        // TODO
+
+        User.findOneAndUpdate({userName: req.params.userName}, {$set: {userName: req.body.userName, password: req.body.password}})
+            .then(function (response) {
+                res.json({status: "Bruger opdateret."});
+            })
+            .catch(function (error) {
+                res.json(error);
+            });
+
+    });
+
+    app.post('/login', function (req, res) {
+    /*
+        User.findOne({userName: req.body.userName})
+            .then(function (response) {
+                res.json(response);
+            })
+            .catch(function (error) {
+                res.json(error);
+            });
+    */
+    User.matchPasswords(req.body.userName, req.body.password)
+        .then(function (result) {
+            res.json(result);
+        })
+        .catch(function (error) {
+            res.json(error);
+        });
+    });
+
+    return app;
+};
