@@ -3,8 +3,9 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const bcrypt = require('bcrypt');
+const salt = require('./salt');
+const Salt = mongoose.model('Salt', salt);
 const SALT_ROUNDS = 10;
-
 
 const User = new Schema({
     username: {
@@ -16,9 +17,16 @@ const User = new Schema({
         type: String,
         required: true
     },
+    // rewrite related
+    saltId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Salt'
+    },
+    /*
     salt: {
         type: String
     },
+    */
     isAdmin: {
         required: true,
         type: Boolean,
@@ -126,5 +134,67 @@ User.statics.matchPasswords = function (username, password) {
             return Promise.resolve(result);
         })
 };
+
+// REWRITE STARTS HERE
+
+User.statics.createUser = function (userData){
+    if(!userData.username){
+        return Promise.reject(new Error('Username missing.'));
+    }
+    if(userData.username && typeof userData.username !== 'string'){
+        return Promise.reject(new Error('Username is not a string.'));
+    }
+    if(userData.username === ''){
+        return Promise.reject(new Error('Username is an empty string.'));
+    }
+    if(!userData.password){
+        return Promise.reject(new Error('Password missing'));
+    }
+    if(userData.password && typeof userData.password !== 'string'){
+        return Promise.reject(new Error('Password is not a string.'));
+    }
+    if(userData.password === ''){
+        return Promise.reject(new Error('Password is an empty string'));
+    }
+
+    const salt = new Salt(userData);
+
+    return salt.save()
+        .then(function () {
+            // TODO create/save user
+            // if user cannot be saved, delete salt from db
+            var user = new this({
+                username: userData.username,
+                password: bcrypt.hashSync(userData.password, salt.value),
+                saltId: salt._id
+            });
+            if(userData.isAdmin){
+                user.isAdmin = userData.isAdmin;
+            }
+            if(userData.isDisabled){
+                user.isDisabled = userData.isDisabled;
+            }
+            user.save()
+                .then(function (response) {
+                    console.log(response);
+                    return Promise.resolve('User saved to database')
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    Salt.findByIdAndRemove(salt._id).then(function (response) {
+                        console.log(response);
+                        return Promise.reject(new Error('Could not save user to database.'));
+                    });
+                });
+        })
+        .catch(function (error) {
+            console.log(error);
+            return Promise.reject(new Error('Could not save user to database.'));
+        });
+
+};
+
+
+// REWRITE ENDS HERE
 
 module.exports.User = User;

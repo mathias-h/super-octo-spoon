@@ -84,6 +84,7 @@ module.exports.createApp = function createApp(Order, User) {
     })
 
     app.post("/user", function (req, res) {
+        /*
         const user = new User({
             username: req.body.username,
             password: req.body.password,
@@ -97,7 +98,14 @@ module.exports.createApp = function createApp(Order, User) {
             console.log(error);
             res.json({status: "ERROR", message: "Could not create user."});
         });
-
+        */
+        User.createUser(req.body)
+            .then(function (response) {
+                res.json(response)
+            })
+            .catch(function (error) {
+                res.json(error);
+            });
     });
 
     app.put('/user/:username', function (req, res) {
