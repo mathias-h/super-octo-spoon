@@ -13,98 +13,96 @@
                 <div class="modal-body">
                     <div class="form-row">
                         <div class="col form-group">
-                            <label for="inputConsultant">Konsulent</label>
-                            <select name="consultant" id="inputConsultant" class="form-control" required>
+                            <label for="editInputConsultant">Konsulent</label>
+                            <select name="consultant" id="editInputConsultant" class="form-control" required>
                                 {{#each consultants}}
                                     <option value="{{this}}">{{this}}</option>
                                 {{/each}}
                             </select>
                         </div>
                         <div class="col form-group">
-                            <label for="inputSignedDate">Indgået dato</label>
-                            <input name="signedDate" type="date" id="inputSignedDate" class="form-control" required>
+                            <label for="editInputSignedDate">Indgået dato</label>
+                            <input name="signedDate" type="date" id="editInputSignedDate" class="form-control" required>
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="col-9 form-group">
-                            <label for="inputName">Navn</label>
-                            <input name="name" type="text" id="inputName" class="form-control" placeholder="Navn"
+                            <label for="editInputName">Navn</label>
+                            <input name="name" type="text" id="editInputName" class="form-control" placeholder="Navn"
                                    required>
                         </div>
                         <div class="col-3 form-group">
-                            <label for="inputFarmName">Gårdnavn</label>
-                            <input name="farmName" type="text" id="inputFarmName" class="form-control"
+                            <label for="editInputFarmName">Gårdnavn</label>
+                            <input name="farmName" type="text" id="editInputFarmName" class="form-control"
                                    placeholder="Gårdnavn" required>
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="col-6 form-group">
-                            <label for="inputStreet">Adresse</label>
-                            <input name="street" type="text" id="inputStreet" class="form-control" placeholder="Adresse"
+                            <label for="editInputStreet">Adresse</label>
+                            <input name="street" type="text" id="editInputStreet" class="form-control" placeholder="Adresse"
                                    required>
                         </div>
                         <div class="col-3 form-group">
-                            <label for="inputZip">Postnummer</label>
-                            <input name="zip" type="number" id="inputZip" class="form-control" placeholder="Postnummer"
+                            <label for="editInputZip">Postnummer</label>
+                            <input name="zip" type="number" id="editInputZip" class="form-control" placeholder="Postnummer"
                                    required>
                         </div>
                         <div class="col-3 form-group">
-                            <label for="inputCity">By</label>
-                            <input name="city" type="text" id="inputCity" class="form-control" placeholder="By"
+                            <label for="editInputCity">By</label>
+                            <input name="city" type="text" id="editInputCity" class="form-control" placeholder="By"
                                    required>
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="col form-group">
-                            <label for="inputLandlineNumber">Fastnet tlf.</label>
-                            <input name="landlineNumber" type="tel" id="inputLandlineNumber" class="form-control"
+                            <label for="editInputLandlineNumber">Fastnet tlf.</label>
+                            <input name="landlineNumber" type="tel" id="editInputLandlineNumber" class="form-control"
                                    placeholder="Fastnet telefon" pattern="^[\s()+-]*([0-9][\s()+-]*){6,20}$">
                         </div>
                         <div class="col form-group">
-                            <label for="inputPhoneNumber">Mobil tlf.</label>
-                            <input name="phoneNumber" type="tel" id="inputPhoneNumber" class="form-control"
+                            <label for="editInputPhoneNumber">Mobil tlf.</label>
+                            <input name="phoneNumber" type="tel" id="editInputPhoneNumber" class="form-control"
                                    placeholder="Mobil telefon" pattern="^[\s()+-]*([0-9][\s()+-]*){6,20}$">
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="col form-group">
-                            <label for="inputComment">Kommentar</label>
-                            <textarea name="comment" id="inputComment" class="form-control" rows="5"
+                            <label for="editInputComment">Kommentar</label>
+                            <textarea name="comment" id="editInputComment" class="form-control" rows="5"
                                       style="min-height: 74px"></textarea>
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="col-3 form-group">
-                            <label for="inputSampleDensity">Prøvetæthed</label>
+                            <label for="editInputSampleDensity">Prøvetæthed</label>
                             <div class="input-group" id="sampleDensityContainer">
                                 <span class="input-group-addon">1/</span>
-                                <input name="sampleDensity" type="number" min="0" id="inputSampleDensity"
+                                <input name="sampleDensity" type="number" min="0" id="editInputSampleDensity"
                                        class="form-control" placeholder="Mængde">
                                 <span class="input-group-addon">ha</span>
                             </div>
                         </div>
 
                         <div class="col-3 form-group">
-                            <label for="inputArea">Areal</label>
+                            <label for="editInputArea">Areal</label>
                             <div class="input-group" id="sampleDensityContainer">
-                                <input name="area" type="number" min="0" id="inputArea" class="form-control"
+                                <input name="area" type="number" min="0" id="editInputArea" class="form-control"
                                        placeholder="Størrelse">
                                 <span class="input-group-addon">ha</span>
                             </div>
                         </div>
                         <div class="col-5">
                             <div class="form-group ml-3" style="line-height: 0; margin-bottom: 0px; margin-top: 32px;">
-                                <label for="inputSamePlanAsLast">
-                                    <input name="samePlanAsLast" type="checkbox" id="inputSamePlanAsLast">Samme plan som
-                                    sidst</label>
-                                <label for="inputTakeOwnSamples">
-                                    <input name="takeOwnSamples" type="checkbox" id="inputTakeOwnSamples">Prøver
-                                    selvudtaget</label>
+                                <label for="editInputSamePlanAsLast">
+                                    <input name="samePlanAsLast" type="checkbox" id="editInputSamePlanAsLast">Samme plan som sidst</label>
+                                <label for="editInputTakeOwnSamples">
+                                    <input name="takeOwnSamples" type="checkbox" id="editInputTakeOwnSamples">Prøver selvudtaget</label>
                             </div>
                         </div>
                     </div>
@@ -149,11 +147,11 @@
                             <!-- Whitespace -->
                         </div>
                         <div class="col-3 form-group">
-                            <label for="inputLabDate">Send til lab</label>
+                            <label for="inputLabDate">Sendt til lab</label>
                             <input name="labDate" type="date" id="inputLabDate" class="form-control">
                         </div>
                         <div class="col-3 form-group">
-                            <label for="inputMO">Send til marksanalyse</label>
+                            <label for="inputMO">Sendt til markanalyse</label>
                             <input name="mO" type="date" id="inputMO" class="form-control">
                         </div>
                     </div>
@@ -190,6 +188,8 @@
                             </div>
                         </div>
                     </div>
+                    <hr>
+                    <div class="form-group" id="log"></div>
                     <div class="modal-footer">
                         <div class="form-row float-right">
                             <div class="col form-group">

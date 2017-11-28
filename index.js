@@ -1,12 +1,16 @@
 const mongoose = require("mongoose");
-const {createApp} = require("./app")
-const { Order } = require("./models/order")
+const {createApp} = require("./app");
+const { Order } = require("./models/order");
+const { User } = require("./models/user");
 
-//TODO Connection skal skrives om ved lejlighed så vi slipper for den deprecation warning.
-
-mongoose.connect("mongodb://localhost:27017/super-octo-spoon");
 mongoose.Promise = global.Promise;
+const connection = mongoose.createConnection("mongodb://localhost:27017/super-octo-spoon")
 
-const app = createApp(mongoose.model("Order", Order));
+const OrderModel = connection.model("Order", Order)
+const UserModel = connection.model('User', User)
 
-app.listen(1024);
+const app = createApp(OrderModel, UserModel);
+
+app.listen(1024, () => {
+    console.log("listening")
+});

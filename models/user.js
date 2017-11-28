@@ -46,6 +46,7 @@ User.pre('save', function (next) {
     if(typeof this.username !== 'string'){
         return next(new Error('Username is not a string.'));
     }
+
     if(this.password === undefined){
         return next(new Error('Password is undefined.'));
     }
@@ -126,4 +127,4 @@ User.statics.matchPasswords = function (username, password) {
         })
 };
 
-module.exports = mongoose.model('User', User);
+module.exports.User = User;

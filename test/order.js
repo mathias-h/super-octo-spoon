@@ -11,24 +11,192 @@ describe("order", () => {
         Order = require("../models/order").Order
     })
 
-    it("should edit order", () => {
-        const orderId = mongoose.Types.ObjectId();
-        const newOrder = {
-            _id: orderId,
-            order: "order"
+    describe("edit order", () => {
+        it("should edit order", () => {
+            const orderId = mongoose.Types.ObjectId();
+            const newOrder = {
+                _id: orderId,
+                order: "new-value"
+            };
+
+            const oldStatics = Order.statics
+            Order.statics = function(order) {
+                this._doc = order
+            }
+            Object.assign(Order.statics, oldStatics)
+            
+            Order.statics.findOneAndUpdate = function findOneAndUpdateMock(query, update) {
+                expect(query).to.deep.eq({ _id: orderId });
+                expect(update.$set).to.deep.eq({
+                    order: "new-value"
+                });
+                
+                return { exec: () => Promise.resolve() }
+            };
+            Order.statics.findOne = () => ({ exec: () => ({ _doc: { order: "old-value"} }) })
+
+            
+            return Order.statics.editOrder(newOrder)
+        });
+        it("should update log", async () => {
+            const orderId = mongoose.Types.ObjectId();
+            const user = "USER"
+            const newOrder = {
+                _id: orderId,
+                order: "changed",
+                new: 1
+            }
+            const oldOrder = {
+                _id: orderId,
+                order: "order",
+                log: []
+            }
+
+            const oldStatics = Order.statics
+            Order.statics = function(order) {
+                this._doc = order
+            }
+            Object.assign(Order.statics, oldStatics)
+
+            Order.statics.findOneAndUpdate = function findOneAndUpdateMock(query, update) {
+                expect(update.$push.log).to.deep.eq({
+                    time: moment(new Date()).startOf("minute").toDate(),
+                    consultant: user,
+                    changes: {
+                        order: "changed",
+                        new: 1
+                    }
+                })
+                
+                return { exec: () => ({}) }
+            };
+
+            Order.statics.findOne = (query) => {
+                expect(query).to.deep.eq({ _id: orderId })
+                return { exec: () => ({_doc:oldOrder}) }
+            }
+
+            await Order.statics.editOrder(newOrder, user)
+        })
+
+        it("should handle address", async () => {
+            const orderId = mongoose.Types.ObjectId();
+            const newOrder = {
+                _id: orderId,
+                address: {
+                    city: "CITY",
+                    zip: 1,
+                    street: "STREET"
+                }
+            }
+            const oldOrder = {
+                _id: orderId,
+                order: "order",
+                log: []
+            }
+
+            const oldStatics = Order.statics
+            Order.statics = function(order) {
+                this._doc = order
+            }
+            Object.assign(Order.statics, oldStatics)
+
+            Order.statics.findOneAndUpdate = function findOneAndUpdateMock(query, update) {
+                expect(update.$push.log.changes).to.deep.eq({
+                    city: "CITY",
+                    zip: 1,
+                    street: "STREET"
+                })
+                
+                return { exec: () => ({}) }
+            };
+
+            Order.statics.findOne = (query) => {
+                expect(query).to.deep.eq({ _id: orderId })
+                return { exec: () => ({_doc:oldOrder}) }
+            }
+
+            await Order.statics.editOrder(newOrder)
+        })
+
+        it("should handle no address changes", async () => {
+            const orderId = mongoose.Types.ObjectId();
+            const newOrder = {
+                _id: orderId,
+                address: {
+                    city: "CITY",
+                    zip: 1,
+                    street: "STREET"
+                }
+            }
+            const oldOrder = {
+                _id: orderId,
+                address: {
+                    city: "CITY",
+                    zip: 1,
+                    street: "STREET"
+                },
+                log: []
+            }
+
+            const oldStatics = Order.statics
+            Order.statics = function(order) {
+                this._doc = order
+            }
+            Object.assign(Order.statics, oldStatics)
+
+            Order.statics.findOneAndUpdate = function findOneAndUpdateMock(query, update) {
+                expect(update.$push.log.changes).to.deep.eq({})
+                
+                return { exec: () => ({}) }
+            };
+
+            Order.statics.findOne = (query) => {
+                expect(query).to.deep.eq({ _id: orderId })
+                return { exec: () => ({_doc:oldOrder}) }
+            }
+
+            await Order.statics.editOrder(newOrder)
+        })
+    });
+    it("should create order", () => {
+        const oldStatics = Order.statics;
+
+        Order.statics = function(order) {
+            expect(order.consultant).to.eq(newOrder.consultant);
+            expect(order.signedDate).to.eq(newOrder.signedDate);
+            expect(order.landlineNumber).to.eq(newOrder.landlineNumber);
+            expect(order.phoneNumber).to.eq(newOrder.phoneNumber);
+            expect(order.name).to.eq(newOrder.name);
+            expect(order.farmName).to.eq(newOrder.farmName);
+            expect(order.address.street).to.eq(newOrder.street);
+            expect(order.address.city).to.eq(newOrder.city);
+            expect(order.address.zip).to.eq(newOrder.zip);
+            expect(order.comment).to.eq(newOrder.comment);
+
+            return Order.statics;
         };
 
-        Order.statics.findOneAndUpdate = function findOneAndUpdateMock(query, update) {
-            expect(query).to.deep.eq({ _id: orderId });
-            expect(update).to.deep.eq({ $set: newOrder });
+        Object.assign(Order.statics, oldStatics);
 
+        const newOrder ={
+            consultant: 'CONSULTANT',
+            signedDate: '2017-1-1',
+            landlineNumber: 11223344,
+            phoneNumber: 55667788,
+            name: 'NAME',
+            farmName: 'FARMNAME',
+            street: "STREET",
+            city: "CITY",
+            zip: 8888,
+            comment: 'COMMENT'
+        };
+
+        Order.statics.save = function saveMock() {
             return { exec: () => Promise.resolve() }
         };
 
-        return Order.statics.editOrder(newOrder)
-    });
-    it("should create order", () => {
-        // TODO
+        return Order.statics.createOrder(newOrder);
     });
     it("sample totals", async () => {
         Order.statics.aggregate = function aggretageMock([match,group]) {
@@ -122,6 +290,53 @@ describe("order", () => {
             const result = await Order.statics.getAll({})
 
             expect(result[0].signedDate).to.eq("01-01-1970")
+        })
+        it("should set fase 1", async () => {
+            const orders = [
+                { _id: 1, signedDate: new Date("1970-01-01") }
+            ]
+            Order.statics.find = () => ({ lean: () => ({ exec: () => orders }) })
+
+            const result = await Order.statics.getAll({})
+
+            expect(result[0].fase).to.eq(1)
+        })
+        it("should set fase 2", async () => {
+            const orders = [
+                { _id: 1, signedDate: new Date("1970-01-01"), mapDate: new Date("1970-01-01") }
+            ]
+            Order.statics.find = () => ({ lean: () => ({ exec: () => orders }) })
+
+            const result = await Order.statics.getAll({})
+
+            expect(result[0].fase).to.eq(2)
+        })
+    })
+
+    describe("set dynamic field", () => {
+        it("should set field", async () => {
+            const orderId = mongoose.Types.ObjectId();
+            const fase = 0;
+            const name = "NAME";
+            const value = "VALUE";
+            const order = {
+                _id: orderId,
+                dynamics: []
+            };
+            let wasCalled = false
+
+            Order.statics.findOneAndUpdate = function findOneAndUpdateMock(query, update) {
+                expect(query).to.deep.eq({ _id: orderId });
+                expect(update).to.deep.eq({
+                    $set: { ["dynamics." + fase + "." + name]: value }
+                });
+                wasCalled = true
+
+                return { exec: () => Promise.resolve() }
+            }
+
+            await Order.statics.setDynamicField(orderId, fase, name, value);
+            expect(wasCalled).to.be.true
         })
     })
 });

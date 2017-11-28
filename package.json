@@ -19,6 +19,7 @@
     "lodash": "^4.17.4",
     "moment": "^2.19.2",
     "mongoose": "^4.13.5",
+    "object-diff": "0.0.4",
     "type-detect": "^4.0.5",
     "url": "^0.11.0"
   },

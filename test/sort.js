@@ -18,10 +18,10 @@ describe("Sorting tests", () => {
                    city: "Bondeby",
                    zip: "8123"
                },
-               comment: "Ring efter høst"
-               ,
+               comment: "Ring efter høst",
                takeOwnSamples: false,
-               samePlanAsLast: true
+               samePlanAsLast: true,
+               fase: 2
            },
            {
                consultant: "CONSULANT2",
@@ -37,7 +37,8 @@ describe("Sorting tests", () => {
                },
                comment: "Ring før høst",
                takeOwnSamples: false,
-               samePlanAsLast: false
+               samePlanAsLast: false,
+               fase: 2
            },
            {
                consultant: "CONSULANT4",
@@ -53,7 +54,8 @@ describe("Sorting tests", () => {
                },
                comment: "Ring under høst",
                takeOwnSamples: true,
-               samePlanAsLast: false
+               samePlanAsLast: false,
+               fase: 3
            },
            {
                consultant: "CONSULANT5",
@@ -69,7 +71,8 @@ describe("Sorting tests", () => {
                },
                comment: "Ring under høst",
                takeOwnSamples: false,
-               samePlanAsLast: true
+               samePlanAsLast: true,
+               fase: 3
            },
            {
                consultant: "CONSULANT1",
@@ -85,7 +88,8 @@ describe("Sorting tests", () => {
                },
                comment: "Ring under høst",
                takeOwnSamples: true,
-               samePlanAsLast: false
+               samePlanAsLast: false,
+               fase: 1
            }
        ]
     });
@@ -154,5 +158,9 @@ describe("Sorting tests", () => {
     })
     it("should pass - last Method - can remove", () => {
         expect(false).to.be.false
+    })
+    it("should sort by fase", () => {
+        correctAnswer = [sortingArray[4],sortingArray[0],sortingArray[1],sortingArray[3],sortingArray[2]]
+        expect(sort(sortingArray, "fase", "asc")).to.deep.eq(correctAnswer)
     })
 })

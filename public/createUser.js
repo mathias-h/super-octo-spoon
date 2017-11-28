@@ -71,8 +71,20 @@ window.addEventListener('load', function() {
         event.preventDefault();
         event.stopPropagation();
 
-
         matchPasswords();
+
+        if (form.checkValidity() === true) {
+            const data = convertFormToObject(form);
+            const userData = {username: data.consultant, password: data.password, isAdmin: data.isSuperUser == "on"};
+            $.ajax({
+                url: "/user",
+                method: "POST",
+                data: JSON.stringify(userData),
+                headers: {
+                    "content-type": "application/json"
+                }
+            }).then(location.reload());
+        }
 
         form.classList.add('was-validated');
     }, false);

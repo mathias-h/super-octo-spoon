@@ -3,10 +3,9 @@
 const bodyParser = require('body-parser');
 const express = require("express");
 const hbs = require("hbs");
-const User = require('./models/user');
-const CONSULTANTS = ["MH","MJ","NK","NL","MHL"];
+const CONSULTANTS = ["MH","MJ","NK","NL","ML"];
 
-module.exports.createApp = function createApp(Order) {
+module.exports.createApp = function createApp(Order, User) {
     const app = express();
     app.set('view engine', 'hbs');
     
@@ -15,6 +14,14 @@ module.exports.createApp = function createApp(Order) {
         hbs.registerPartial("createOrderModal", require("fs").readFileSync(__dirname + "/views/createOrderModal.hbs").toString());
         hbs.registerPartial("editOrderModal", require("fs").readFileSync(__dirname + "/views/editOrderModal.hbs").toString());
         hbs.registerPartial("createUserModal", require("fs").readFileSync(__dirname + "/views/createUserModal.hbs").toString());
+        hbs.registerHelper("objectIter", function(obj, options) {
+            let out = ""
+            for (const [key, val] of Object.entries(obj)) {
+                out += options.fn({ key, val })
+            }
+            console.log(out)
+            return out
+        })
         next()
     });
 
@@ -37,9 +44,8 @@ module.exports.createApp = function createApp(Order) {
         })
     });
     
-    app.post("/order/create", (req, res) => {
+    app.post("/order", (req, res) => {
         Order.createOrder(req.body).then(() => {
-            res.header("Content-Type", "text/plain");
             res.send("order created");
         }).catch(e => {
             res.status(500).json(e);
@@ -57,19 +63,27 @@ module.exports.createApp = function createApp(Order) {
         });
     });
     
-    app.post("/order", (req,res) => {
+    app.put("/order", (req,res) => {
         const order = req.body;
+        const currentUser = "MH" // TODO get current user
     
-        Order.editOrder(order).then(() => {
-            res.header("Content-Type", "text/plain");
+        Order.editOrder(order, currentUser).then(() => {
             res.end("order updated");
         }).catch(err => {
             res.status(500).json(err);
         });
     });
 
-    app.post("/user", function (req, res) {
+    app.put("/order/dynamic/:orderId", (req,res) => {
+        const orderId = req.params.orderId
+        const { fase, name, value } = req.body
 
+        Order.setDynamicField(orderId, fase, name, value)
+            .then(() => res.end("ok"))
+            .catch(err => res.status(500).json(err))
+    })
+
+    app.post("/user", function (req, res) {
         const user = new User({
             username: req.body.username,
             password: req.body.password,
@@ -108,7 +122,6 @@ module.exports.createApp = function createApp(Order) {
                 console.log(error);
                 res.status(500).end("ERROR");
             });
-
     });
 
     app.post('/login', function (req, res) {

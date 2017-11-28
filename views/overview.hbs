@@ -4,18 +4,7 @@
         <meta charset="UTF-8">
 
         <title>Djursland Landboforening</title>
-
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
-        <link rel="stylesheet" type="text/css" href="/overviewStyle.css">
-
-        <script src="https://code.jquery.com/jquery-3.2.1.js" defer></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" defer></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" defer></script>
-        <script src="https://momentjs.com/downloads/moment.min.js" defer></script>
-        <script src="/createOrderModal.js" defer></script>
-        <script src="/editOrderModal.js" defer></script>
-        <script src="/createUser.js" defer></script>
-
+    
         <style>
             @media screen and (max-width: 991px){
                 #navbar-statistics{
@@ -64,8 +53,10 @@
                 display: inline-block;
             }
 
+            td[align=center] {
+                vertical-align:middle !important;
+            }
 
-            /* maybe?? */
             .form-control:valid {
                 border-color: #ced4da !important;
             }
@@ -74,7 +65,29 @@
                 border-color: #80bdff !important;
                 box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25) !important;
             }
+
+            .bubble {
+                width: 16px;
+                height: 16px;
+                border-radius: 50%;
+            }
+
+            .fase1 {
+                background: #EF5350;
+            }
+            .fase2 {
+                background: #3F51B5;
+            }
         </style>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
+        <script src="https://code.jquery.com/jquery-3.2.1.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" defer></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" defer></script>
+        <script src="https://momentjs.com/downloads/moment.min.js" defer></script>
+        <script src="/createOrderModal.js" defer></script>
+        <script src="/editOrderModal.js" defer></script>
+        <script src="/createUser.js" defer></script>
 
         <script defer>
             onload = () => {
@@ -141,6 +154,7 @@
         <table class="table table-fixed table-striped">
             <thead>
                 <tr>
+                    <th class="sortable" id="fase">Fase</th>
                     <th class="sortable" id="consultant">Konsulent</th>
                     <th class="sortable" id="date">Oprettet dato</th>
                     <th class="sortable" id="landline">Fastnet tlf.</th>
@@ -157,6 +171,9 @@
             <tbody>
                 {{#each orders}}
                     <tr class="order" data-order-id="{{_id}}">
+                        <td align="center">
+                            <div class="bubble fase{{fase}}"></div>
+                        </td>
                         <td>
                             {{consultant}}
                         </td>
@@ -186,12 +203,12 @@
                             {{/if}}
                         </td>
                         <td>{{area}}ha</td>
-                        <td class="text-center">
+                        <td align="center">
                             {{#if samePlanAsLast}}
                                 <img src="/check.svg" alt="flueben"/>
                             {{/if}}
                         </td>
-                        <td class="text-center">
+                        <td align="center">
                             {{#if takeOwnSamples}}
                                 <img src="/check.svg" alt="flueben"/>
                             {{/if}}

@@ -180,18 +180,18 @@ describe("order integration test", () => {
                     throw new Error("modal not shown")
                 }
 
-                modal.querySelector("#inputName").value = "NEW_NAME"
-                modal.querySelector("#inputFarmName").value = "NEW_FARM_NAME"
-                modal.querySelector("#inputStreet").value = "NEW_STREET"
-                modal.querySelector("#inputZip").value = 8888
-                modal.querySelector("#inputCity").value = "NEW_CITY"
-                modal.querySelector("#inputLandlineNumber").value = "77777777"
-                modal.querySelector("#inputPhoneNumber").value = "66666666"
-                modal.querySelector("#inputComment").value = "NEW_COMMENT"
-                modal.querySelector("#inputSampleDensity").value = 2
-                modal.querySelector("#inputArea").value = 3
-                modal.querySelector("#inputSamePlanAsLast").checked = false
-                modal.querySelector("#inputTakeOwnSamples").checked = false
+                modal.querySelector("#editInputName").value = "NEW_NAME"
+                modal.querySelector("#editInputFarmName").value = "NEW_FARM_NAME"
+                modal.querySelector("#editInputStreet").value = "NEW_STREET"
+                modal.querySelector("#editInputZip").value = 8888
+                modal.querySelector("#editInputCity").value = "NEW_CITY"
+                modal.querySelector("#editInputLandlineNumber").value = "77777777"
+                modal.querySelector("#editInputPhoneNumber").value = "66666666"
+                modal.querySelector("#editInputComment").value = "NEW_COMMENT"
+                modal.querySelector("#editInputSampleDensity").value = 2
+                modal.querySelector("#editInputArea").value = 3
+                modal.querySelector("#editInputSamePlanAsLast").checked = false
+                modal.querySelector("#editInputTakeOwnSamples").checked = false
                 modal.querySelector("#inputMapDate").value = "1970-01-02"
                 modal.querySelector("#inputSampleDate").value = "1970-01-02"
                 modal.querySelector("#inputSampleTime").value = 2
@@ -203,6 +203,8 @@ describe("order integration test", () => {
                 modal.querySelector("#inputFromLabDate").value = "1970-01-02"
                 modal.querySelector("#inputMO").value = "1970-01-02"
                 modal.querySelector("#inputReceptApproved").value = "1970-01-02"
+
+                //TODO should show log
 
                 modal.querySelector("#orderEditSave").click()
             }, 200)
@@ -236,4 +238,10 @@ describe("order integration test", () => {
         expect(order.mO).to.deep.eq(new Date("1970-01-02"))
         expect(order.receptApproved).to.deep.eq(new Date("1970-01-02"))
     })
+
+    it("should search")
+
+    it("should order")
+
+    it("should display statistics")
 })

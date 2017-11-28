@@ -2,6 +2,7 @@ const { Schema } = require("mongoose");
 const { sort } = require("./sort");
 const { search } = require("./search");
 const moment = require("moment");
+const diff = require("object-diff");
 
 const Order = new Schema({
     consultant: {
@@ -63,11 +64,40 @@ const Order = new Schema({
     fromLabDate: Date,
     mO: Date,
     receptApproved: Date,
-    samplesTaken: Number
+    samplesTaken: Number,
+    log:[{
+        time: Date,
+        changes: Object,
+        consultant: String
+    }]
 }, { strict: true });
 
-Order.statics.editOrder = function updateOrder(order) {
-    return this.findOneAndUpdate({ _id: order._id }, { $set: order }).exec()
+Order.statics.editOrder = async function updateOrder(order, user) {
+    order = new this(order)._doc
+    delete order.log
+    const oldOrder = (await this.findOne({ _id: order._id }).exec())._doc
+    delete oldOrder.log
+    delete oldOrder.__v
+    const changes = diff.custom({
+        equal: function(a, b){
+            if (a instanceof Date && b instanceof Date)
+                return a.getTime() === b.getTime();
+         
+            return a === b;
+        }
+    }, oldOrder, order)
+    delete changes._id
+    delete changes.address
+    const addressChanges = diff(oldOrder.address || {}, order.address || {})
+    const dbChanges = Object.keys(addressChanges).length ? Object.assign({}, changes, { address: addressChanges }) : changes
+    const logChanges = Object.assign({}, changes, addressChanges)
+    const newLog = {
+        time: moment(new Date()).startOf("minute").toDate(),
+        consultant: user,
+        changes: logChanges
+    }
+
+    return this.findOneAndUpdate({ _id: order._id }, { $set: dbChanges, $push: { log: newLog } }).exec()
 }
 Order.statics.createOrder = function createOrder(orderData) {
     if(orderData.landlineNumber || orderData.phoneNumber) {
@@ -111,15 +141,34 @@ Order.statics.sampleTotals = async function sampleTotals() {
 }
 
 Order.statics.getAll = async function getAll({query, sortBy="date", order}) {
-    const orders = await this.find().lean().exec()
+    let orders = await this.find().lean().exec()
 
     if (!query & !order){
         order = "desc";
     }
 
-    return sort(search(orders, query), sortBy, order).map(o => Object.assign(o, {
-        signedDate: moment(o.signedDate).format("DD-MM-YYYY")
-    }))
+    orders = search(orders, query).map(o => {
+        let fase = 1
+
+        if (o.mapDate) fase = 2
+
+        o.fase = fase
+
+        return o
+    })
+
+    return sort(orders, sortBy, order).map(o => {
+        o.signedDate = moment(o.signedDate).format("DD-MM-YYYY")
+        return o
+    })
+}
+
+Order.statics.setDynamicField = function setDynamicField(orderId, fase, name, value) {
+    return this.findOneAndUpdate({ _id: orderId }, {
+        $set: {
+            ["dynamics." + fase + "." + name]: value
+        }
+    }).exec()
 }
 
 Order.index({
