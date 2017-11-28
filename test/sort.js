@@ -159,7 +159,7 @@ describe("Sorting tests", () => {
     it("should pass - last Method - can remove", () => {
         expect(false).to.be.false
     })
-    it.only("should sort by fase", () => {
+    it("should sort by fase", () => {
         correctAnswer = [sortingArray[4],sortingArray[0],sortingArray[1],sortingArray[3],sortingArray[2]]
         expect(sort(sortingArray, "fase", "asc")).to.deep.eq(correctAnswer)
     })

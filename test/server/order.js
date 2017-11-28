@@ -91,7 +91,7 @@ describe("Order server tests", () => {
             const app = createApp(OrderMock);
 
             return request(app)
-                .post('/order/create')
+                .post('/order')
                 .send(order)
                 .expect(200)
                 .expect('order created');
@@ -112,7 +112,7 @@ describe("Order server tests", () => {
             const app = createApp(OrderMock);
 
             return request(app)
-                .post('/order/create')
+                .post('/order')
                 .send(order)
                 .expect('Content-Type', /application\/json/)
                 .expect(500);
@@ -133,10 +133,10 @@ describe("Order server tests", () => {
             const app = createApp(OrderMock);
 
             return request(app)
-                .post('/order/create')
+                .post('/order')
                 .send(order)
-                .expect('Content-Type', /application\/json/)
                 .expect(500)
+                .expect('Content-Type', /application\/json/)
         });
     })
     it("should set dynamic fields", () => {
