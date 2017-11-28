@@ -16,7 +16,7 @@ module.exports.createApp = function createApp(Order) {
         hbs.registerPartial("editOrderModal", require("fs").readFileSync(__dirname + "/views/editOrderModal.hbs").toString());
         hbs.registerPartial("createUserModal", require("fs").readFileSync(__dirname + "/views/createUserModal.hbs").toString());
         next()
-    })
+    });
 
     app.use(express.static(__dirname + '/public'));
     app.use(bodyParser.urlencoded({extended: true}));
@@ -68,10 +68,9 @@ module.exports.createApp = function createApp(Order) {
         });
     });
 
-    app.post("/user/create", function (req, res) {
-        const userData = req.body;
+    app.post("/user", function (req, res) {
 
-        var user = new User({userName: userData.userName, password: userData.password});
+        var user = new User({userName: req.body.userName, password: req.body.password});
 
         user.save().then(function (response) {
             res.json({status: "Bruger oprettet."});
@@ -81,21 +80,37 @@ module.exports.createApp = function createApp(Order) {
 
     });
 
-    app.put('/user/setPassword', function (req, res) {
+    app.put('/user/:userName', function (req, res) {
         // TODO
-        const userData = req.body;
 
-        User.findOneAndUpdate({userName: userData.userName}, {$set: {password: userData.password}})
+        User.findOneAndUpdate({userName: req.params.userName}, {$set: {userName: req.body.userName, password: req.body.password}})
             .then(function (response) {
-                console.log(response);
-                res.json({status: "Password sat."});
+                res.json({status: "Bruger opdateret."});
             })
             .catch(function (error) {
-                console.log(error);
-                res.json({error: "Kunne ikke sætte password."});
+                res.json(error);
             });
 
     });
 
-    return app
-}
+    app.post('/login', function (req, res) {
+    /*
+        User.findOne({userName: req.body.userName})
+            .then(function (response) {
+                res.json(response);
+            })
+            .catch(function (error) {
+                res.json(error);
+            });
+    */
+    User.matchPasswords(req.body.userName, req.body.password)
+        .then(function (result) {
+            res.json(result);
+        })
+        .catch(function (error) {
+            res.json(error);
+        });
+    });
+
+    return app;
+};

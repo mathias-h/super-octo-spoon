@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt');
 const SALT_ROUNDS = 10;
 
 
-let user = new Schema({
+const User = new Schema({
     userName: {
         type: String,
         required: true,
@@ -17,10 +17,9 @@ let user = new Schema({
         required: true
     },
     salt: {
-        type: String//,
-        //required: true
+        type: String
     },
-    admin: {
+    isAdmin: {
         type: Boolean,
         required: true,
         default: false
@@ -29,7 +28,7 @@ let user = new Schema({
     timestamps: true
 });
 
-user.pre('save', function (next) {
+User.pre('save', function (next) {
 
     if(this.userName === undefined){
         return next(new Error('Username is undefined.'));
@@ -60,16 +59,24 @@ user.pre('save', function (next) {
     }
 });
 
-user.pre('findOneAndUpdate', function (next) {
+User.pre('findOneAndUpdate', function (next) {
 
     const userName = this.getUpdate().$set.userName;
     const password = this.getUpdate().$set.password;
+
+    if(userName === undefined){
+        return next(new Error('Username is undefined.'));
+    }
 
     if(userName !== undefined && userName === ''){
         return next(new Error('Username is empty.'));
     }
     if(userName !== undefined && typeof userName !== 'string'){
         return next(new Error('Username is not a string.'));
+    }
+
+    if(password === undefined){
+        return next(new Error('Username is undefined.'));
     }
 
     if(password !== undefined && password === ''){
@@ -90,4 +97,33 @@ user.pre('findOneAndUpdate', function (next) {
     }
 });
 
-module.exports = mongoose.model('User', user);
+User.statics.matchPasswords = function (userName, password) {
+    return this.findOne({userName: userName})
+        .then(function (response) {
+            //TODO: Skal lige have sparring på det her. Bør vi returnere errors istedet for som pt. er gjort nedenfor?
+            if(!response){
+                return Promise.reject({status: "ERROR", message: "User not found."});
+            }
+
+            const hashedPassword = bcrypt.hashSync(password, response.salt);
+            if(hashedPassword !== response.password){
+                return Promise.reject({status: "ERROR", message: "Password mismatch."});
+            }
+
+            var result = {
+                status: "OK",
+                //TODO: Hvis ovenstående todo er ok, hvad skal message så være istedet for?
+                message: "",
+                userData: {
+                    userName: response.userName,
+                    isAdmin: response.isAdmin
+                    }
+                };
+            return Promise.resolve(result);
+        })
+        .catch(function (error) {
+            return Promise.reject(error);
+        });
+};
+
+module.exports = mongoose.model('User', User);
