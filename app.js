@@ -77,8 +77,10 @@ module.exports.createApp = function createApp(Order) {
         });
 
         user.save().then(function (response) {
+            console.log(response);
             res.json({status: "OK", message: "User created."});
         }).catch(function (error) {
+            console.log(error);
             res.json({status: "ERROR", message: "Could not create user."});
         });
 
@@ -96,13 +98,15 @@ module.exports.createApp = function createApp(Order) {
 
         User.findOneAndUpdate(condition, update, {runValidators: true})
             .then(function (response) {
+                console.log(response);
                 if(!response){
                     res.json({status: "ERROR", message: "User not found."})
                 }
                 res.json({status: "OK", message: "User updated."});
             })
             .catch(function (error) {
-                res.json(error);
+                console.log(error);
+                res.status(500).end("ERROR");
             });
 
     });
@@ -113,7 +117,11 @@ module.exports.createApp = function createApp(Order) {
                 res.json(result);
             })
             .catch(function (error) {
-                res.json(error);
+                console.log(error);
+                if(error.status === "ERROR"){
+                    res.status(401).end("Not authorized.");
+                }
+                res.status(500).end("ERROR");
             });
     });
 
