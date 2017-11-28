@@ -145,9 +145,16 @@ Order.statics.getAll = async function getAll({query, sortBy="date", order}) {
         order = "desc";
     }
 
-    return sort(search(orders, query), sortBy, order).map(o => Object.assign(o, {
-        signedDate: moment(o.signedDate).format("DD-MM-YYYY")
-    }))
+    return sort(search(orders, query), sortBy, order).map(o => {
+        let fase = 1
+
+        if (o.mapDate) fase = 2
+
+        return Object.assign(o, {
+            signedDate: moment(o.signedDate).format("DD-MM-YYYY"),
+            fase
+        })
+    })
 }
 
 Order.statics.setDynamicField = function setDynamicField(orderId, fase, name, value) {

@@ -74,6 +74,19 @@
                 border-color: #80bdff !important;
                 box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25) !important;
             }
+
+            .bubble {
+                width: 16px;
+                height: 16px;
+                border-radius: 50%;
+            }
+
+            .fase1 {
+                color: red;
+            }
+            .fase2 {
+                color: blue;
+            }
         </style>
 
         <script defer>
@@ -159,7 +172,7 @@
                 {{#each orders}}
                     <tr class="order" data-order-id="{{_id}}">
                         <td>
-                            {{fase}}
+                            <div class="bubble fase{{fase}}"></div>
                         </td>
                         <td>
                             {{consultant}}

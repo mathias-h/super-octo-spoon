@@ -259,6 +259,26 @@ describe("order", () => {
 
             expect(result[0].signedDate).to.eq("01-01-1970")
         })
+        it("should set fase 1", async () => {
+            const orders = [
+                { _id: 1, signedDate: new Date("1970-01-01") }
+            ]
+            Order.statics.find = () => ({ lean: () => ({ exec: () => orders }) })
+
+            const result = await Order.statics.getAll({})
+
+            expect(result[0].fase).to.eq(1)
+        })
+        it("should set fase 2", async () => {
+            const orders = [
+                { _id: 1, signedDate: new Date("1970-01-01"), mapDate: new Date("1970-01-01") }
+            ]
+            Order.statics.find = () => ({ lean: () => ({ exec: () => orders }) })
+
+            const result = await Order.statics.getAll({})
+
+            expect(result[0].fase).to.eq(2)
+        })
     })
 
     describe("set dynamic field", () => {
