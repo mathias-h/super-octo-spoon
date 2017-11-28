@@ -39,6 +39,7 @@ User.pre('save', function (next) {
     if(typeof this.userName !== 'string'){
         return next(new Error('Username is not a string.'));
     }
+
     if(this.password === undefined){
         return next(new Error('New password is undefined.'));
     }
@@ -67,22 +68,20 @@ User.pre('findOneAndUpdate', function (next) {
     if(userName === undefined){
         return next(new Error('Username is undefined.'));
     }
-
-    if(userName !== undefined && userName === ''){
+    if(userName === ''){
         return next(new Error('Username is empty.'));
     }
-    if(userName !== undefined && typeof userName !== 'string'){
+    if(typeof userName !== 'string'){
         return next(new Error('Username is not a string.'));
     }
 
     if(password === undefined){
         return next(new Error('Username is undefined.'));
     }
-
-    if(password !== undefined && password === ''){
+    if(password === ''){
         return next(new Error('New password is empty.'));
     }
-    if(password !== undefined && typeof password !== 'string'){
+    if(typeof password !== 'string'){
         return next(new Error('New password is not a string.'));
     }
 

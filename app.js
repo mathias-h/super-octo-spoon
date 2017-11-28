@@ -37,7 +37,7 @@ module.exports.createApp = function createApp(Order) {
         })
     });
     
-    app.post("/order/create", (req, res) => {
+    app.post("/order", (req, res) => {
         Order.createOrder(req.body).then(() => {
             res.header("Content-Type", "text/plain");
             res.send("order created");
@@ -82,7 +82,6 @@ module.exports.createApp = function createApp(Order) {
 
     app.put('/user/:userName', function (req, res) {
         // TODO
-
         User.findOneAndUpdate({userName: req.params.userName}, {$set: {userName: req.body.userName, password: req.body.password}})
             .then(function (response) {
                 res.json({status: "Bruger opdateret."});
@@ -90,19 +89,9 @@ module.exports.createApp = function createApp(Order) {
             .catch(function (error) {
                 res.json(error);
             });
-
     });
 
     app.post('/login', function (req, res) {
-    /*
-        User.findOne({userName: req.body.userName})
-            .then(function (response) {
-                res.json(response);
-            })
-            .catch(function (error) {
-                res.json(error);
-            });
-    */
     User.matchPasswords(req.body.userName, req.body.password)
         .then(function (result) {
             res.json(result);
