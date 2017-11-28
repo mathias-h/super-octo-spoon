@@ -144,7 +144,7 @@ class EditOrderModal {
         delete order.zip;
 
         return $.ajax({
-            type: 'POST',
+            type: 'PUT',
             url: '/order',
             data: JSON.stringify(order),
             contentType: "application/json"
