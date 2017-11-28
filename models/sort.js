@@ -42,6 +42,10 @@ module.exports.sort = function (orders, sortBy, order) {
         return _.orderBy(orders, function (order) {
             return order.landlineNumber
         }, [order])
+    } else if (sortBy == "fase") {
+        return _.orderBy(orders, function(order) {
+            return [order.fase, order.signedDate]
+        }, [order, "desc"])
     }
 
     else {

@@ -141,21 +141,25 @@ Order.statics.sampleTotals = async function sampleTotals() {
 }
 
 Order.statics.getAll = async function getAll({query, sortBy="date", order}) {
-    const orders = await this.find().lean().exec()
+    let orders = await this.find().lean().exec()
 
     if (!query & !order){
         order = "desc";
     }
 
-    return sort(search(orders, query), sortBy, order).map(o => {
+    orders = search(orders, query).map(o => {
         let fase = 1
 
         if (o.mapDate) fase = 2
 
-        return Object.assign(o, {
-            signedDate: moment(o.signedDate).format("DD-MM-YYYY"),
-            fase
-        })
+        o.fase = fase
+
+        return o
+    })
+
+    return sort(orders, sortBy, order).map(o => {
+        o.signedDate = moment(o.signedDate).format("DD-MM-YYYY")
+        return o
     })
 }
 
