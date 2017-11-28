@@ -28,15 +28,15 @@ class EditOrderModal {
             }
         })
 
-        $("#editOrderModal #inputLandlineNumber").on("input", () => this.validatePhoneNumbers());
-        $("#editOrderModal #inputPhoneNumber").on("input", () => this.validatePhoneNumbers());
+        $("#editOrderModal #editInputLandlineNumber").on("input", () => this.validatePhoneNumbers());
+        $("#editInputPhoneNumber").on("input", () => this.validatePhoneNumbers());
 
         this.form[0].classList.add("was-validated")
     }
 
     validatePhoneNumbers() {
-        const landline = $("#editOrderModal #inputLandlineNumber");
-        const mobile = $("#editOrderModal #inputPhoneNumber");
+        const landline = $("#editInputLandlineNumber");
+        const mobile = $("#editInputPhoneNumber");
 
         landline[0].setCustomValidity("");
         mobile[0].setCustomValidity("");
@@ -55,32 +55,70 @@ class EditOrderModal {
             if (!date) input.val("")
             else input.val(moment(new Date(date)).format("YYYY-MM-DD"));
         }
+        
         return $.get(`/order/${orderId}`).then(order => {
             this.orderId = orderId;
-            $("#editOrderModal #inputConsultant").val(order.consultant);
-            setDate($("#editOrderModal #inputSignedDate"), order.signedDate)
-            $("#editOrderModal #inputName").val(order.name);
-            $("#editOrderModal #inputFarmName").val(order.farmName);
-            $("#editOrderModal #inputStreet").val(order.address.street);
-            $("#editOrderModal #inputCity").val(order.address.city);
-            $("#editOrderModal #inputZip").val(order.address.zip);
-            $("#editOrderModal #inputLandlineNumber").val(order.landlineNumber);
-            $("#editOrderModal #inputPhoneNumber").val(order.phoneNumber);
-            $("#editOrderModal #inputComment").val(order.comment);
-            $("#editOrderModal #inputSampleDensity").val(order.sampleDensity);
-            $("#editOrderModal #inputSamePlanAsLast")[0].checked = order.samePlanAsLast;
-            $("#editOrderModal #inputTakeOwnSamples")[0].checked = order.takeOwnSamples;
-            $("#editOrderModal #inputArea").val(order.area);
-            setDate($("#editOrderModal #inputMapDate"), order.mapDate)
-            setDate($("#editOrderModal #inputMapSample"), order.mapSample)
-            $("#editOrderModal #inputSampleTime").val(order.sampleTime);
-            $("#editOrderModal #inputMgSamples").val(order.mgSamples);
-            $("#editOrderModal #inputCutSamples").val(order.cutSamples);
-            $("#editOrderModal #inputOtherSamples").val(order.otherSamples);
-            setDate($("#editOrderModal #inputLabDate"), order.labDate)
-            setDate($("#editOrderModal #inputFromLabDate"), order.fromLabDate)
-            setDate($("#editOrderModal #inputMO"), order.mO)
-            setDate($("#editOrderModal #inputReceptApproved"), order.receptApproved)
+            $("#editInputConsultant").val(order.consultant);
+            setDate($("#editInputSignedDate"), order.signedDate)
+            $("#editInputName").val(order.name);
+            $("#editInputFarmName").val(order.farmName);
+            $("#editInputStreet").val(order.address.street);
+            $("#editInputCity").val(order.address.city);
+            $("#editInputZip").val(order.address.zip);
+            $("#editInputLandlineNumber").val(order.landlineNumber);
+            $("#editInputPhoneNumber").val(order.phoneNumber);
+            $("#editInputComment").val(order.comment);
+            $("#editInputSampleDensity").val(order.sampleDensity);
+            $("#editInputSamePlanAsLast")[0].checked = order.samePlanAsLast;
+            $("#editInputTakeOwnSamples")[0].checked = order.takeOwnSamples;
+            $("#editInputArea").val(order.area);
+            setDate($("#inputMapDate"), order.mapDate)
+            setDate($("#inputSampleDate"), order.sampleDate)
+            $("#inputSampleTime").val(order.sampleTime);
+            $("#inputMgSamples").val(order.mgSamples);
+            $("#inputCutSamples").val(order.cutSamples);
+            $("#inputOtherSamples").val(order.otherSamples);
+            setDate($("#inputLabDate"), order.labDate)
+            setDate($("#inputFromLabDate"), order.fromLabDate)
+            setDate($("#inputMO"), order.mO)
+            setDate($("#inputReceptApproved"), order.receptApproved)
+
+            const names = {
+                name: "Navn",
+                farmName: "Gårdnavn",
+                street: "Adresse",
+                city: "By",
+                zip: "Postnummer",
+                landlineNumber: "Fastnet tlf.",
+                phoneNumber: "Mobil tlf.",
+                comment: "Kommentar",
+                sampleDensity: "Prøvetæthed",
+                area: "Areal",
+                samePlanAsLast: "Samme plan som sidst",
+                takeOwnSamples: "Prøver selvudtaget",
+                mapDate: "Kort til udtagning",
+                sampleDate: "Udtagning dato",
+                sampleTime: "Uptagning timer",
+                mgSamples: "Mg prøver",
+                cutSamples: "Cut prøver",
+                otherSamples: "Andre prøver",
+                labDate: "Sendt til lab",
+                fromLabDate: "Modtaget fra lab",
+                mO: "Sendt til markanalyse",
+                receptApproved: "Kvitering godkendt"
+            }
+
+            $("#log").html("<h2>Log</h2>" +
+            order.log.map(({ changes, time }) => `
+                <div class="form-row">
+                    <h3>${moment(time).format("DD-MM-YYYY HH:MM")}</h3>
+                </div>
+                ${Object.entries(changes).map(([k,v])=> `
+                    <div class="form-row">
+                    <p>${names[k]}</p>=<p>${v}</p>
+                    </div>
+                `).join("")}
+            `).join(""))
         });
     }
 
@@ -92,8 +130,8 @@ class EditOrderModal {
         const order = convertFormToObject(this.form[0]);
         order._id = this.orderId;
 
-        order.samePlanAsLast = $("#editOrderModal #inputSamePlanAsLast")[0].checked;
-        order.takeOwnSamples = $("#editOrderModal #inputTakeOwnSamples")[0].checked;
+        order.samePlanAsLast = $("#editInputSamePlanAsLast")[0].checked;
+        order.takeOwnSamples = $("#editInputTakeOwnSamples")[0].checked;
 
         order.address = {
             street: order.street,

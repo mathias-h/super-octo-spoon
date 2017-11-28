@@ -141,6 +141,7 @@
         <table class="table table-fixed table-striped">
             <thead>
                 <tr>
+                    <th>Fase</th>
                     <th class="sortable" id="consultant">Konsulent</th>
                     <th class="sortable" id="date">Oprettet dato</th>
                     <th class="sortable" id="landline">Fastnet tlf.</th>
@@ -157,6 +158,9 @@
             <tbody>
                 {{#each orders}}
                     <tr class="order" data-order-id="{{_id}}">
+                        <td>
+                            {{fase}}
+                        </td>
                         <td>
                             {{consultant}}
                         </td>

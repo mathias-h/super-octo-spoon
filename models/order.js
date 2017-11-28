@@ -2,6 +2,7 @@ const { Schema } = require("mongoose");
 const { sort } = require("./sort");
 const { search } = require("./search");
 const moment = require("moment");
+const diff = require("object-diff");
 
 const Order = new Schema({
     consultant: {
@@ -63,11 +64,38 @@ const Order = new Schema({
     fromLabDate: Date,
     mO: Date,
     receptApproved: Date,
-    samplesTaken: Number
+    samplesTaken: Number,
+    log:[{
+        time: Date,
+        changes: Object
+    }]
 }, { strict: true });
 
-Order.statics.editOrder = function updateOrder(order) {
-    return this.findOneAndUpdate({ _id: order._id }, { $set: order }).exec()
+Order.statics.editOrder = async function updateOrder(order) {
+    order = new this(order)._doc
+    delete order.log
+    const oldOrder = (await this.findOne({ _id: order._id }).exec())._doc
+    delete oldOrder.log
+    delete oldOrder.__v
+    const changes = diff.custom({
+        equal: function(a, b){
+            if (a instanceof Date && b instanceof Date)
+                return a.getTime() === b.getTime();
+         
+            return a === b;
+        }
+    }, oldOrder, order)
+    delete changes._id
+    delete changes.address
+    const addressChanges = diff(oldOrder.address || {}, order.address || {})
+    const dbChanges = Object.keys(addressChanges).length ? Object.assign({}, changes, { address: addressChanges }) : changes
+    const logChanges = Object.assign({}, changes, addressChanges)
+    const newLog = {
+        time: moment(new Date()).startOf("minute").toDate(),
+        changes: logChanges
+    }
+
+    return this.findOneAndUpdate({ _id: order._id }, { $set: dbChanges, $push: { log: newLog } }).exec()
 }
 Order.statics.createOrder = function createOrder(orderData) {
     if(orderData.landlineNumber || orderData.phoneNumber) {
