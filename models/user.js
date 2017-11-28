@@ -7,7 +7,7 @@ const SALT_ROUNDS = 10;
 
 
 const User = new Schema({
-    userName: {
+    username: {
         type: String,
         required: true,
         unique: true
@@ -25,28 +25,31 @@ const User = new Schema({
         default: false
     }
 },{
-    timestamps: true
+    timestamps: true,
+    strict: true
+
 });
 
 User.pre('save', function (next) {
 
-    if(this.userName === undefined){
+    if(this.username === undefined){
         return next(new Error('Username is undefined.'));
     }
-    if(this.userName === ''){
+    if(this.username === ''){
         return next(new Error('Username is empty.'));
     }
-    if(typeof this.userName !== 'string'){
+    if(typeof this.username !== 'string'){
         return next(new Error('Username is not a string.'));
     }
+
     if(this.password === undefined){
-        return next(new Error('New password is undefined.'));
+        return next(new Error('Password is undefined.'));
     }
     if(this.password === ''){
-        return next(new Error('New password is empty.'));
+        return next(new Error('Password is empty.'));
     }
     if(typeof this.password !== 'string'){
-        return next(new Error('New password is not a string.'));
+        return next(new Error('Password is not a string.'));
     }
 
     try {
@@ -60,30 +63,27 @@ User.pre('save', function (next) {
 });
 
 User.pre('findOneAndUpdate', function (next) {
-
-    const userName = this.getUpdate().$set.userName;
+    const userName = this.getUpdate().$set.username;
     const password = this.getUpdate().$set.password;
+    const isAdmin = this.getUpdate().$set.isAdmin;
 
-    if(userName === undefined){
-        return next(new Error('Username is undefined.'));
-    }
-
-    if(userName !== undefined && userName === ''){
+    if(userName && userName === ''){
         return next(new Error('Username is empty.'));
     }
-    if(userName !== undefined && typeof userName !== 'string'){
+    if(userName && userName && typeof userName !== 'string'){
         return next(new Error('Username is not a string.'));
     }
-
-    if(password === undefined){
-        return next(new Error('Username is undefined.'));
-    }
-
-    if(password !== undefined && password === ''){
+    if(password && password === ''){
         return next(new Error('New password is empty.'));
     }
-    if(password !== undefined && typeof password !== 'string'){
+    if(password && typeof password !== 'string'){
         return next(new Error('New password is not a string.'));
+    }
+    if(isAdmin && isAdmin=== ''){
+        return next(new Error('Admin level is empty.'));
+    }
+    if(isAdmin && typeof isAdmin !== 'string'){
+        return next(new Error('Admin level is not a string.'));
     }
 
     try {
@@ -97,25 +97,23 @@ User.pre('findOneAndUpdate', function (next) {
     }
 });
 
-User.statics.matchPasswords = function (userName, password) {
-    return this.findOne({userName: userName})
+User.statics.matchPasswords = function (username, password) {
+    return this.findOne({username: username})
         .then(function (response) {
-            //TODO: Skal lige have sparring på det her. Bør vi returnere errors istedet for som pt. er gjort nedenfor?
             if(!response){
-                return Promise.reject({status: "ERROR", message: "User not found."});
+                return Promise.reject({status: "ERROR", message: "Username or password is invalid."});
             }
 
             const hashedPassword = bcrypt.hashSync(password, response.salt);
             if(hashedPassword !== response.password){
-                return Promise.reject({status: "ERROR", message: "Password mismatch."});
+                return Promise.reject({status: "ERROR", message: "Username or password is invalid."});
             }
 
             var result = {
                 status: "OK",
-                //TODO: Hvis ovenstående todo er ok, hvad skal message så være istedet for?
-                message: "",
+                message: "Authentication OK",
                 userData: {
-                    userName: response.userName,
+                    username: response.username,
                     isAdmin: response.isAdmin
                     }
                 };

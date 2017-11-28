@@ -160,7 +160,43 @@ describe("order", () => {
         })
     });
     it("should create order", () => {
-        // TODO
+        const oldStatics = Order.statics;
+
+        Order.statics = function(order) {
+            expect(order.consultant).to.eq(newOrder.consultant);
+            expect(order.signedDate).to.eq(newOrder.signedDate);
+            expect(order.landlineNumber).to.eq(newOrder.landlineNumber);
+            expect(order.phoneNumber).to.eq(newOrder.phoneNumber);
+            expect(order.name).to.eq(newOrder.name);
+            expect(order.farmName).to.eq(newOrder.farmName);
+            expect(order.address.street).to.eq(newOrder.street);
+            expect(order.address.city).to.eq(newOrder.city);
+            expect(order.address.zip).to.eq(newOrder.zip);
+            expect(order.comment).to.eq(newOrder.comment);
+
+            return Order.statics;
+        };
+
+        Object.assign(Order.statics, oldStatics);
+
+        const newOrder ={
+            consultant: 'CONSULTANT',
+            signedDate: '2017-1-1',
+            landlineNumber: 11223344,
+            phoneNumber: 55667788,
+            name: 'NAME',
+            farmName: 'FARMNAME',
+            street: "STREET",
+            city: "CITY",
+            zip: 8888,
+            comment: 'COMMENT'
+        };
+
+        Order.statics.save = function saveMock() {
+            return { exec: () => Promise.resolve() }
+        };
+
+        return Order.statics.createOrder(newOrder);
     });
     it("sample totals", async () => {
         Order.statics.aggregate = function aggretageMock([match,group]) {

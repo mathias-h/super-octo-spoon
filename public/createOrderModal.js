@@ -29,10 +29,14 @@ window.addEventListener('load', function() {
         }
     });
 
+    function getCurrentDate(){
+
+    }
+
     const form = document.getElementById('orderCreateForm');
     function clearOrderCreate(){
         // TODO: Sæt konsulent tilbage til bruger
-        $("#inputSignedDate").val("2017-11-21");
+        $("#inputSignedDate").val();
         $("#inputName").val("");
         $("#inputFarmName").val("");
         $("#inputStreet").val("");
@@ -44,6 +48,17 @@ window.addEventListener('load', function() {
 
         $(form).removeClass('was-validated');
     }
+
+    $(form).keypress((e) => {
+        if(e.which == 13){
+            event.preventDefault();
+            event.stopPropagation();
+
+            $("#orderCreateSubmit").click();
+
+            return false;
+        }
+    });
 
     form.addEventListener('submit', function(event) {
         event.preventDefault();
@@ -66,7 +81,7 @@ window.addEventListener('load', function() {
         if (form.checkValidity() === true) {
             const data = convertFormToObject(form);
             $.ajax({
-                url: "/order/create",
+                url: "/order",
                 method: "POST",
                 data: JSON.stringify(data),
                 headers: {
