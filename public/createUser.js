@@ -75,15 +75,15 @@ window.addEventListener('load', function() {
 
         if (form.checkValidity() === true) {
             const data = convertFormToObject(form);
-            const userData = {username: data.consultant, password: data.password, isSuperUser: data.isSuperUser};
+            const userData = {username: data.consultant, password: data.password, isAdmin: data.isSuperUser == "on"};
             $.ajax({
                 url: "/user",
                 method: "POST",
-                data: JSON.stringify(data),
+                data: JSON.stringify(userData),
                 headers: {
                     "content-type": "application/json"
                 }
-            }).then(console.log(JSON.stringify(userData)));
+            }).then(location.reload());
         }
 
         form.classList.add('was-validated');

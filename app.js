@@ -69,7 +69,6 @@ module.exports.createApp = function createApp(Order) {
     });
 
     app.post("/user", function (req, res) {
-
         const user = new User({
             username: req.body.username,
             password: req.body.password,
