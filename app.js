@@ -3,7 +3,6 @@
 const bodyParser = require('body-parser');
 const express = require("express");
 const hbs = require("hbs");
-const CONSULTANTS = ["MH","MJ","NK","NL","ML"];
 
 module.exports.createApp = function createApp(Order, User) {
     const app = express();
@@ -13,7 +12,10 @@ module.exports.createApp = function createApp(Order, User) {
     app.use((req,res, next) => {
         hbs.registerPartial("createOrderModal", require("fs").readFileSync(__dirname + "/views/createOrderModal.hbs").toString());
         hbs.registerPartial("editOrderModal", require("fs").readFileSync(__dirname + "/views/editOrderModal.hbs").toString());
-        hbs.registerPartial("createUserModal", require("fs").readFileSync(__dirname + "/views/createUserModal.hbs").toString());
+
+        hbs.registerPartial("adminModal", require("fs").readFileSync(__dirname + "/views/admin.hbs").toString());
+        hbs.registerPartial("createUser", require("fs").readFileSync(__dirname + "/views/admin/createUser.hbs").toString());
+
         hbs.registerHelper("objectIter", function(obj, options) {
             let out = ""
             for (const [key, val] of Object.entries(obj)) {
@@ -31,16 +33,21 @@ module.exports.createApp = function createApp(Order, User) {
     
     app.get("/", (req,res) => {
         Order.sampleTotals().then(({ totalSamples, totalTaken }) => {
-            Order.getAll(req.query).then(orders => {
-                const data = {
-                    orders,
-                    totalSamples,
-                    totalTaken,
-                    query: req.query.query,
-                    consultants: CONSULTANTS
-                };
-                res.render("overview", data);
+            return Order.getAll(req.query).then(orders => {
+                return User.find({}).select({username: 1}).then(consultants => {
+                    const data = {
+                        orders,
+                        totalSamples,
+                        totalTaken,
+                        query: req.query.query,
+                        consultants: consultants
+                    };
+                    res.render("overview", data);
+                });
             })
+        }).catch(err => {
+            console.error(err)
+            res.render("error")
         })
     });
     
@@ -65,13 +72,15 @@ module.exports.createApp = function createApp(Order, User) {
     
     app.put("/order", (req,res) => {
         const order = req.body;
-        const currentUser = "MH" // TODO get current user
-    
-        Order.editOrder(order, currentUser).then(() => {
-            res.end("order updated");
-        }).catch(err => {
-            res.status(500).json(err);
-        });
+        
+        User.findOne().exec().then(user => {
+            Order.editOrder(order, user._id).then(() => {
+                res.end("order updated");
+            }).catch(err => {
+                console.error(err)
+                res.status(500).json(err);
+            });
+        })
     });
 
     app.put("/order/dynamic/:orderId", (req,res) => {
@@ -110,6 +119,10 @@ module.exports.createApp = function createApp(Order, User) {
                 console.log(error);
                 res.status(500).end("ERROR");
             });
+    });
+
+    app.get('/login', (req, res) =>{
+        res.render('login');
     });
 
     app.post('/login', function (req, res) {

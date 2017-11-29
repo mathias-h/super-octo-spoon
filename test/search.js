@@ -2,7 +2,7 @@ const { expect } = require("chai");
 const { search } = require("../models/search");
 const testOrders = [
     {
-        consultant: "CONSULTANT1",
+        consultant: { username: "CONSULTANT1" },
         signedDate: new Date("1/1/2017"),
         landlineNumber: "88888888",
         phoneNumber: "99999990",
@@ -16,7 +16,7 @@ const testOrders = [
         comment: "Ring efter høst"
     },
     {
-        consultant: "CONSULTANT1",
+        consultant: { username: "CONSULTANT1" },
         signedDate: new Date("1/1/2017"),
         landlineNumber: "88888889",
         phoneNumber: "99999999",
@@ -30,7 +30,7 @@ const testOrders = [
         comment: "Ring før høst"
     },
     {
-        consultant: "CONSULTANT2",
+        consultant: { username: "CONSULTANT2" },
         signedDate: new Date("1/1/2017"),
         landlineNumber: "88888887",
         phoneNumber: "99999999",

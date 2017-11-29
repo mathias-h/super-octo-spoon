@@ -14,7 +14,10 @@ describe("overview view", () => {
                 return Promise.resolve({ totalSamples: 0, totalTaken: 0 })
             }
         };
-        const app = createApp(OrderMock);
+        const UserMock = {
+            find: () => ({ select: () => Promise.resolve({}) })
+        }
+        const app = createApp(OrderMock, UserMock);
         
         return request(app)
             .get("/?query=test")

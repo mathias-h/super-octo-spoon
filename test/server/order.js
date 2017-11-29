@@ -55,8 +55,13 @@ describe("Order server tests", () => {
                 return Promise.resolve()
             }
         };
+        const UserMock = {
+            findOne() {
+                return { exec: () => Promise.resolve({}) }
+            }
+        }
         
-        const app = createApp(OrderMock)
+        const app = createApp(OrderMock, UserMock)
 
         return request(app)
             .put("/order")

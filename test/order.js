@@ -33,8 +33,7 @@ describe("order", () => {
                 
                 return { exec: () => Promise.resolve() }
             };
-            Order.statics.findOne = () => ({ exec: () => ({ _doc: { order: "old-value"} }) })
-
+            Order.statics.findOne = () => ({ exec: () => ({ _doc: { order: "old-value" } }) })
             
             return Order.statics.editOrder(newOrder)
         });
@@ -90,9 +89,7 @@ describe("order", () => {
                 }
             }
             const oldOrder = {
-                _id: orderId,
-                order: "order",
-                log: []
+                _id: orderId
             }
 
             const oldStatics = Order.statics
@@ -157,6 +154,51 @@ describe("order", () => {
             }
 
             await Order.statics.editOrder(newOrder)
+        })
+        it("should handle dynamic columns", async () => {
+            const orderId = mongoose.Types.ObjectId();
+            const fase = 0
+            const name = "NAME"
+            const value = "VALUE"
+            const newOrder = {
+                _id: orderId,
+                dynamics: {
+                    [fase]: {
+                        [name]: value
+                    }
+                }
+            }
+            const oldOrder = {
+                _id: orderId
+            }
+
+            const oldStatics = Order.statics;
+            Order.statics = function(order) {
+                this._doc = order
+            }
+            Object.assign(Order.statics, oldStatics);
+
+            Order.statics.findOneAndUpdate = function findOneAndUpdateMock(query, update) {
+                expect(update.$set).to.deep.eq({
+                    dynamics: {
+                        [fase]: {
+                            [name]: value
+                        }
+                    }
+                });
+                expect(update.$push.log.changes).to.deep.eq({
+                    [name]: value
+                });
+                
+                return { exec: () => ({}) };
+            }
+
+            Order.statics.findOne = (query) => {
+                expect(query).to.deep.eq({ _id: orderId });
+                return { exec: () => ({_doc:oldOrder}) };
+            }
+
+            await Order.statics.editOrder(newOrder);
         })
     });
     it("should create order", () => {
@@ -233,13 +275,13 @@ describe("order", () => {
                         city: "CITY",
                         street: "STREET"
                     },
-                    consultant: "CONSULTANT",
+                    consultant: { username: "CONSULTANT"},
                     landlineNumber: "88888888",
                     phoneNumber: "88888888",
                     farmName: "FARM_NAME"
                 }
             ]
-            Order.statics.find = () => ({ lean: () => ({ exec: () => orders }) })
+            Order.statics.find = () => ({ lean: () => ({ populate: () => ({ exec: () => orders }) }) })
 
             const result = await Order.statics.getAll({ query })
 
@@ -250,7 +292,7 @@ describe("order", () => {
                 { _id: 1, name: "B" },
                 { _id: 2, name: "A" }
             ]
-            Order.statics.find = () => ({ lean: () => ({ exec: () => orders }) })
+            Order.statics.find = () => ({ lean: () => ({ populate: () => ({ exec: () => orders }) }) })
 
             const result = await Order.statics.getAll({ sortBy: "name", order: "asc" })
 
@@ -262,7 +304,7 @@ describe("order", () => {
                 { _id: 1, name: "A" },
                 { _id: 2, name: "B" }
             ]
-            Order.statics.find = () => ({ lean: () => ({ exec: () => orders }) })
+            Order.statics.find = () => ({ lean: () => ({ populate: () => ({ exec: () => orders }) }) })
 
             const result = await Order.statics.getAll({ sortBy: "name", order: "desc" })
 
@@ -274,7 +316,7 @@ describe("order", () => {
                 { _id: 1, signedDate: new Date("1970-01-01") },
                 { _id: 2, signedDate: new Date("1970-01-02") }
             ]
-            Order.statics.find = () => ({ lean: () => ({ exec: () => orders }) })
+            Order.statics.find = () => ({ lean: () => ({ populate: () => ({ exec: () => orders }) }) })
 
             const result = await Order.statics.getAll({})
 
@@ -285,7 +327,7 @@ describe("order", () => {
             const orders = [
                 { _id: 1, signedDate: new Date("1970-01-01") }
             ]
-            Order.statics.find = () => ({ lean: () => ({ exec: () => orders }) })
+            Order.statics.find = () => ({ lean: () => ({ populate: () => ({ exec: () => orders }) }) })
 
             const result = await Order.statics.getAll({})
 
@@ -295,7 +337,7 @@ describe("order", () => {
             const orders = [
                 { _id: 1, signedDate: new Date("1970-01-01") }
             ]
-            Order.statics.find = () => ({ lean: () => ({ exec: () => orders }) })
+            Order.statics.find = () => ({ lean: () => ({ populate: () => ({ exec: () => orders }) }) })
 
             const result = await Order.statics.getAll({})
 
@@ -305,38 +347,11 @@ describe("order", () => {
             const orders = [
                 { _id: 1, signedDate: new Date("1970-01-01"), mapDate: new Date("1970-01-01") }
             ]
-            Order.statics.find = () => ({ lean: () => ({ exec: () => orders }) })
+            Order.statics.find = () => ({ lean: () => ({ populate: () => ({ exec: () => orders }) }) })
 
             const result = await Order.statics.getAll({})
 
             expect(result[0].fase).to.eq(2)
-        })
-    })
-
-    describe("set dynamic field", () => {
-        it("should set field", async () => {
-            const orderId = mongoose.Types.ObjectId();
-            const fase = 0;
-            const name = "NAME";
-            const value = "VALUE";
-            const order = {
-                _id: orderId,
-                dynamics: []
-            };
-            let wasCalled = false
-
-            Order.statics.findOneAndUpdate = function findOneAndUpdateMock(query, update) {
-                expect(query).to.deep.eq({ _id: orderId });
-                expect(update).to.deep.eq({
-                    $set: { ["dynamics." + fase + "." + name]: value }
-                });
-                wasCalled = true
-
-                return { exec: () => Promise.resolve() }
-            }
-
-            await Order.statics.setDynamicField(orderId, fase, name, value);
-            expect(wasCalled).to.be.true
         })
     })
 });
