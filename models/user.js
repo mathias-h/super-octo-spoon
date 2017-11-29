@@ -104,44 +104,98 @@ User.pre('findOneAndUpdate', function (next) {
     return next();
 });
 
-User.statics.matchPasswords = function (username, password) {
+User.statics.matchPasswords = async function (username, password) {
+
+    let foundUser = await this.findOne({username: username}).exec();
+
+    return await bcrypt.compare(password, foundUser.password);
+
+
+
+/*
+    let foundUser = this.findOne({username: username});
+
+    let returnValue = "notSet";
+
+    bcrypt.compare(password, foundUser.password, function (error, isValidLogin) {
+
+        console.log("DEBUG: isValidLogin " + isValidLogin);
+        if(isValidLogin){
+
+            returnValue = {
+                id: foundUser._id,
+                username: foundUser.username,
+                isAdmin: foundUser.isAdmin,
+                isDisabled: foundUser.isDisabled
+            };
+        }
+        else {
+            returnValue = false;
+        }
+        console.log(":" + returnValue);
+    });
+
+    //console.log(returnValue);
+
+    return returnValue;
+
+
 
     return this.findOne({username: username})
         .then(function (response) {
+            //console.log("DEBUG: findOne.then():");
+            //console.log(response);
             if(!response){
-                return Promise.reject({status: "ERROR", message: "Username or password is invalid."});
+                throw new Error("Username or password is invalid.");
             }
 
-            const result = {
-                status: "OK",
-                message: "Authentication OK",
-                userData: {
-                    id: response._id,
-                    username: response.username,
-                    isAdmin: response.isAdmin,
-                    isDisabled: response.isDisabled
+            bcrypt.compareSync(password, response.password, function (error, isValidLogin) {
+
+                console.log("DEBUG: isValidLogin " + isValidLogin);
+                if(isValidLogin){
+
+                    return {
+                        id: response._id,
+                        username: response.username,
+                        isAdmin: response.isAdmin,
+                        isDisabled: response.isDisabled
+                    };
                 }
+                else {
+                    return false;
+                }
+            })
+
+
+
+            const result = {
+                id: response._id,
+                username: response.username,
+                isAdmin: response.isAdmin,
+                isDisabled: response.isDisabled
             };
 
-            bcrypt.compare(password, response.password)
+            bcrypt.compareSync(password, response.password)
                 .then(function (isValidLogin) {
-
+                    console.log("DEBUG: bcrypt.compare.then:");
                     if(isValidLogin){
-                        Promise.resolve(result);
+                        console.log("DEBUG: isValidLogin " + isValidLogin);
+                        return result;
                     }
                     else{
-                        Promise.reject({status: "ERROR", message: "Username or password is incorrect."});
+                        throw new Error("Username or password is incorrect.");
                     }
 
                 })
                 .catch(function (error) {
-                    Promise.reject({status: "ERROR", message: "Could not validate.", error: error});
+                    throw new Error("Could not validate.");
                 });
+
         })
         .catch(function (error) {
-            return Promise.reject({status: "ERROR", message: "Could not validate.", error: error});
+            throw new Error("Could not validate.");
         });
-
+    */
 };
 
 User.statics.updateUser = function (userId, userData) {
