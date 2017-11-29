@@ -87,7 +87,7 @@ User.pre('findOneAndUpdate', function (next) {
         return next(new Error('Admin level is empty.'));
     }
     if(isAdmin && typeof isAdmin !== "boolean"){
-        return next(new Error('Admin level is not a string.'));
+        return next(new Error('Admin level is not a boolean.'));
     }
 
     let that = this;
@@ -105,12 +105,59 @@ User.pre('findOneAndUpdate', function (next) {
 });
 
 User.statics.matchPasswords = async function (username, password) {
-
+/*
     let foundUser = await this.findOne({username: username}).exec();
 
     return await bcrypt.compare(password, foundUser.password);
+*/
 
+    if(!username){
+        return {status: false, message: "Missing username."};
+    }
+    if(typeof username !== 'string'){
+        return {status: false, message: "Incorrect type of username."};
+    }
+    if(!password){
+        return {status: false, message: "Missing password."};
+    }
+    if(typeof password !== 'string'){
+        return {status: false, message: "Incorrect type of password."};
+    }
+    return this.findOne({username: username})
+        .then(function (user) {
 
+            if(user === null){
+                return {
+                        status: false,
+                        message: "User not found."
+                        };
+            }
+            else{
+                let response = {
+                    status: false,
+                    message: "Incorrect credentials"
+                };
+
+                response.status = bcrypt.compareSync(password, user.password);
+
+                if(response.status){
+                    response.message = "OK Credentials",
+                    response.user = {
+                        id: user._id,
+                        username: user.username,
+                        isAdmin: user.isAdmin,
+                        isDisabled: user.isDisabled
+                    }
+                }
+
+                return response;
+            }
+        }).catch(function (error) {
+            return {
+                    status: false,
+                    error: error
+                    };
+        });
 
 /*
     let foundUser = this.findOne({username: username});

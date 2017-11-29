@@ -133,7 +133,7 @@ module.exports.createApp = function createApp(Order, User) {
                 console.log("DEBUG: route then()");
                 console.log(result);
 
-                if(result){
+                if(result.status){
                     // TODO Start session her
                     res.json({status: "OK"});
                 }
