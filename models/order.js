@@ -1,4 +1,4 @@
-const { Schema } = require("mongoose");
+const { Schema, Types } = require("mongoose");
 const { sort } = require("./sort");
 const { search } = require("./search");
 const moment = require("moment");
@@ -77,6 +77,9 @@ const Order = new Schema({
 Order.statics.editOrder = async function updateOrder(order, user) {
     order = new this(order)._doc
     const oldOrder = (await this.findOne({ _id: order._id }).exec())._doc
+
+    if (order.consultant) order.consultant = order.consultant.toString()
+    if (oldOrder.consultant) oldOrder.consultant = oldOrder.consultant.toString()
 
     delete oldOrder.__v
     delete oldOrder.log

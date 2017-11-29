@@ -7,6 +7,7 @@ const rimraf = require("rimraf")
 const moment = require("moment")
 
 const { Order : OrderSchema } = require("../../models/order")
+const { User : UserSchema } = require("../../models/user")
 const { createApp } = require("../../app")
 
 const sleep = time => new Promise(resolve => setTimeout(resolve, time))
@@ -17,6 +18,7 @@ describe("order integration test", () => {
     let browser
     let page
     const OrderModel = mongoose.models.Order || mongoose.model("Order", OrderSchema)
+    const UserModel = mongoose.models.User || mongoose.model("User", UserSchema)
     
     before(async () => {
         const dataPath = __dirname + "/../test-data"
@@ -30,8 +32,8 @@ describe("order integration test", () => {
         mongoose.connect("mongodb://localhost:27018/super-octo-spoon");
         mongoose.Promise = global.Promise;
 
-        server = createApp(OrderModel).listen(1025)
-        browser = await puppeteer.launch()
+        server = createApp(OrderModel, UserModel).listen(1025)
+        browser = await puppeteer.launch({ headless: false, devtools: true })
 
         page = await browser.newPage()
         await page.goto("http://localhost:1025/")
@@ -44,14 +46,17 @@ describe("order integration test", () => {
         db.kill()
     })
 
-    beforeEach(() => OrderModel.remove({}).exec())
+    beforeEach(async () => {
+        await OrderModel.remove({}).exec()
+        await UserModel.remove({}).exec()
+    })
 
     it("should show orders in overview", async () => {
-        const orderId1 = mongoose.Types.ObjectId()
-        orderId1.toHexString()
+        const orderId = mongoose.Types.ObjectId()
+        const consultantId = mongoose.Types.ObjectId()
         const order = new OrderModel({
-            _id: orderId1,
-            consultant: "CONTULTANT",
+            _id: orderId,
+            consultant: mongoose.Types.ObjectId(),
             signedDate: new Date("2017-01-02"),
             name: "NAME",
             farmName: "FARM_NAME",
@@ -61,10 +66,10 @@ describe("order integration test", () => {
                 zip: 9999
             }
         })
-        const orderId2 = mongoose.Types.ObjectId()
+        const orderId1 = mongoose.Types.ObjectId()
         const order1 = new OrderModel({
-            _id: orderId2,
-            consultant: "CONTULTANT",
+            _id: orderId1,
+            consultant: consultantId,
             signedDate: new Date("2017-01-01"),
             name: "NAME",
             farmName: "FARM_NAME",
@@ -83,13 +88,21 @@ describe("order integration test", () => {
             Array.from(document.querySelectorAll("tr.order"))
                 .map(o => o.getAttribute("data-order-id")))
 
-        expect(orderIds).to.deep.eq([orderId1.toHexString(), orderId2.toHexString()])
+        expect(orderIds).to.deep.eq([orderId.toHexString(), orderId1.toHexString()])
     })
 
     it("should create order", async () => {
+        const user = new UserModel({
+            username: "USERNAME",
+            password: "PASSWORD",
+            isAdmin: true,
+            isDisabled: false
+        })
+        await user.save()
+
         await page.reload()
 
-        await page.evaluate(() => {
+        await page.evaluate((userId) => {
             document.querySelector("#navbarSupportedContent > ul > li:nth-child(1) > a").click()
 
             const modal = document.querySelector("#createOrderModal")
@@ -99,6 +112,7 @@ describe("order integration test", () => {
                     throw new Error("modal not shown")
                 }
 
+                modal.querySelector("#inputConsultant").value = userId
                 modal.querySelector("#inputName").value = "NAME"
                 modal.querySelector("#inputFarmName").value = "FARM_NAME"
                 modal.querySelector("#inputStreet").value = "STREET"
@@ -114,13 +128,14 @@ describe("order integration test", () => {
 
                 modal.querySelector("button[type=submit]").click()
             }, 200)
-        })
+        }, user._id)
 
-        await sleep(400)
+        await sleep(500)
 
-        const [order] = await OrderModel.find().lean().exec()
+        const orders = await OrderModel.find().lean().exec()
+        const order = orders[0]
 
-        expect(order.consultant).to.eq("MH")
+        expect(order.consultant.toHexString()).to.eq(user._id.toHexString())
         expect(moment(order.signedDate).format("YYYY-MM-DD")).to.eq(moment(new Date()).format("YYYY-MM-DD"))
         expect(order.name).to.eq("NAME")
         expect(order.farmName).to.eq("FARM_NAME")
@@ -137,10 +152,26 @@ describe("order integration test", () => {
     })
 
     it("should edit order", async () => {
+        const consultant = new UserModel({
+            username: "CONSULTANT",
+            password: "PASSWORD",
+            isAdmin: false,
+            isDisabled: false
+        })
+        const consultant1 = new UserModel({
+            username: "CONSULTANT1",
+            password: "PASSWORD",
+            isAdmin: false,
+            isDisabled: false
+        })
+
+        await consultant.save()
+        await consultant1.save()
+
         const orderId = mongoose.Types.ObjectId()
         await new OrderModel({
             _id: orderId,
-            consultant: "MH",
+            consultant: consultant._id,
             signedDate: new Date("2017-01-01"),
             name: "NAME",
             farmName: "FARM_NAME",
@@ -171,7 +202,7 @@ describe("order integration test", () => {
 
         await page.reload()
 
-        await page.evaluate(() => {
+        await page.evaluate((newConsultantId) => {
             document.querySelector(".order").click()
             const modal = document.getElementById("editOrderModal")
 
@@ -180,6 +211,7 @@ describe("order integration test", () => {
                     throw new Error("modal not shown")
                 }
 
+                modal.querySelector("#editInputConsultant").value = newConsultantId
                 modal.querySelector("#editInputName").value = "NEW_NAME"
                 modal.querySelector("#editInputFarmName").value = "NEW_FARM_NAME"
                 modal.querySelector("#editInputStreet").value = "NEW_STREET"
@@ -208,12 +240,13 @@ describe("order integration test", () => {
 
                 modal.querySelector("#orderEditSave").click()
             }, 200)
-        })
+        }, consultant1._id.toHexString())
 
         await sleep(400)
 
         const order = await OrderModel.findOne({ _id: orderId })
 
+        expect(order.consultant.toHexString()).to.eq(consultant1._id.toHexString())
         expect(order.name).to.eq("NEW_NAME")
         expect(order.farmName).to.eq("NEW_FARM_NAME")
         expect(order.address.street).to.eq("NEW_STREET")

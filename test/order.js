@@ -275,7 +275,7 @@ describe("order", () => {
                         city: "CITY",
                         street: "STREET"
                     },
-                    consultant: "CONSULTANT",
+                    consultant: { username: "CONSULTANT"},
                     landlineNumber: "88888888",
                     phoneNumber: "88888888",
                     farmName: "FARM_NAME"
