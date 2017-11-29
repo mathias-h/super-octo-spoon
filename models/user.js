@@ -70,6 +70,7 @@ User.pre('findOneAndUpdate', function (next) {
     const username = this.getUpdate().$set.username;
     const password = this.getUpdate().$set.password;
     const isAdmin = this.getUpdate().$set.isAdmin;
+    const isDisabled = this.getUpdate().$set.isDisabled;
 
     if(username === ''){
         return next(new Error('Username is empty.'));
@@ -88,6 +89,12 @@ User.pre('findOneAndUpdate', function (next) {
     }
     if(isAdmin && typeof isAdmin !== "boolean"){
         return next(new Error('Admin level is not a boolean.'));
+    }
+    if(isDisabled=== ''){
+        return next(new Error('Activity level is empty.'));
+    }
+    if(isDisabled && typeof isDisabled !== "boolean"){
+        return next(new Error('Activity level is not a boolean.'));
     }
 
     let that = this;
@@ -158,7 +165,7 @@ User.statics.matchPasswords = async function (username, password) {
                     error: error
                     };
         });
-    
+
 };
 
 User.statics.updateUser = function (userId, userData) {
@@ -189,6 +196,7 @@ User.statics.createUser = function (userData) {
 
     const user = new this();
 
+    // TODO Check lige op på følgende checks. De holder vidst ikke helt i praksis - ndlarsen
     if(userData.username){
         user.username = userData.username;
     }
