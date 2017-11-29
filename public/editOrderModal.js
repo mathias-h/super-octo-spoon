@@ -98,7 +98,7 @@ class EditOrderModal {
                 takeOwnSamples: "Prøver selvudtaget",
                 mapDate: "Kort til udtagning",
                 sampleDate: "Udtagning dato",
-                sampleTime: "Uptagning timer",
+                sampleTime: "Udtagning timer",
                 mgSamples: "Mg prøver",
                 cutSamples: "Cut prøver",
                 otherSamples: "Andre prøver",

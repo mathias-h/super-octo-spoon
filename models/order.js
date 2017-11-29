@@ -2,7 +2,7 @@ const { Schema } = require("mongoose");
 const { sort } = require("./sort");
 const { search } = require("./search");
 const moment = require("moment");
-const diff = require("object-diff");
+const { diff } = require("deep-object-diff");
 
 const Order = new Schema({
     consultant: {
@@ -69,35 +69,40 @@ const Order = new Schema({
         time: Date,
         changes: Object,
         consultant: String
-    }]
+    }],
+    dynamics: Object
 }, { strict: true });
 
 Order.statics.editOrder = async function updateOrder(order, user) {
     order = new this(order)._doc
-    delete order.log
     const oldOrder = (await this.findOne({ _id: order._id }).exec())._doc
-    delete oldOrder.log
+
     delete oldOrder.__v
-    const changes = diff.custom({
-        equal: function(a, b){
-            if (a instanceof Date && b instanceof Date)
-                return a.getTime() === b.getTime();
-         
-            return a === b;
-        }
-    }, oldOrder, order)
+    delete oldOrder.log
+    delete order.log
+
+    const changes = diff(oldOrder, order)
+    
     delete changes._id
-    delete changes.address
-    const addressChanges = diff(oldOrder.address || {}, order.address || {})
-    const dbChanges = Object.keys(addressChanges).length ? Object.assign({}, changes, { address: addressChanges }) : changes
-    const logChanges = Object.assign({}, changes, addressChanges)
+    delete changes.log
+
+    const logChanges = Object.assign({}, changes, changes.address)
+    delete logChanges.dynamics
+
+    for (const fase in changes.dynamics) {
+        for (const [k,v] of Object.entries(changes.dynamics[fase])) {
+            logChanges[k] = v
+        }
+    }
+
+    delete logChanges.address
     const newLog = {
         time: moment(new Date()).startOf("minute").toDate(),
         consultant: user,
         changes: logChanges
     }
 
-    return this.findOneAndUpdate({ _id: order._id }, { $set: dbChanges, $push: { log: newLog } }).exec()
+    return this.findOneAndUpdate({ _id: order._id }, { $set: changes, $push: { log: newLog } }).exec()
 }
 Order.statics.createOrder = function createOrder(orderData) {
     if(orderData.landlineNumber || orderData.phoneNumber) {
@@ -161,14 +166,6 @@ Order.statics.getAll = async function getAll({query, sortBy="date", order}) {
         o.signedDate = moment(o.signedDate).format("DD-MM-YYYY")
         return o
     })
-}
-
-Order.statics.setDynamicField = function setDynamicField(orderId, fase, name, value) {
-    return this.findOneAndUpdate({ _id: orderId }, {
-        $set: {
-            ["dynamics." + fase + "." + name]: value
-        }
-    }).exec()
 }
 
 Order.index({
