@@ -130,13 +130,20 @@ module.exports.createApp = function createApp(Order, User) {
         User.matchPasswords(req.body.username, req.body.password)
             .then(function (result) {
                 // TODO create session and set session variables
+                console.log("DEBUG: route then()");
+                console.log(result);
+
+                if(result.status){
+                    // TODO Start session her
+                    res.json({status: "OK"});
+                }
+                else{
+                    res.json({status: "INCORRECT_CREDENTIALS", message: "Forkert brugernavn eller kodeord."});
+                }
                 res.json(result);
             })
             .catch(function (error) {
-                if(error.status === "ERROR"){
-                    res.status(401).end("Not authorized.");
-                }
-                res.status(500).end("ERROR");
+                res.status(500).end({status: "ERROR", message: "Unknown error"});
             });
     });
 

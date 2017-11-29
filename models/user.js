@@ -70,6 +70,7 @@ User.pre('findOneAndUpdate', function (next) {
     const username = this.getUpdate().$set.username;
     const password = this.getUpdate().$set.password;
     const isAdmin = this.getUpdate().$set.isAdmin;
+    const isDisabled = this.getUpdate().$set.isDisabled;
 
     if(username === ''){
         return next(new Error('Username is empty.'));
@@ -87,7 +88,13 @@ User.pre('findOneAndUpdate', function (next) {
         return next(new Error('Admin level is empty.'));
     }
     if(isAdmin && typeof isAdmin !== "boolean"){
-        return next(new Error('Admin level is not a string.'));
+        return next(new Error('Admin level is not a boolean.'));
+    }
+    if(isDisabled=== ''){
+        return next(new Error('Activity level is empty.'));
+    }
+    if(isDisabled && typeof isDisabled !== "boolean"){
+        return next(new Error('Activity level is not a boolean.'));
     }
 
     let that = this;
@@ -104,42 +111,59 @@ User.pre('findOneAndUpdate', function (next) {
     return next();
 });
 
-User.statics.matchPasswords = function (username, password) {
+User.statics.matchPasswords = async function (username, password) {
+/*
+    let foundUser = await this.findOne({username: username}).exec();
 
+    return await bcrypt.compare(password, foundUser.password);
+*/
+
+    if(!username){
+        return {status: false, message: "Missing username."};
+    }
+    if(typeof username !== 'string'){
+        return {status: false, message: "Incorrect type of username."};
+    }
+    if(!password){
+        return {status: false, message: "Missing password."};
+    }
+    if(typeof password !== 'string'){
+        return {status: false, message: "Incorrect type of password."};
+    }
     return this.findOne({username: username})
-        .then(function (response) {
-            if(!response){
-                return Promise.reject({status: "ERROR", message: "Username or password is invalid."});
+        .then(function (user) {
+
+            if(user === null){
+                return {
+                        status: false,
+                        message: "User not found."
+                        };
             }
+            else{
+                let response = {
+                    status: false,
+                    message: "Incorrect credentials"
+                };
 
-            const result = {
-                status: "OK",
-                message: "Authentication OK",
-                userData: {
-                    id: response._id,
-                    username: response.username,
-                    isAdmin: response.isAdmin,
-                    isDisabled: response.isDisabled
+                response.status = bcrypt.compareSync(password, user.password);
+
+                if(response.status){
+                    response.message = "OK Credentials",
+                    response.user = {
+                        id: user._id,
+                        username: user.username,
+                        isAdmin: user.isAdmin,
+                        isDisabled: user.isDisabled
+                    }
                 }
-            };
 
-            bcrypt.compare(password, response.password)
-                .then(function (isValidLogin) {
-
-                    if(isValidLogin){
-                        Promise.resolve(result);
-                    }
-                    else{
-                        Promise.reject({status: "ERROR", message: "Username or password is incorrect."});
-                    }
-
-                })
-                .catch(function (error) {
-                    Promise.reject({status: "ERROR", message: "Could not validate.", error: error});
-                });
-        })
-        .catch(function (error) {
-            return Promise.reject({status: "ERROR", message: "Could not validate.", error: error});
+                return response;
+            }
+        }).catch(function (error) {
+            return {
+                    status: false,
+                    error: error
+                    };
         });
 
 };
@@ -156,10 +180,7 @@ User.statics.updateUser = function (userId, userData) {
 
     return this.findOneAndUpdate(condition, update, {runValidators: true})
         .then(function (response) {
-            console.log("DEBUG: findOneAndUpdate then():");
-            console.log(response);
             if(response){
-                console.log("resolving");
                 return {status: "OK", message: "User updated."};
             } else{
                 throw new Error("User not found.");
@@ -172,6 +193,7 @@ User.statics.createUser = function (userData) {
 
     const user = new this();
 
+    // TODO Check lige op på følgende checks. De holder vidst ikke helt i praksis - ndlarsen
     if(userData.username){
         user.username = userData.username;
     }
@@ -187,10 +209,8 @@ User.statics.createUser = function (userData) {
 
     return user.save()
         .then(function (response) {
-            console.log(response);
             return {status: "OK", message: "User created."};
         }).catch(function (error) {
-            console.log(error);
             throw new Error("Could not create user.");
         });
 };
