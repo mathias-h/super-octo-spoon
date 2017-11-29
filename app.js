@@ -93,41 +93,29 @@ module.exports.createApp = function createApp(Order, User) {
     })
 
     app.post("/user", function (req, res) {
-        const user = new User({
-            username: req.body.username,
-            password: req.body.password,
-            isAdmin: req.body.isAdmin
-        });
 
-        user.save().then(function (response) {
-            console.log(response);
-            res.json({status: "OK", message: "User created."});
-        }).catch(function (error) {
-            console.log(error);
-            res.json({status: "ERROR", message: "Could not create user."});
-        });
+        User.createUser(req.body)
+            .then(function (response) {
+                console.log(response);
+                res.json({status: "OK", message: "User created."});
+            })
+            .catch(function (error) {
+                console.log(error);
+                res.json({status: "ERROR", message: "Could not create user."});
+            });
 
     });
 
-    app.put('/user/:username', function (req, res) {
+    app.put('/user/:userId', function (req, res) {
 
-        const condition = {
-            username: req.params.username
-        };
-
-        const update = {
-            $set: req.body
-        };
-
-        User.findOneAndUpdate(condition, update, {runValidators: true})
+        User.updateUser(req.params.userId, req.body)
             .then(function (response) {
+                console.log("DEBUG: route then()");
                 console.log(response);
-                if(!response){
-                    res.json({status: "ERROR", message: "User not found."})
-                }
                 res.json({status: "OK", message: "User updated."});
             })
             .catch(function (error) {
+                console.log("DEBUG: route catch()");
                 console.log(error);
                 res.status(500).end("ERROR");
             });
@@ -138,12 +126,13 @@ module.exports.createApp = function createApp(Order, User) {
     });
 
     app.post('/login', function (req, res) {
+
         User.matchPasswords(req.body.username, req.body.password)
             .then(function (result) {
+                // TODO create session and set session variables
                 res.json(result);
             })
             .catch(function (error) {
-                console.log(error);
                 if(error.status === "ERROR"){
                     res.status(401).end("Not authorized.");
                 }
