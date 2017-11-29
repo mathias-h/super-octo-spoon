@@ -215,4 +215,5 @@ User.statics.createUser = function (userData) {
         });
 };
 
-module.exports.User = User;
+//module.exports.User = User;
+module.exports = mongoose.model('User', User);
