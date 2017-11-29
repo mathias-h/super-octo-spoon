@@ -281,7 +281,7 @@ describe("order", () => {
                     farmName: "FARM_NAME"
                 }
             ]
-            Order.statics.find = () => ({ lean: () => ({ exec: () => orders }) })
+            Order.statics.find = () => ({ lean: () => ({ populate: () => ({ exec: () => orders }) }) })
 
             const result = await Order.statics.getAll({ query })
 
@@ -292,7 +292,7 @@ describe("order", () => {
                 { _id: 1, name: "B" },
                 { _id: 2, name: "A" }
             ]
-            Order.statics.find = () => ({ lean: () => ({ exec: () => orders }) })
+            Order.statics.find = () => ({ lean: () => ({ populate: () => ({ exec: () => orders }) }) })
 
             const result = await Order.statics.getAll({ sortBy: "name", order: "asc" })
 
@@ -304,7 +304,7 @@ describe("order", () => {
                 { _id: 1, name: "A" },
                 { _id: 2, name: "B" }
             ]
-            Order.statics.find = () => ({ lean: () => ({ exec: () => orders }) })
+            Order.statics.find = () => ({ lean: () => ({ populate: () => ({ exec: () => orders }) }) })
 
             const result = await Order.statics.getAll({ sortBy: "name", order: "desc" })
 
@@ -316,7 +316,7 @@ describe("order", () => {
                 { _id: 1, signedDate: new Date("1970-01-01") },
                 { _id: 2, signedDate: new Date("1970-01-02") }
             ]
-            Order.statics.find = () => ({ lean: () => ({ exec: () => orders }) })
+            Order.statics.find = () => ({ lean: () => ({ populate: () => ({ exec: () => orders }) }) })
 
             const result = await Order.statics.getAll({})
 
@@ -327,7 +327,7 @@ describe("order", () => {
             const orders = [
                 { _id: 1, signedDate: new Date("1970-01-01") }
             ]
-            Order.statics.find = () => ({ lean: () => ({ exec: () => orders }) })
+            Order.statics.find = () => ({ lean: () => ({ populate: () => ({ exec: () => orders }) }) })
 
             const result = await Order.statics.getAll({})
 
@@ -337,7 +337,7 @@ describe("order", () => {
             const orders = [
                 { _id: 1, signedDate: new Date("1970-01-01") }
             ]
-            Order.statics.find = () => ({ lean: () => ({ exec: () => orders }) })
+            Order.statics.find = () => ({ lean: () => ({ populate: () => ({ exec: () => orders }) }) })
 
             const result = await Order.statics.getAll({})
 
@@ -347,7 +347,7 @@ describe("order", () => {
             const orders = [
                 { _id: 1, signedDate: new Date("1970-01-01"), mapDate: new Date("1970-01-01") }
             ]
-            Order.statics.find = () => ({ lean: () => ({ exec: () => orders }) })
+            Order.statics.find = () => ({ lean: () => ({ populate: () => ({ exec: () => orders }) }) })
 
             const result = await Order.statics.getAll({})
 

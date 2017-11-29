@@ -30,8 +30,8 @@ module.exports.createApp = function createApp(Order, User) {
     
     app.get("/", (req,res) => {
         Order.sampleTotals().then(({ totalSamples, totalTaken }) => {
-            Order.getAll(req.query).then(orders => {
-                User.find({}).select({username: 1}).then(consultants => {
+            return Order.getAll(req.query).then(orders => {
+                return User.find({}).select({username: 1}).then(consultants => {
                     const data = {
                         orders,
                         totalSamples,
@@ -42,6 +42,9 @@ module.exports.createApp = function createApp(Order, User) {
                     res.render("overview", data);
                 });
             })
+        }).catch(err => {
+            console.error(err)
+            res.render("error")
         })
     });
     
@@ -66,14 +69,15 @@ module.exports.createApp = function createApp(Order, User) {
     
     app.put("/order", (req,res) => {
         const order = req.body;
-        const currentUser = "MH" // TODO get current user
-        debugger
-        Order.editOrder(order, currentUser).then(() => {
-            res.end("order updated");
-        }).catch(err => {
-            console.error(err)
-            res.status(500).json(err);
-        });
+        
+        User.findOne().exec().then(user => {
+            Order.editOrder(order, user._id).then(() => {
+                res.end("order updated");
+            }).catch(err => {
+                console.error(err)
+                res.status(500).json(err);
+            });
+        })
     });
 
     app.put("/order/dynamic/:orderId", (req,res) => {
