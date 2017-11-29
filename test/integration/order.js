@@ -244,4 +244,16 @@ describe("order integration test", () => {
     it("should order")
 
     it("should display statistics")
+
+    it("should login")
+
+    it("should create user")
+
+    it("should update user")
+
+    it("should set season")
+
+    it("should create season")
+
+    it("should select season")
 })

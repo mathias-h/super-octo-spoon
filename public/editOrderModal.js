@@ -105,7 +105,13 @@ class EditOrderModal {
                 labDate: "Sendt til lab",
                 fromLabDate: "Modtaget fra lab",
                 mO: "Sendt til markanalyse",
-                receptApproved: "Kvitering godkendt"
+                receptApproved: "Faktura godkendt"
+            }
+
+            function valueToString(value) {
+                const str = value.toString()
+                if (str.endsWith("T00:00:00.000Z")) return moment(new Date(str)).format("DD-MM-YYYY")
+                else return str
             }
 
             $("#log").html("<h2>Log</h2>" +
@@ -115,7 +121,7 @@ class EditOrderModal {
                 </div>
                 ${Object.entries(changes).map(([k,v])=> `
                     <div class="form-row">
-                    <p>${names[k]}</p>=<p>${v}</p>
+                    <p>${names[k]}</p>=<p>${valueToString(v)}</p>
                     </div>
                 `).join("")}
             `).join(""))
