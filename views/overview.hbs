@@ -2,9 +2,7 @@
 <html lang="da">
     <head>
         <meta charset="UTF-8">
-
         <title>Djursland Landboforening</title>
-    
         <style>
             @media screen and (max-width: 991px){
                 #navbar-statistics{
@@ -14,10 +12,6 @@
 
             html, body {
                 min-width: 1190px;
-            }
-
-            tbody tr {
-                cursor: pointer;
             }
 
             .sortable {
@@ -31,9 +25,6 @@
             .navbar {
                 padding-right: 12px;
                 padding-left: 4px;
-            }
-            #contentData thead th {
-                text-transform: capitalize;
             }
             .arrow-asc {
                 width: 0;
@@ -81,15 +72,15 @@
         </style>
 
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
-        <script src="https://code.jquery.com/jquery-3.2.1.js" defer></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" defer></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" defer></script>
-        <script src="https://momentjs.com/downloads/moment.min.js" defer></script>
-        <script src="/createOrderModal.js" defer></script>
-        <script src="/editOrderModal.js" defer></script>
-        <script src="/createUser.js" defer></script>
+        <script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>
+        <script src="https://momentjs.com/downloads/moment.min.js"></script>
+        <script src="/createOrderModal.js"></script>
+        <script src="/editOrderModal.js"></script>
+        <script src="/createUser.js"></script>
 
-        <script defer>
+        <script>
             onload = () => {
                 $(".sortable").click(function () {
                     var id = $(this).attr("id");
