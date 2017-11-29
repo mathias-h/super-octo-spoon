@@ -110,9 +110,9 @@ class EditOrderModal {
             }
 
             function valueToString(value) {
-                if (value === null || value === undefined) return "NULL"
-                const str = value.toString()
-                if (str.endsWith("T00:00:00.000Z")) return moment(new Date(str)).format("DD-MM-YYYY")
+                if (value === null || value === undefined) return "NULL";
+                const str = value.toString();
+                if (str.endsWith("T00:00:00.000Z")) return moment(new Date(str)).format("DD-MM-YYYY");
                 else return str
             }
 

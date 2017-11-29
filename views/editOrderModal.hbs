@@ -9,15 +9,26 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
+            <style>
+                .bubble {
+                    display: inline-flex;
+                }
+            </style>
             <ul class="nav nav-tabs pt-2 bg-light" id="faseTab" role="tablist">
                 <li class="nav-item ml-3">
-                    <a class="nav-link active" id="fase1-tab" data-toggle="tab" href="#fase1" role="tab">Fase 1</a>
+                    <a class="nav-link active" id="fase1-tab" data-toggle="tab" href="#fase1" role="tab">Fase 1 <div class="bubble fase1"></div></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="fase2-tab" data-toggle="tab" href="#fase2" role="tab">Fase 2</a>
+                    <a class="nav-link" id="fase2-tab" data-toggle="tab" href="#fase2" role="tab"><div class="bubble fase2"></div> Fase 2</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link disabled" id="fase3-tab" data-toggle="tab" href="#fase3" role="tab" href="#">Fase 3</a>
+                    <a class="nav-link" id="fase3-tab" data-toggle="tab" href="#fase3" role="tab"><div class="bubble fase3"></div> Fase 3</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="faseLog-tab" data-toggle="tab" href="#log" role="tab">Log</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="faseDestroy-tab" data-toggle="tab" href="#destroy" role="tab">DESTROY</a>
                 </li>
             </ul>
             <form id="orderEditForm" novalidate>
@@ -189,9 +200,15 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="tab-pane" id="fase3" role="tabpanel" aria-labelledby="Fase3Tab">
+                            <p>Hejsa allesammen, jeg er en lidt kedelig fase indtil videre...</p>
+                        </div>
+                        <div class="tab-pane" id="log" role="tabpanel" aria-labelledby="FaseLogTab">
+                            <div class="form-group" id="log"></div>
+                        </div>
+                        <div class="tab-pane" id="destroy" role="tabpanel" aria-labelledby="FaseDestroyTab">
+                        </div>
                     </div>
-                    <hr>
-                    <div class="form-group" id="log"></div>
                     <div class="modal-footer">
                         <div class="form-row float-right">
                             <div class="col form-group">
