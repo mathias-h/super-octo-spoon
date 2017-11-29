@@ -58,7 +58,7 @@ class EditOrderModal {
         
         return $.get(`/order/${orderId}`).then(order => {
             this.orderId = orderId;
-            $("#editInputConsultant").val(order.consultant);
+            $("#editInputConsultant").val(order.consultant._id);
             setDate($("#editInputSignedDate"), order.signedDate)
             $("#editInputName").val(order.name);
             $("#editInputFarmName").val(order.farmName);
@@ -84,6 +84,7 @@ class EditOrderModal {
             setDate($("#inputReceptApproved"), order.receptApproved)
 
             const names = {
+                consultant: "Konsulent",
                 name: "Navn",
                 farmName: "Gårdnavn",
                 street: "Adresse",
@@ -115,16 +116,27 @@ class EditOrderModal {
                 else return str
             }
 
+            const logs = []
+
+            for (const log of order.log) {
+                const simmilarLogIndex = logs.findIndex(l => l.time == log.time && l.consultant === log.consultant)
+                
+                debugger
+
+                if (simmilarLogIndex !== -1) Object.assign(logs[simmilarLogIndex].changes, log.changes)
+                else logs.push(log)
+            }
+
             $("#log").html("<h2>Log</h2>" +
-            order.log.map(({ changes, time, consultant }) => `
+            logs.map(({ changes, time, consultant }) => `
                 <div class="form-row">
-                    <h3>${moment(time).format("DD-MM-YYYY HH:MM")} ${consultant}</h3>
+                    <h3>${moment(time).format("DD-MM-YYYY HH:MM")} ${consultant.username}</h3>
                 </div>
-                ${Object.entries(changes).map(([k,v])=> `
+                ${changes ? Object.entries(changes).map(([k,v])=> `
                     <div class="form-row">
                     <p>${names[k]}</p>=<p>${valueToString(v)}</p>
                     </div>
-                `).join("")}
+                `).join("") : ""}
             `).join(""))
         });
     }

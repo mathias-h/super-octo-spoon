@@ -39,7 +39,7 @@ describe("order", () => {
         });
         it("should update log", async () => {
             const orderId = mongoose.Types.ObjectId();
-            const user = "USER"
+            const consultant = mongoose.Types.ObjectId();
             const newOrder = {
                 _id: orderId,
                 order: "changed",
@@ -60,7 +60,7 @@ describe("order", () => {
             Order.statics.findOneAndUpdate = function findOneAndUpdateMock(query, update) {
                 expect(update.$push.log).to.deep.eq({
                     time: moment(new Date()).startOf("minute").toDate(),
-                    consultant: user,
+                    consultant,
                     changes: {
                         order: "changed",
                         new: 1
@@ -75,7 +75,7 @@ describe("order", () => {
                 return { exec: () => ({_doc:oldOrder}) }
             }
 
-            await Order.statics.editOrder(newOrder, user)
+            await Order.statics.editOrder(newOrder, consultant)
         })
 
         it("should handle address", async () => {
@@ -200,6 +200,48 @@ describe("order", () => {
 
             await Order.statics.editOrder(newOrder);
         })
+
+        it.only("should log handle consultant", async () => {
+            const orderId = mongoose.Types.ObjectId();
+            const consultantId = mongoose.Types.ObjectId();
+            const consultantUsername = "CONSULTANT";
+            const newOrder = {
+                _id: orderId,
+                consultant: { _doc: { _id: consultantId, username: consultantUsername } }
+            }
+            const oldOrder = {
+                _id: orderId,
+                consultant: { username: "OTHER_CONSULTANT" }
+            }
+
+            const oldStatics = Order.statics;
+            Order.statics = function(order) {
+                this._doc = order
+                this.populate = function() {
+                    return this
+                }
+                this.execPopulate = function() {
+                    return this
+                }
+            }
+            Object.assign(Order.statics, oldStatics);
+
+            Order.statics.findOne = function() { return this }
+            Order.statics.populate = function() { return this }
+            Order.statics.exec = async function() { return { _doc: oldOrder } }
+
+            Order.statics.findOneAndUpdate = function findOneAndUpdateMock(_, update) {
+                expect(update.$push.log.changes).to.deep.eq({
+                    consultant: consultantUsername
+                })
+                expect(update.$set).to.deep.eq({
+                    consultant: consultantId.toHexString()
+                })
+                return { exec: () => {} }
+            }
+
+            await Order.statics.editOrder(newOrder);
+        })
     });
     it("should create order", () => {
         const oldStatics = Order.statics;
@@ -281,7 +323,10 @@ describe("order", () => {
                     farmName: "FARM_NAME"
                 }
             ]
-            Order.statics.find = () => ({ lean: () => ({ populate: () => ({ exec: () => orders }) }) })
+            Order.statics.find = function() { return this }
+            Order.statics.lean = function() { return this }
+            Order.statics.populate = function() { return this }
+            Order.statics.exec = function() { return orders }
 
             const result = await Order.statics.getAll({ query })
 
@@ -292,7 +337,10 @@ describe("order", () => {
                 { _id: 1, name: "B" },
                 { _id: 2, name: "A" }
             ]
-            Order.statics.find = () => ({ lean: () => ({ populate: () => ({ exec: () => orders }) }) })
+            Order.statics.find = function() { return this }
+            Order.statics.lean = function() { return this }
+            Order.statics.populate = function() { return this }
+            Order.statics.exec = function() { return orders }
 
             const result = await Order.statics.getAll({ sortBy: "name", order: "asc" })
 
@@ -304,7 +352,10 @@ describe("order", () => {
                 { _id: 1, name: "A" },
                 { _id: 2, name: "B" }
             ]
-            Order.statics.find = () => ({ lean: () => ({ populate: () => ({ exec: () => orders }) }) })
+            Order.statics.find = function() { return this }
+            Order.statics.lean = function() { return this }
+            Order.statics.populate = function() { return this }
+            Order.statics.exec = function() { return orders }
 
             const result = await Order.statics.getAll({ sortBy: "name", order: "desc" })
 
@@ -316,7 +367,10 @@ describe("order", () => {
                 { _id: 1, signedDate: new Date("1970-01-01") },
                 { _id: 2, signedDate: new Date("1970-01-02") }
             ]
-            Order.statics.find = () => ({ lean: () => ({ populate: () => ({ exec: () => orders }) }) })
+            Order.statics.find = function() { return this }
+            Order.statics.lean = function() { return this }
+            Order.statics.populate = function() { return this }
+            Order.statics.exec = function() { return orders }
 
             const result = await Order.statics.getAll({})
 
@@ -327,7 +381,10 @@ describe("order", () => {
             const orders = [
                 { _id: 1, signedDate: new Date("1970-01-01") }
             ]
-            Order.statics.find = () => ({ lean: () => ({ populate: () => ({ exec: () => orders }) }) })
+            Order.statics.find = function() { return this }
+            Order.statics.lean = function() { return this }
+            Order.statics.populate = function() { return this }
+            Order.statics.exec = function() { return orders }
 
             const result = await Order.statics.getAll({})
 
@@ -337,7 +394,10 @@ describe("order", () => {
             const orders = [
                 { _id: 1, signedDate: new Date("1970-01-01") }
             ]
-            Order.statics.find = () => ({ lean: () => ({ populate: () => ({ exec: () => orders }) }) })
+            Order.statics.find = function() { return this }
+            Order.statics.lean = function() { return this }
+            Order.statics.populate = function() { return this }
+            Order.statics.exec = function() { return orders }
 
             const result = await Order.statics.getAll({})
 
@@ -347,7 +407,10 @@ describe("order", () => {
             const orders = [
                 { _id: 1, signedDate: new Date("1970-01-01"), mapDate: new Date("1970-01-01") }
             ]
-            Order.statics.find = () => ({ lean: () => ({ populate: () => ({ exec: () => orders }) }) })
+            Order.statics.find = function() { return this }
+            Order.statics.lean = function() { return this }
+            Order.statics.populate = function() { return this }
+            Order.statics.exec = function() { return orders }
 
             const result = await Order.statics.getAll({})
 

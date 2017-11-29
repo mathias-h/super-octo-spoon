@@ -13,8 +13,10 @@ describe("Order server tests", () => {
             const OrderMock = { 
                 findOne(query) {
                     expect(query._id).to.eq(orderId)
-                    return Promise.resolve(order)
-                }
+                    return this
+                },
+                populate() { return this },
+                exec() { return Promise.resolve(order) }
             }
             const app = createApp(OrderMock)
 
@@ -31,7 +33,11 @@ describe("Order server tests", () => {
                 _id: orderId
             }
             const OrderMock = { 
-                findOne: () => Promise.resolve(null)
+                findOne() {
+                    return this
+                },
+                populate() { return this },
+                exec() { return Promise.resolve(null) }
             }
 
             const app = createApp(OrderMock)
