@@ -69,41 +69,55 @@ const Order = new Schema({
     log:[{
         time: Date,
         changes: Object,
-        consultant: String
+        consultant: {
+            type: Schema.Types.ObjectId,
+            ref: "User"
+        }
     }],
     dynamics: Object
 }, { strict: true });
 
-Order.statics.editOrder = async function updateOrder(order, user) {
-    order = new this(order)._doc
-    const oldOrder = (await this.findOne({ _id: order._id }).exec())._doc
-
-    if (order.consultant) order.consultant = order.consultant.toString()
-    if (oldOrder.consultant) oldOrder.consultant = oldOrder.consultant.toString()
+Order.statics.editOrder = async function updateOrder(order, userId) {
+    const o = await new this(order).populate("consultant", "username").execPopulate()
+    order = o._doc
+    const oldOrder = (await this.findOne({ _id: order._id }).populate("consultant", "username").exec())._doc
+    let consultantId
 
     delete oldOrder.__v
     delete oldOrder.log
     delete order.log
 
     const changes = diff(oldOrder, order)
-    
+
+    if (changes.consultant) {
+        consultantId = order.consultant._doc._id.toHexString()
+        changes.consultant = order.consultant._doc.username    
+    }
+
     delete changes._id
     delete changes.log
 
     const logChanges = Object.assign({}, changes, changes.address)
     delete logChanges.dynamics
-
     for (const fase in changes.dynamics) {
         for (const [k,v] of Object.entries(changes.dynamics[fase])) {
             logChanges[k] = v
         }
     }
 
+    for (const key of Object.keys(logChanges)) {
+        if (logChanges[key] === null) delete logChanges[key]
+    }
+
     delete logChanges.address
     const newLog = {
         time: moment(new Date()).startOf("minute").toDate(),
-        consultant: user,
+        consultant: userId,
         changes: logChanges
+    }
+
+    if (changes.consultant) {
+        changes.consultant = consultantId
     }
 
     return this.findOneAndUpdate({ _id: order._id }, { $set: changes, $push: { log: newLog } }).exec()
@@ -150,7 +164,7 @@ Order.statics.sampleTotals = async function sampleTotals() {
 }
 
 Order.statics.getAll = async function getAll({query, sortBy="date", order}) {
-    let orders = await this.find().lean().populate('consultant').exec()
+    let orders = await this.find().lean().populate('consultant', "username").exec()
 
     if (!query & !order){
         order = "desc";

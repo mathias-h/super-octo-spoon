@@ -61,7 +61,7 @@ module.exports.createApp = function createApp(Order, User) {
     
     app.get("/order/:orderId", (req,res) => {
         const orderId = req.params.orderId;
-        Order.findOne({ _id: orderId }).then(order => {
+        Order.findOne({ _id: orderId }).populate("consultant", "username").populate("log.consultant", "username").exec().then(order => {
             if (!order) {
                 res.header("Content-Type", "text/plain");
                 res.status(404).send("order not found");
