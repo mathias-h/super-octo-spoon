@@ -5,11 +5,11 @@ const moment = require("moment");
 const { diff } = require("deep-object-diff");
 
 const Order = new Schema({
-    consultant: [{
+    consultant: {
         type: Schema.Types.ObjectId,
         ref: 'User',
         required: true
-    }],
+    },
     signedDate: {
         type: Date,
         required: true
