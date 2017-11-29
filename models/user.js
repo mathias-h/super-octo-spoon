@@ -180,10 +180,7 @@ User.statics.updateUser = function (userId, userData) {
 
     return this.findOneAndUpdate(condition, update, {runValidators: true})
         .then(function (response) {
-            console.log("DEBUG: findOneAndUpdate then():");
-            console.log(response);
             if(response){
-                console.log("resolving");
                 return {status: "OK", message: "User updated."};
             } else{
                 throw new Error("User not found.");
@@ -212,10 +209,8 @@ User.statics.createUser = function (userData) {
 
     return user.save()
         .then(function (response) {
-            console.log(response);
             return {status: "OK", message: "User created."};
         }).catch(function (error) {
-            console.log(error);
             throw new Error("Could not create user.");
         });
 };
