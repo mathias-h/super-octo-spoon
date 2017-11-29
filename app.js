@@ -12,7 +12,10 @@ module.exports.createApp = function createApp(Order, User) {
     app.use((req,res, next) => {
         hbs.registerPartial("createOrderModal", require("fs").readFileSync(__dirname + "/views/createOrderModal.hbs").toString());
         hbs.registerPartial("editOrderModal", require("fs").readFileSync(__dirname + "/views/editOrderModal.hbs").toString());
-        hbs.registerPartial("createUserModal", require("fs").readFileSync(__dirname + "/views/createUserModal.hbs").toString());
+
+        hbs.registerPartial("adminModal", require("fs").readFileSync(__dirname + "/views/admin.hbs").toString());
+        hbs.registerPartial("createUser", require("fs").readFileSync(__dirname + "/views/admin/createUser.hbs").toString());
+
         hbs.registerHelper("objectIter", function(obj, options) {
             let out = ""
             for (const [key, val] of Object.entries(obj)) {
