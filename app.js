@@ -68,10 +68,11 @@ module.exports.createApp = function createApp(Order, User) {
     app.put("/order", (req,res) => {
         const order = req.body;
         const currentUser = "MH" // TODO get current user
-    
+        debugger
         Order.editOrder(order, currentUser).then(() => {
             res.end("order updated");
         }).catch(err => {
+            console.error(err)
             res.status(500).json(err);
         });
     });
