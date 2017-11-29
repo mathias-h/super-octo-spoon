@@ -16,7 +16,7 @@
                             <label for="editInputConsultant">Konsulent</label>
                             <select name="consultant" id="editInputConsultant" class="form-control" required>
                                 {{#each consultants}}
-                                    <option value="{{this}}">{{this}}</option>
+                                    <option value="{{this._id}}">{{this.username}}</option>
                                 {{/each}}
                             </select>
                         </div>

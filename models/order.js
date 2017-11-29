@@ -5,10 +5,11 @@ const moment = require("moment");
 const diff = require("object-diff");
 
 const Order = new Schema({
-    consultant: {
-        type: String,
+    consultant: [{
+        type: Schema.Types.ObjectId,
+        ref: 'User',
         required: true
-    },
+    }],
     signedDate: {
         type: Date,
         required: true
@@ -141,7 +142,7 @@ Order.statics.sampleTotals = async function sampleTotals() {
 }
 
 Order.statics.getAll = async function getAll({query, sortBy="date", order}) {
-    let orders = await this.find().lean().exec()
+    let orders = await this.find().lean().populate('consultant').exec()
 
     if (!query & !order){
         order = "desc";

@@ -32,14 +32,16 @@ module.exports.createApp = function createApp(Order, User) {
     app.get("/", (req,res) => {
         Order.sampleTotals().then(({ totalSamples, totalTaken }) => {
             Order.getAll(req.query).then(orders => {
-                const data = {
-                    orders,
-                    totalSamples,
-                    totalTaken,
-                    query: req.query.query,
-                    consultants: CONSULTANTS
-                };
-                res.render("overview", data);
+                User.find({}).select({username: 1}).then(consultants => {
+                    const data = {
+                        orders,
+                        totalSamples,
+                        totalTaken,
+                        query: req.query.query,
+                        consultants: consultants
+                    };
+                    res.render("overview", data);
+                });
             })
         })
     });
@@ -122,6 +124,10 @@ module.exports.createApp = function createApp(Order, User) {
                 console.log(error);
                 res.status(500).end("ERROR");
             });
+    });
+
+    app.get('/login', (req, res) =>{
+        res.render('login');
     });
 
     app.post('/login', function (req, res) {
