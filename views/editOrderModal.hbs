@@ -17,19 +17,26 @@
             </style>
             <ul class="nav nav-tabs pt-2 bg-light" id="faseTab" role="tablist">
                 <li class="nav-item ml-3">
-                    <a class="nav-link active" id="fase1-tab" data-toggle="tab" href="#fase1" role="tab"><div align="center" class="bubble fase1 faseBubble align-middle"></div> Fase 1</a>
+                    <a class="nav-link active" id="fase1-tab" data-toggle="tab" href="#fase1" role="tab">
+                        <div align="center" class="bubble fase1 faseBubble align-middle"></div>
+                        Fase 1</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="fase2-tab" data-toggle="tab" href="#fase2" role="tab"><div align="center" class="bubble fase2 faseBubble align-middle"></div> Fase 2</a>
+                    <a class="nav-link" id="fase2-tab" data-toggle="tab" href="#fase2" role="tab">
+                        <div align="center" class="bubble fase2 faseBubble align-middle"></div>
+                        Fase 2</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="fase3-tab" data-toggle="tab" href="#fase3" role="tab"><div align="center" class="bubble fase3 faseBubble align-middle"></div> Fase 3</a>
+                    <a class="nav-link" id="fase3-tab" data-toggle="tab" href="#fase3" role="tab">
+                        <div align="center" class="bubble fase3 faseBubble align-middle"></div>
+                        Fase 3</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" id="faseLog-tab" data-toggle="tab" href="#log" role="tab">Log</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="faseSletOrdre-tab" data-toggle="tab" href="#sletOrdre" role="tab">Slet ordre</a>
+                    <a class="nav-link" id="faseSletOrdre-tab" data-toggle="tab" href="#sletOrdre" role="tab">Slet
+                        ordre</a>
                 </li>
             </ul>
             <form id="orderEditForm" novalidate>
@@ -52,12 +59,12 @@
                                 </div>
                             </div>
                             <div class="form-row">
-                                <div class="col-9 form-group">
+                                <div class="col-6 form-group">
                                     <label for="editInputName">Navn</label>
                                     <input name="name" type="text" id="editInputName" class="form-control"
                                            placeholder="Navn" required>
                                 </div>
-                                <div class="col-3 form-group">
+                                <div class="col-6 form-group">
                                     <label for="editInputFarmName">Gårdnavn</label>
                                     <input name="farmName" type="text" id="editInputFarmName" class="form-control"
                                            placeholder="Gårdnavn" required>
@@ -84,17 +91,21 @@
                             <div class="form-row">
                                 <div class="col form-group">
                                     <label for="editInputLandlineNumber">Fastnet tlf.</label>
-                                    <input name="landlineNumber" type="tel" id="editInputLandlineNumber" class="form-control" placeholder="Fastnet telefon" pattern="^[\s()+-]*([0-9][\s()+-]*){6,20}$">
+                                    <input name="landlineNumber" type="tel" id="editInputLandlineNumber"
+                                           class="form-control" placeholder="Fastnet telefon"
+                                           pattern="^[\s()+-]*([0-9][\s()+-]*){6,20}$">
                                 </div>
                                 <div class="col form-group">
                                     <label for="editInputPhoneNumber">Mobil tlf.</label>
-                                    <input name="phoneNumber" type="tel" id="editInputPhoneNumber" class="form-control" placeholder="Mobil telefon" pattern="^[\s()+-]*([0-9][\s()+-]*){6,20}$">
+                                    <input name="phoneNumber" type="tel" id="editInputPhoneNumber" class="form-control"
+                                           placeholder="Mobil telefon" pattern="^[\s()+-]*([0-9][\s()+-]*){6,20}$">
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="col form-group">
                                     <label for="editInputComment">Kommentar</label>
-                                    <textarea name="comment" id="editInputComment" class="form-control" rows="5" style="min-height: 74px"></textarea>
+                                    <textarea name="comment" id="editInputComment" class="form-control" rows="5"
+                                              style="min-height: 74px"></textarea>
                                 </div>
                             </div>
                             <div class="form-row">
@@ -102,7 +113,8 @@
                                     <label for="editInputSampleDensity">Prøvetæthed</label>
                                     <div class="input-group" id="sampleDensityContainer">
                                         <span class="input-group-addon">1/</span>
-                                        <input name="sampleDensity" type="number" min="0" id="editInputSampleDensity" class="form-control" placeholder="Mængde">
+                                        <input name="sampleDensity" type="number" min="0" id="editInputSampleDensity"
+                                               class="form-control" placeholder="Mængde">
                                         <span class="input-group-addon">ha</span>
                                     </div>
                                 </div>
@@ -110,17 +122,20 @@
                                 <div class="col-4 form-group">
                                     <label for="editInputArea">Areal</label>
                                     <div class="input-group" id="sampleDensityContainer">
-                                        <input name="area" type="number" min="0" id="editInputArea" class="form-control" placeholder="Størrelse">
+                                        <input name="area" type="number" min="0" id="editInputArea" class="form-control"
+                                               placeholder="Størrelse">
                                         <span class="input-group-addon">ha</span>
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="form-group ml-3"
-                                         style="line-height: 0; margin-bottom: 0px; margin-top: 32px;">
+                                         style="line-height: 0; margin-bottom: 0; margin-top: 32px;">
                                         <label for="editInputSamePlanAsLast">
-                                            <input name="samePlanAsLast" type="checkbox" id="editInputSamePlanAsLast"> Samme plan som sidst</label>
+                                            <input name="samePlanAsLast" type="checkbox" id="editInputSamePlanAsLast">
+                                            Samme plan som sidst</label>
                                         <label for="editInputTakeOwnSamples">
-                                            <input name="takeOwnSamples" type="checkbox" id="editInputTakeOwnSamples"> Prøver selvudtaget</label>
+                                            <input name="takeOwnSamples" type="checkbox" id="editInputTakeOwnSamples">
+                                            Prøver selvudtaget</label>
                                     </div>
                                 </div>
                             </div>
@@ -139,7 +154,8 @@
                                 <div class="col-3 form-group">
                                     <label for="inputSampleTime">Udtagning</label>
                                     <div class="input-group">
-                                        <input name="sampleTime" type="number" id="inputSampleTime" class="form-control" placeholder="Antal">
+                                        <input name="sampleTime" type="number" id="inputSampleTime" class="form-control"
+                                               placeholder="Antal">
                                         <span class="input-group-addon">timer</span>
                                     </div>
                                 </div>
@@ -156,7 +172,8 @@
                                 <div class="col-3 form-group">
                                     <label for="inputCutSamples">Cut</label>
                                     <div class="input-group">
-                                        <input name="cutSamples" type="number" min="0" id="inputCutSamples" class="form-control" placeholder="Antal">
+                                        <input name="cutSamples" type="number" min="0" id="inputCutSamples"
+                                               class="form-control" placeholder="Antal">
                                         <span class="input-group-addon">stk</span>
                                     </div>
                                 </div>
@@ -176,7 +193,8 @@
                                 <div class="col-3">
                                     <label for="inputOtherSamples">Andre</label>
                                     <div class="input-group">
-                                        <input name="otherSamples" type="number" min="0" id="inputOtherSamples" class="form-control" placeholder="Andre">
+                                        <input name="otherSamples" type="number" min="0" id="inputOtherSamples"
+                                               class="form-control" placeholder="Andre">
                                         <span class="input-group-addon">stk</span>
                                     </div>
                                 </div>
@@ -189,14 +207,16 @@
                                 </div>
                                 <div class="col-3 form-group">
                                     <label for="inputReceptApproved">Faktura godkendt</label>
-                                    <input name="receptApproved" type="date" id="inputReceptApproved" class="form-control">
+                                    <input name="receptApproved" type="date" id="inputReceptApproved"
+                                           class="form-control">
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="col-3 form-group">
                                     <label for="inputMgSamples">Mg</label>
                                     <div class="input-group">
-                                        <input name="mgSamples" type="number" min="0" id="inputMgSamples" class="form-control" placeholder="Mængde">
+                                        <input name="mgSamples" type="number" min="0" id="inputMgSamples"
+                                               class="form-control" placeholder="Mængde">
                                         <span class="input-group-addon">stk</span>
                                     </div>
                                 </div>
@@ -204,11 +224,98 @@
                             <div class="dynamic fase-2"></div>
                         </div>
                         <div class="tab-pane" id="fase3" role="tabpanel" aria-labelledby="Fase3Tab">
-                            <p>Hejsa allesammen, jeg er en lidt kedelig fase indtil videre...</p>
+                            <div class="form-row">
+                                <div class="col-4 form-group">
+                                    <label for="editInputSentToFarm">Udsendt til landmand dato</label>
+                                    <input name="sentToFarm" type="date" id="editInputSentToFarm" class="form-control">
+                                </div>
+                                <div class="col-4 form-group">
+                                    <label for="editInputSentBy">Udsendt af:</label>
+                                    <select name="sentBy" id="editInputSentBy" class="form-control" required>
+                                        {{#each consultants}}
+                                            <option value="{{this._id}}">{{this.username}}</option>
+                                        {{/each}}
+                                    </select>
+                                </div>
+                                <div class="col-4 form-group">
+                                    <label for="editInputContactFarmer">
+                                        <input name="contactFarmer" type="checkbox" id="editInputContactFarmer">
+                                        Landmand kontaktes til sommer ang. tildelingskort.</label>
+                                    <label for="applicationMap">
+                                        <input name="contactFarmer" type="checkbox" id="editInputContactFarmer">Ønkes
+                                        tildelingskort?</label>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-4 form-group">
+                                    <label for="editInputRemarksAndComments">Bemærkninger & Aftaler</label>
+                                    <textarea name="remarksAndComments" id="editInputRemarksAndComments"
+                                              class="form-control" rows="5"
+                                              style="min-height: 74px"></textarea>
+                                </div>
+                                <div class="col-4 form-group">
+                                    <label for="editInputAssignedFields">Tildelte Marker på Kort</label>
+                                    <div class="input-group" id="editInputAssignedFields">
+                                        <input name="sampleDensity" type="number" min="0" id="editInputAssignedFields"
+                                               class="form-control" placeholder="Antal marker">
+                                        <span class="input-group-addon">marker</span>
+                                    </div>
+                                    <label for="editInputAssignedHectare">Antal ha.</label>
+                                    <div class="input-group" id="editInputAssignedHectare">
+                                        <input name="AssignedHectare" type="number" min="0"
+                                               id="editInputAssignedHectare"
+                                               class="form-control" placeholder="Antal Has">
+                                        <span class="input-group-addon">ha</span>
+                                    </div>
+                                </div>
+                                <div class="col-4 form-group">
+                                    <div class="form group ml-3"
+                                         style="line-height: 0; margin-bottom: 0; margin-top: 32px;"></div>
+                                    <label for="editInputSentToFarm">Sendt til Landmand</label>
+                                    <input name="sentToFarm" type="date" id="editInputSentToFarm" class="form-control">
+                                    <label for="editInputSentToPit">Sendt til Maskinstation</label>
+                                    <input name="sentToPit" type="date" id="editInputSentToPit" class="form-control">
+                                </div>
+
+                                <div class="form-group ml-3"
+                                     style="line-height: 0; margin-bottom: 0; margin-top: 32px;">
+                                    <label for="editInputSamePlanAsLast">
+                                        <input name="samePlanAsLast" type="checkbox" id="editInputSamePlanAsLast">
+                                        Samme plan som sidst</label>
+                                    <label for="editInputTakeOwnSamples">
+                                        <input name="takeOwnSamples" type="checkbox" id="editInputTakeOwnSamples">
+                                        Prøver selvudtaget</label>
+                                </div>
+                            </div>
                             <div class="dynamic fase-3"></div>
                         </div>
                         <div class="tab-pane" id="log" role="tabpanel" aria-labelledby="FaseLogTab">
-                            <div class="form-group" id="log"></div>
+                            <div class="form-group" id="logElement">
+                                <div class="col form-group">
+                                    <label for="editInputLogConsultant">Konsulent</label>
+                                    <select name="consultantLog" id="editInputLogConsultant" class="form-control" required>
+                                        {{#each consultants}}
+                                            <option value="{{this._id}}">{{this.username}}</option>
+                                        {{/each}}
+                                    </select>
+                                </div>
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th scope="Konsulent">Konsulent</th>
+                                        <th scope="Dato">Dato</th>
+                                        <th scope="Ændring">Ændring</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td>Konsulent Navn her</td>
+                                        <td>Indsæt dato her</td>
+                                        <td>Indsæt ændring her</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                         <div class="tab-pane" id="sletOrdre" role="tabpanel" aria-labelledby="FaseDestroyTab">
                         </div>

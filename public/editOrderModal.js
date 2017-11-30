@@ -21,7 +21,7 @@ class EditOrderModal {
             evt.stopPropagation();
 
             save()
-        
+
             return false;
         });
         $("#orderEditForm").on("keyup", evt => {
@@ -43,10 +43,10 @@ class EditOrderModal {
         landline[0].setCustomValidity("");
         mobile[0].setCustomValidity("");
 
-        if(!(landline[0].validity.valid && landline.val()) && !(mobile[0].validity.valid && mobile.val())){
+        if (!(landline[0].validity.valid && landline.val()) && !(mobile[0].validity.valid && mobile.val())) {
             landline[0].setCustomValidity("Mindst et telefonnummer skal angives");
             mobile[0].setCustomValidity("Mindst et telefonnummer skal angives");
-        }else{
+        } else {
             landline[0].setCustomValidity("");
             mobile[0].setCustomValidity("");
         }
@@ -57,7 +57,7 @@ class EditOrderModal {
             if (!date) input.val("")
             else input.val(moment(new Date(date)).format("YYYY-MM-DD"));
         }
-        
+
         return $.get(`/order/${orderId}`).then(order => {
             this.orderId = orderId;
             $("#editInputConsultant").val(order.consultant._id);
@@ -188,17 +188,6 @@ class EditOrderModal {
                 else logs.push(log)
             }
 
-            $("#log").html("<h2>Log</h2>" +
-            logs.map(({ changes, time, consultant }) => `
-                <div class="form-row">
-                    <h3>${moment(time).format("DD-MM-YYYY HH:MM")} ${consultant.username}</h3>
-                </div>
-                ${changes ? Object.entries(changes).map(([k,v])=> `
-                    <div class="form-row">
-                    <p>${names[k]}</p>=<p>${valueToString(v)}</p>
-                    </div>
-                `).join("") : ""}
-            `).join(""))
         });
     }
 

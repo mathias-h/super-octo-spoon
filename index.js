@@ -4,10 +4,10 @@ const { Order } = require("./models/order");
 const { User } = require("./models/user");
 
 mongoose.Promise = global.Promise;
-const connection = mongoose.createConnection("mongodb://localhost:27017/super-octo-spoon")
+const connection = mongoose.createConnection("mongodb://localhost:27017/super-octo-spoon");
 
-const OrderModel = connection.model("Order", Order)
-const UserModel = connection.model('User', User)
+const OrderModel = connection.model("Order", Order);
+const UserModel = connection.model('User', User);
 
 const app = createApp(OrderModel, UserModel);
 

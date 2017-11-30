@@ -145,6 +145,11 @@ User.statics.matchPasswords = async function (username, password) {
                     message: "Incorrect credentials"
                 };
 
+                if(user.isDisabled){
+                    return response;
+                }
+
+                // TODO: skal denne skrive om at benytte et callback?
                 response.status = bcrypt.compareSync(password, user.password);
 
                 if(response.status){
@@ -152,8 +157,7 @@ User.statics.matchPasswords = async function (username, password) {
                     response.user = {
                         id: user._id,
                         username: user.username,
-                        isAdmin: user.isAdmin,
-                        isDisabled: user.isDisabled
+                        isAdmin: user.isAdmin
                     }
                 }
 

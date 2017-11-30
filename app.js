@@ -2,6 +2,7 @@
 
 const bodyParser = require('body-parser');
 const express = require("express");
+const session = require('express-session');
 const hbs = require("hbs");
 
 module.exports.createApp = function createApp(Order, User) {
@@ -30,8 +31,43 @@ module.exports.createApp = function createApp(Order, User) {
     app.use(express.static(__dirname + '/public'));
     app.use(bodyParser.urlencoded({extended: true}));
     app.use(bodyParser.json());
+
+    // Session related stuff starting //
+    // Create session and defaults
+
+    app.use(session({
+        secret: "5up3r53cur353cr37",
+        resave: false,
+        saveUninitialized: false,
+        isLoggedIn: false,
+        username: null,
+        userId: null,
+        isAdmin: false
+    }));
+
+    // Default session check for all requests to this app
+    app.use(function (req, res, next) {
+
+        const sess = req.session;
+        const url = req.url;
+
+        if(sess.isLoggedIn && url === '/login'){
+            res.redirect('/');
+            return;
+        }
+        else if((sess.isLoggedIn && url !== '/login') || (!sess.isLoggedIn && url === '/login')){
+            next();
+        }
+        else{
+            res.redirect('/login');
+            return;
+        }
+    });
+
+    // Session related stuff ends //
     
     app.get("/", (req,res) => {
+
         Order.sampleTotals().then(({ totalSamples, totalTaken }) => {
             return Order.getAll(req.query).then(orders => {
                 return User.find({}).select({username: 1}).then(consultants => {
@@ -96,11 +132,11 @@ module.exports.createApp = function createApp(Order, User) {
 
         User.createUser(req.body)
             .then(function (response) {
-                console.log(response);
+                //console.log(response);
                 res.json({status: "OK", message: "User created."});
             })
             .catch(function (error) {
-                console.log(error);
+                //console.log(error);
                 res.json({status: "ERROR", message: "Could not create user."});
             });
 
@@ -110,31 +146,42 @@ module.exports.createApp = function createApp(Order, User) {
 
         User.updateUser(req.params.userId, req.body)
             .then(function (response) {
-                console.log("DEBUG: route then()");
-                console.log(response);
+                //console.log("DEBUG: route then()");
+                //console.log(response);
                 res.json({status: "OK", message: "User updated."});
             })
             .catch(function (error) {
-                console.log("DEBUG: route catch()");
-                console.log(error);
+                //console.log("DEBUG: route catch()");
+                //console.log(error);
                 res.status(500).end("ERROR");
             });
     });
 
     app.get('/login', (req, res) =>{
+
         res.render('login');
     });
 
     app.post('/login', function (req, res) {
 
+        const sess = req.session;
+
         User.matchPasswords(req.body.username, req.body.password)
             .then(function (result) {
-                // TODO create session and set session variables
-                console.log("DEBUG: route then()");
-                console.log(result);
+                //console.log("DEBUG: route then()");
+                //console.log(result);
 
                 if(result.status){
                     // TODO Start session her
+                    //console.log("Starting session.");
+
+                    sess.isLoggedIn = true;
+                    sess.username = result.user.username;
+                    sess.userId = result.user.id;
+                    sess.isAdmin = result.user.isAdmin;
+
+                    //console.log(sess);
+
                     res.json({status: "OK"});
                 }
                 else{
@@ -145,6 +192,16 @@ module.exports.createApp = function createApp(Order, User) {
             .catch(function (error) {
                 res.status(500).end({status: "ERROR", message: "Unknown error"});
             });
+    });
+
+    app.post('/logout', function (req, res) {
+        const sess = req.session;
+
+        if(sess.isLoggedIn){
+            sess.destroy();
+        }
+        res.redirect('/login');
+
     });
 
     return app;
