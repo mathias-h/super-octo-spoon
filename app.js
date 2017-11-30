@@ -53,14 +53,12 @@ module.exports.createApp = function createApp(Order, User) {
 
         if(sess.isLoggedIn && url === '/login'){
             res.redirect('/');
-            return;
         }
         else if((sess.isLoggedIn && url !== '/login') || (!sess.isLoggedIn && url === '/login')){
             next();
         }
         else{
             res.redirect('/login');
-            return;
         }
     });
 
@@ -109,7 +107,7 @@ module.exports.createApp = function createApp(Order, User) {
     app.put("/order", (req,res) => {
         const order = req.body;
         
-        User.findOne().exec().then(user => {
+        User.findOne({ _id: req.session.userId }).exec().then(user => {
             Order.editOrder(order, user._id).then(() => {
                 res.end("order updated");
             }).catch(err => {
