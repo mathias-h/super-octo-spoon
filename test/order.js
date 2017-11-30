@@ -43,7 +43,7 @@ describe("order", () => {
 
         db = childProcess.spawn("mongod", ["--port", "27018", "--dbpath", dataPath])
 
-        await sleep(200)
+        await sleep(500)
 
         mongoose.Promise = global.Promise;
         const connection = await mongoose.createConnection("mongodb://localhost:27018/super-octo-spoon");
@@ -59,6 +59,7 @@ describe("order", () => {
 
     beforeEach(async () => {
         await Order.remove({})
+        await User.remove({})
     })
 
     describe("edit order", () => {
@@ -344,117 +345,259 @@ describe("order", () => {
             totalTaken: 6
         })
     })
+
+    describe.only("get all", () => {
+        it("should search", async () => {
+            const consultant = new User({
+                username: "CONSULTANT",
+                password: "PASS",
+                isAdmin: false,
+                isDisabled: false
+            })
+            await consultant.save()
+            const query = "X"
+            const order = new Order({ 
+                name: "X",
+                signedDate: new Date("1970-01-01"),
+                address: {
+                    zip: 8888,
+                    city: "CITY",
+                    street: "STREET"
+                },
+                consultant: consultant._id,
+                landlineNumber: "88888888",
+                phoneNumber: "88888888",
+                farmName: "FARM_NAME"
+            })
+            await order.save()
+            await new Order({ 
+                name: "Y",
+                signedDate: new Date("1970-01-01"),
+                address: {
+                    zip: 9999,
+                    city: "CITY",
+                    street: "STREET"
+                },
+                consultant: consultant._id,
+                landlineNumber: "99999999",
+                phoneNumber: "99999999",
+                farmName: "FARM_NAME"
+            }).save()
+            
+            const result = await Order.getAll({ query })
+
+            expect(result.length).to.eq(1)
+            expect(result[0]._id.toHexString()).to.eq(order._id.toHexString())
+        })
   
-    // describe("get all", () => {
-    //     it("should search", async () => {
-    //         const query = "A 9999"
-    //         const orders = [
-    //             { 
-    //                 _id: 1,
-    //                 name: "NAME",
-    //                 address: {
-    //                     zip: 9999,
-    //                     city: "CITY",
-    //                     street: "STREET"
-    //                 },
-    //                 consultant: { username: "CONSULTANT"},
-    //                 landlineNumber: "88888888",
-    //                 phoneNumber: "88888888",
-    //                 farmName: "FARM_NAME"
-    //             }
-    //         ]
-    //         Order.statics.find = function() { return this }
-    //         Order.statics.lean = function() { return this }
-    //         Order.statics.populate = function() { return this }
-    //         Order.statics.exec = function() { return orders }
+        it("should sort asc", async () => {
+            const consultant = new User({
+                username: "CONSULTANT",
+                password: "PASS",
+                isAdmin: false,
+                isDisabled: false
+            })
+            await consultant.save()
+            const order = new Order({ 
+                name: "B",
+                signedDate: new Date("1970-01-01"),
+                address: {
+                    zip: 8888,
+                    city: "CITY",
+                    street: "STREET"
+                },
+                consultant: consultant._id,
+                landlineNumber: "88888888",
+                phoneNumber: "88888888",
+                farmName: "FARM_NAME"
+            })
+            await order.save()
+            const order1 = new Order({ 
+                name: "A",
+                signedDate: new Date("1970-01-01"),
+                address: {
+                    zip: 9999,
+                    city: "CITY",
+                    street: "STREET"
+                },
+                consultant: consultant._id,
+                landlineNumber: "99999999",
+                phoneNumber: "99999999",
+                farmName: "FARM_NAME"
+            })
+            await order1.save()
 
-    //         const result = await Order.statics.getAll({ query })
+            const results = await Order.getAll({ sortBy: "name", order: "asc" })
 
-    //         expect(result).to.deep.eq(orders)
-    //     })
-    //     it("should sort results asc", async () => {
-    //         const orders = [
-    //             { _id: 1, name: "B" },
-    //             { _id: 2, name: "A" }
-    //         ]
-    //         Order.statics.find = function() { return this }
-    //         Order.statics.lean = function() { return this }
-    //         Order.statics.populate = function() { return this }
-    //         Order.statics.exec = function() { return orders }
+            expect(results[1]._id.toHexString()).to.eq(order._id.toHexString())
+            expect(results[0]._id.toHexString()).to.eq(order1._id.toHexString())
+        })
+        it("should sort asc", async () => {
+            const consultant = new User({
+                username: "CONSULTANT",
+                password: "PASS",
+                isAdmin: false,
+                isDisabled: false
+            })
+            await consultant.save()
+            const order = new Order({ 
+                name: "A",
+                signedDate: new Date("1970-01-01"),
+                address: {
+                    zip: 8888,
+                    city: "CITY",
+                    street: "STREET"
+                },
+                consultant: consultant._id,
+                landlineNumber: "88888888",
+                phoneNumber: "88888888",
+                farmName: "FARM_NAME"
+            })
+            await order.save()
+            const order1 = new Order({ 
+                name: "B",
+                signedDate: new Date("1970-01-01"),
+                address: {
+                    zip: 9999,
+                    city: "CITY",
+                    street: "STREET"
+                },
+                consultant: consultant._id,
+                landlineNumber: "99999999",
+                phoneNumber: "99999999",
+                farmName: "FARM_NAME"
+            })
+            await order1.save()
 
-    //         const result = await Order.statics.getAll({ sortBy: "name", order: "asc" })
+            const results = await Order.getAll({ sortBy: "name", order: "desc" })
 
-    //         expect(result[0]._id).to.eq(2)
-    //         expect(result[1]._id).to.eq(1)
-    //     })
-    //     it("should sort results desc", async () => {
-    //         const orders = [
-    //             { _id: 1, name: "A" },
-    //             { _id: 2, name: "B" }
-    //         ]
-    //         Order.statics.find = function() { return this }
-    //         Order.statics.lean = function() { return this }
-    //         Order.statics.populate = function() { return this }
-    //         Order.statics.exec = function() { return orders }
+            expect(results[1]._id.toHexString()).to.eq(order._id.toHexString())
+            expect(results[0]._id.toHexString()).to.eq(order1._id.toHexString())
+        })
+        it("should sort by signed date by default", async () => {
+            const consultant = new User({
+                username: "CONSULTANT",
+                password: "PASS",
+                isAdmin: false,
+                isDisabled: false
+            })
+            await consultant.save()
+            const order = new Order({ 
+                name: "NAME",
+                signedDate: new Date("1970-01-01"),
+                address: {
+                    zip: 8888,
+                    city: "CITY",
+                    street: "STREET"
+                },
+                consultant: consultant._id,
+                landlineNumber: "88888888",
+                phoneNumber: "88888888",
+                farmName: "FARM_NAME"
+            })
+            await order.save()
+            const order1 = new Order({ 
+                name: "NAME",
+                signedDate: new Date("1970-01-02"),
+                address: {
+                    zip: 9999,
+                    city: "CITY",
+                    street: "STREET"
+                },
+                consultant: consultant._id,
+                landlineNumber: "99999999",
+                phoneNumber: "99999999",
+                farmName: "FARM_NAME"
+            })
+            await order1.save()
 
-    //         const result = await Order.statics.getAll({ sortBy: "name", order: "desc" })
+            const results = await Order.getAll({})
 
-    //         expect(result[0]._id).to.eq(2)
-    //         expect(result[1]._id).to.eq(1)
-    //     })
-    //     it("should sort by singed date by default", async () => {
-    //         const orders = [
-    //             { _id: 1, signedDate: new Date("1970-01-01") },
-    //             { _id: 2, signedDate: new Date("1970-01-02") }
-    //         ]
-    //         Order.statics.find = function() { return this }
-    //         Order.statics.lean = function() { return this }
-    //         Order.statics.populate = function() { return this }
-    //         Order.statics.exec = function() { return orders }
+            expect(results[1]._id.toHexString()).to.eq(order._id.toHexString())
+            expect(results[0]._id.toHexString()).to.eq(order1._id.toHexString())
+        })
 
-    //         const result = await Order.statics.getAll({})
+        it("should format signed date", async () => {
+            const consultant = new User({
+                username: "CONSULTANT",
+                password: "PASS",
+                isAdmin: false,
+                isDisabled: false
+            })
+            await consultant.save()
+            const order = new Order({ 
+                name: "NAME",
+                signedDate: new Date("1970-02-01"),
+                address: {
+                    zip: 8888,
+                    city: "CITY",
+                    street: "STREET"
+                },
+                consultant: consultant._id,
+                landlineNumber: "88888888",
+                phoneNumber: "88888888",
+                farmName: "FARM_NAME"
+            })
+            await order.save()
 
-    //         expect(result[0]._id).to.eq(2)
-    //         expect(result[1]._id).to.eq(1)
-    //     })
-    //     it("should format singed date", async () => {
-    //         const orders = [
-    //             { _id: 1, signedDate: new Date("1970-01-01") }
-    //         ]
-    //         Order.statics.find = function() { return this }
-    //         Order.statics.lean = function() { return this }
-    //         Order.statics.populate = function() { return this }
-    //         Order.statics.exec = function() { return orders }
+            const [result] = await Order.getAll({})
 
-    //         const result = await Order.statics.getAll({})
+            expect(result.signedDate).to.eq("01-02-1970")
+        })
+        it("should set fase 1", async () => {
+            const consultant = new User({
+                username: "CONSULTANT",
+                password: "PASS",
+                isAdmin: false,
+                isDisabled: false
+            })
+            await consultant.save()
+            const order = new Order({ 
+                name: "NAME",
+                signedDate: new Date("1970-01-01"),
+                address: {
+                    zip: 8888,
+                    city: "CITY",
+                    street: "STREET"
+                },
+                consultant: consultant._id,
+                landlineNumber: "88888888",
+                phoneNumber: "88888888",
+                farmName: "FARM_NAME"
+            })
+            await order.save()
 
-    //         expect(result[0].signedDate).to.eq("01-01-1970")
-    //     })
-    //     it("should set fase 1", async () => {
-    //         const orders = [
-    //             { _id: 1, signedDate: new Date("1970-01-01") }
-    //         ]
-    //         Order.statics.find = function() { return this }
-    //         Order.statics.lean = function() { return this }
-    //         Order.statics.populate = function() { return this }
-    //         Order.statics.exec = function() { return orders }
+            const [result] = await Order.getAll({})
 
-    //         const result = await Order.statics.getAll({})
+            expect(result.fase).to.eq(1)
+        })
+        it("should set fase 1", async () => {
+            const consultant = new User({
+                username: "CONSULTANT",
+                password: "PASS",
+                isAdmin: false,
+                isDisabled: false
+            })
+            await consultant.save()
+            const order = new Order({ 
+                name: "NAME",
+                signedDate: new Date("1970-01-01"),
+                address: {
+                    zip: 8888,
+                    city: "CITY",
+                    street: "STREET"
+                },
+                consultant: consultant._id,
+                landlineNumber: "88888888",
+                phoneNumber: "88888888",
+                farmName: "FARM_NAME",
+                mapDate: new Date("1970-01-01")
+            })
+            await order.save()
 
-    //         expect(result[0].fase).to.eq(1)
-    //     })
-    //     it("should set fase 2", async () => {
-    //         const orders = [
-    //             { _id: 1, signedDate: new Date("1970-01-01"), mapDate: new Date("1970-01-01") }
-    //         ]
-    //         Order.statics.find = function() { return this }
-    //         Order.statics.lean = function() { return this }
-    //         Order.statics.populate = function() { return this }
-    //         Order.statics.exec = function() { return orders }
+            const [result] = await Order.getAll({})
 
-    //         const result = await Order.statics.getAll({})
-
-    //         expect(result[0].fase).to.eq(2)
-    //     })
-    // })
+            expect(result.fase).to.eq(2)
+        })
+    })
 });
