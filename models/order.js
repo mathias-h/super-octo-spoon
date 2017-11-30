@@ -95,13 +95,22 @@ Order.statics.editOrder = async function updateOrder(order, userId) {
 
     delete changes._id
 
+    const dynamicChanges = changes.dynamics
+    delete changes.dynamics
+
     const update = { $set: changes }
 
     const logChanges = Object.assign({}, changes, changes.address)
     delete logChanges.dynamics
-    for (const fase in changes.dynamics) {
-        for (const [k,v] of Object.entries(changes.dynamics[fase])) {
-            logChanges[k] = v
+    
+    if (dynamicChanges) {   
+        for (const fase of Object.keys(dynamicChanges)) {
+            for (const [k,v] of Object.entries(dynamicChanges[fase])) {
+                if (v !== null) {
+                    update.$set["dynamics." + fase + "." + k] = v
+                }
+                logChanges[k] = v
+            }
         }
     }
 

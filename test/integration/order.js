@@ -241,6 +241,8 @@ describe("order integration test", () => {
 
                 //TODO should show log
 
+                //TODO should show dynamic
+
                 modal.querySelector("#orderEditSave").click()
             }, 200)
         }, consultant1._id.toHexString())
