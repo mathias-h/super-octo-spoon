@@ -31,13 +31,13 @@ describe("user", function () {
     }
 
     before(async () => {
-        const dataPath = __dirname + '/users_test_data.js';
+        const dataPath = __dirname + '/test-data-users';
         rimraf.sync(dataPath);
         fs.mkdirSync(dataPath);
 
-        db = childProcess.spawn("mongod", ["--port", "27018", "--dbpath", dataPath])
+        db = childProcess.spawn("mongod", ["--port", "27018", "--dbpath", dataPath]);
 
-        await sleep(500)
+        await sleep(500);
 
         mongoose.Promise = global.Promise;
         const connection = await mongoose.createConnection("mongodb://localhost:27018/super-octo-spoon");
@@ -49,6 +49,10 @@ describe("user", function () {
     after(async () => {
         await mongoose.disconnect();
         db.kill();
+        sleep(1000);
+        const dataPath = __dirname + '/test-data-users';
+        rimraf.sync(dataPath);
+        //fs.rmdirSync(dataPath);
     });
 
     beforeEach(async () => {
