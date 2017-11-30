@@ -78,8 +78,7 @@ const Order = new Schema({
 }, { strict: true });
 
 Order.statics.editOrder = async function updateOrder(order, userId) {
-    const o = await new this(order).populate("consultant", "username").execPopulate()
-    order = o._doc
+    order = (await new this(order).populate("consultant", "username").execPopulate())._doc
     const oldOrder = (await this.findOne({ _id: order._id }).populate("consultant", "username").exec())._doc
     let consultantId
 
@@ -95,7 +94,8 @@ Order.statics.editOrder = async function updateOrder(order, userId) {
     }
 
     delete changes._id
-    delete changes.log
+
+    const update = { $set: changes }
 
     const logChanges = Object.assign({}, changes, changes.address)
     delete logChanges.dynamics
@@ -110,17 +110,22 @@ Order.statics.editOrder = async function updateOrder(order, userId) {
     }
 
     delete logChanges.address
-    const newLog = {
-        time: moment(new Date()).startOf("minute").toDate(),
-        consultant: userId,
-        changes: logChanges
+
+    if (Object.keys(logChanges).length > 0) {
+        const newLog = {
+            time: moment(new Date()).startOf("minute").toDate(),
+            consultant: userId,
+            changes: logChanges
+        }
+
+        update.$push = { log: newLog }
     }
 
     if (changes.consultant) {
         changes.consultant = consultantId
     }
-
-    return this.findOneAndUpdate({ _id: order._id }, { $set: changes, $push: { log: newLog } }).exec()
+    
+    return this.findOneAndUpdate({ _id: order._id }, update)
 }
 Order.statics.createOrder = function createOrder(orderData) {
     if(orderData.landlineNumber || orderData.phoneNumber) {
