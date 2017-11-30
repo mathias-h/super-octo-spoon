@@ -290,6 +290,42 @@ describe("order", () => {
             
             expect(newOrder.log.length).to.eq(1)
         })
+
+        it("should not override dynamics", async () => {
+            const order = await createOrder({
+                dynamics: {
+                    "1": {
+                        "test": "test"
+                    }
+                }
+            })
+
+            await Order.editOrder({
+                _id: order._id,
+                consultant: order.consultant,
+                signedDate: new Date("1970-01-01"),
+                name: "NAME",
+                farmName: "FARM_NAME",
+                address: {
+                    city: "CITY",
+                    zip: 9999,
+                    street: "STREET"
+                },
+                dynamics: {
+                    "1": {
+                        "test1": "test"
+                    }
+                }
+            });
+
+            const newOrder = await Order.findById(order._id)
+            const fase = newOrder.dynamics["1"]
+
+            expect(newOrder.dynamics["1"]).to.deep.eq({
+                test: "test",
+                test1: "test"
+            })
+        })
     });
    
     it("should create order", async () => {
@@ -346,7 +382,7 @@ describe("order", () => {
         })
     })
 
-    describe.only("get all", () => {
+    describe("get all", () => {
         it("should search", async () => {
             const consultant = new User({
                 username: "CONSULTANT",

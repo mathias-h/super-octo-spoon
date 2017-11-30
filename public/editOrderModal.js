@@ -7,7 +7,9 @@ class EditOrderModal {
 
         this.modal = $("#editOrderModal");
         this.form = $("#orderEditForm");
+        this.dynamics = {}
         const _this = this;
+        
 
         $("tbody tr").click(function (evt) {
             const orderId = this.getAttribute("data-order-id");
@@ -83,6 +85,67 @@ class EditOrderModal {
             setDate($("#inputMO"), order.mO)
             setDate($("#inputReceptApproved"), order.receptApproved)
 
+            const _this = this
+
+            if (order.dynamics) {
+                this.dynamics = order.dynamics
+                $(".dynamic").each(function() {
+                    function getField(fase, name, value) {
+                        const div = document.createElement("div")
+                        const input = document.createElement("input")
+                        input.value = value
+                        input.id = `dynamic-${fase}-${name}`
+                        input.name = name
+                        input.addEventListener("change", evt => {
+                            if (!_this.dynamics[fase]) {
+                                _this.dynamics[fase] = {}
+                            }
+        
+                            _this.dynamics[fase][name] = input.value
+                        })
+                        div.innerHTML = `<label for="dynamic-${fase}-${name}">${name}</label>`
+                        div.appendChild(input)
+
+                        return div
+                    }
+                    const fase = this.classList[1].replace("fase-", "")
+    
+                    for (const f of Object.keys(order.dynamics)) {
+                        if (fase !== f) continue
+    
+                        for (const [name, value] of Object.entries(order.dynamics[f])) {
+                            this.appendChild(getField(f,name,value))
+                        }
+                    }
+    
+                    const addButton = document.createElement("button")
+                    addButton.type = "button"
+                    addButton.innerHTML = '<img src="/add.svg" alt="tilføj dynamisk kolonne"/>'
+                    addButton.addEventListener("click", evt => {
+                        const nameInput = document.querySelector("#newName")
+                        const name = nameInput.value
+    
+                        if (!name) {
+                            // TODO handle no name
+                            return
+                        }
+    
+                        if (!_this.dynamics[fase]) {
+                            _this.dynamics[fase] = {}
+                        }
+    
+                        _this.dynamics[fase][name] = ""
+
+                        $(getField(fase, name, "")).insertBefore($("label[for=newName]"))
+                    })
+                    $(this).append(`
+                        <label for="newName">tilføj dynamisk kolonne</label>
+                        <input type="text" id="newName" name="newName">
+                    `)
+                    $(this).append(addButton)
+                })
+            }
+
             const names = {
                 consultant: "Konsulent",
                 name: "Navn",
@@ -120,8 +183,6 @@ class EditOrderModal {
 
             for (const log of order.log) {
                 const simmilarLogIndex = logs.findIndex(l => l.time == log.time && l.consultant === log.consultant)
-                
-                debugger
 
                 if (simmilarLogIndex !== -1) Object.assign(logs[simmilarLogIndex].changes, log.changes)
                 else logs.push(log)
@@ -161,6 +222,8 @@ class EditOrderModal {
         delete order.street;
         delete order.city;
         delete order.zip;
+
+        order.dynamics = this.dynamics
 
         return $.ajax({
             type: 'PUT',
