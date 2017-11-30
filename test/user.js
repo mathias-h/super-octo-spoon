@@ -1,89 +1,98 @@
 "use strict";
 
-const { expect } = require("chai");
-const mongoose = require('mongoose');
+const { expect } = require("chai");
+const mongoose = require("mongoose");
+const moment = require("moment");
+const childProcess = require("child_process");
+const rimraf = require("rimraf");
+const fs = require("fs");
+const { User: UserSchema } = require("../models/user");
+
+mongoose.Promise = global.Promise;
+
+const sleep = time => new Promise(resolve => setTimeout(resolve, time));
 
 describe("user", function () {
 
+    let db;
     let User;
-    const testData = {
-        username: "testUser01",
-        password: "12345678",
-        isAdmin: true,
-        isDisabled: false
-    };
 
-    beforeEach(function () {
-        User = require("../models/user");
-    });
-
-    it('should create a user',function () {
-
-        const user = new User(testData);
-
-        expect(user.username).to.eq(testData.username);
-        expect(user.password).to.eq(testData.password);
-        expect(user.isAdmin).to.eq(testData.isAdmin);
-        expect(user.isDisabled).to.eq(testData.isDisabled);
-
-    });
-
-/*
-    it('should create a user ', function () {
-
-        console.log(User);
-        const oldUserStatics = User.statics;
-
-        User.statics = function(user){
-            expect(user.username).to.eq(newUser.username);
-            // TODO: Nedenstående fejler nok pga. hashing
-            expect(user.password).to.eq(newUser.password);
-            expect(user.isAdmin).to.eq(newUser.isAdmin);
-            expect(user.isDisabled).to.eq(newUser.isDisabled);
-
-            return User.statics;
-        };
-
-        const newUser = {
-            username: "testUser01",
-            password: "12345678",
+    async function createUser(data = {}){
+        const d = {
+            username: "ndlarsen",
+            password: "1Qqqqqqq",
             isAdmin: true,
             isDisabled: false
         };
 
-        const testDataUser = new User({
-            username: "testUser01",
-            password: "12345678",
-            isAdmin: true,
-            isDisabled: false
+        const user = new User(Object.assign(d, data));
+        await user.save();
+        return user;
+    }
+
+    before(async () => {
+        const dataPath = __dirname + '/users_test_data.js';
+        rimraf.sync(dataPath);
+        fs.mkdirSync(dataPath);
+
+        db = childProcess.spawn("mongod", ["--port", "27018", "--dbpath", dataPath])
+
+        await sleep(500)
+
+        mongoose.Promise = global.Promise;
+        const connection = await mongoose.createConnection("mongodb://localhost:27018/super-octo-spoon");
+
+        User = connection.models.User || connection.model("User", UserSchema);
+
+    });
+
+    after(async () => {
+        await mongoose.disconnect();
+        db.kill();
+    });
+
+    beforeEach(async () => {
+        await User.remove({});
+    });
+
+    describe('create user', function () {
+        it('should create a user', async function () {
+
+            const userData = {
+                username: "TESTUSER",
+                password: "TESTPASSWORD",
+                isAdmin: false,
+                isDisabled: false
+            };
+
+            await User.createUser(userData);
+
+            const newUser = User.findOne();
+
+            expect(newUser.username).to.eq(userData.username);
+            expect(newUser.password).to.eq(userData.password);
+            expect(newUser.isAdmin).to.eq(userData.isAdmin);
+            expect(newUser.isDisabled).to.eq(userData.isDisabled);
+
+        });
+    });
+
+    describe('edit user', function () {
+        it('should change username', function () {
+            //TODO
         });
 
-        Object.assign(User.statics, oldUserStatics);
-
-        User.statics.save = function saveMock(){
-            return {exec: function (){
-                return Promise.resolve()
-                }
-            }
-        };
-
-        return User.statics.createUser(newUser);
-    });
-*/
-    it('should change username', function () {
-        //TODO
-    });
-
-    it('should change password', function () {
+        it('should change password', function () {
             //TODO
-    });
+        });
 
-    it('should change admin user level', function () {
-        //TODO
-    });
+        it('should change admin user level', function () {
+            //TODO
+        });
 
-    it('should change activity status', function () {
-        //TODO
+        it('should change activity status', function () {
+            //TODO
+        });
     });
 
 });
