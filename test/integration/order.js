@@ -17,8 +17,8 @@ describe("order integration test", () => {
     let db
     let browser
     let page
-    const OrderModel = mongoose.models.Order || mongoose.model("Order", OrderSchema)
-    const UserModel = mongoose.models.User || mongoose.model("User", UserSchema)
+    let OrderModel
+    let UserModel
     
     before(async () => {
         const dataPath = __dirname + "/../test-data"
@@ -29,8 +29,11 @@ describe("order integration test", () => {
         
         await sleep(200)
 
-        mongoose.connect("mongodb://localhost:27018/super-octo-spoon");
         mongoose.Promise = global.Promise;
+        const connection = await mongoose.createConnection("mongodb://localhost:27018/super-octo-spoon");
+
+        OrderModel = connection.models.Order || connection.model("Order", OrderSchema)
+        UserModel = connection.models.User || connection.model("User", UserSchema)
 
         server = createApp(OrderModel, UserModel).listen(1025)
         browser = await puppeteer.launch({ headless: false, devtools: true })
