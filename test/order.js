@@ -294,9 +294,7 @@ describe("order", () => {
         it("should not override dynamics", async () => {
             const order = await createOrder({
                 dynamics: {
-                    "1": {
-                        "test": "test"
-                    }
+                    "1": { "test": "test" }
                 }
             })
 
@@ -312,9 +310,7 @@ describe("order", () => {
                     street: "STREET"
                 },
                 dynamics: {
-                    "1": {
-                        "test1": "test"
-                    }
+                    "1": { "test1": "test" }
                 }
             });
 
