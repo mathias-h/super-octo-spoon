@@ -36,10 +36,26 @@ describe("order integration test", () => {
         UserModel = connection.models.User || connection.model("User", UserSchema)
 
         server = createApp(OrderModel, UserModel).listen(1025)
-        browser = await puppeteer.launch()
+        browser = await puppeteer.launch({ headless: false, devtools: true })
 
         page = await browser.newPage()
         await page.goto("http://localhost:1025/")
+
+        await OrderModel.remove({})
+        await UserModel.remove({})
+
+        await new UserModel({
+            username: "admin",
+            password: "pass",
+            isAdmin: true,
+            isDisabled: false
+        }).save()
+
+        await page.evaluate(() => {
+            document.getElementById("inputUsername").value = "admin"
+            document.getElementById("inputPassword").value = "pass"
+            document.querySelector("button[type=submit]").click()
+        })
     })
 
     after(async () => {
@@ -50,8 +66,8 @@ describe("order integration test", () => {
     })
 
     beforeEach(async () => {
-        await OrderModel.remove({}).exec()
-        await UserModel.remove({}).exec()
+        await OrderModel.remove({})
+        await UserModel.remove({})
     })
 
     it("should show orders in overview", async () => {
