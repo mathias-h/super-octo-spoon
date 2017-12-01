@@ -192,7 +192,7 @@ module.exports.createApp = function createApp(Order, User) {
             });
     });
 
-    app.post('/logout', function (req, res) {
+    app.get('/logout', function (req, res) {
         const sess = req.session;
 
         if(sess.isLoggedIn){
