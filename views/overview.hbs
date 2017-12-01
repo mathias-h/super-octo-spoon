@@ -137,9 +137,10 @@
                 </li>
                 <li>
                     <select id="season" class="form-control btn-sm">
-                    {{#each seasons}}
-                        <option value="{{this.season}}">Sæson {{this.season}}</option>
-                    {{/each}}
+                    <!-- TODO check implementation -->
+                        {{#each seasons}}
+                            <option value="{{this.id}}">Sæson {{this.season}}</option>
+                        {{/each}}
                     </select>
                 </li>
             </ul>

@@ -94,6 +94,8 @@ module.exports.createApp = function createApp(Order, User, Season) {
         Order.createOrder(req.body).then(() => {
             res.send("order created");
         }).catch(e => {
+            console.log(req.body)
+            console.log(e)
             res.status(500).json(e);
         })
     });

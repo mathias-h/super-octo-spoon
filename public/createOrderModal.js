@@ -15,6 +15,10 @@ window.addEventListener('load', function() {
     $("#inputSignedDate").val(moment(new Date()).format("YYYY-MM-DD"));
     $("#inputSignedDate").val(moment(new Date()).format("YYYY-MM-DD"));
 
+    $("#createOrderModal").on('shown.bs.modal', function () {
+        $("#orderSeason").val($("#season").val())
+    })
+
     $("#orderCreateCancel").click(() => {
         clearOrderCreate();
     });
@@ -34,7 +38,7 @@ window.addEventListener('load', function() {
         var month = d.getMonth()+1;
         var day = d.getDate();
 
-        return d.getFullYear() + '/' + (month<10 ? '0' : '') + month + '/' + (day<10 ? '0' : '') + day;
+        return d.getFullYear() + '-' + (month<10 ? '0' : '') + month + '-' + (day<10 ? '0' : '') + day;
     }
 
     const form = document.getElementById('orderCreateForm');

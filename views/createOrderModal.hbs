@@ -23,11 +23,11 @@
                             <input name="signedDate" type="date" id="inputSignedDate" class="form-control" required>
                         </div>
                         <div class="col form-group">
-                            <label for="season">Sæson</label>
-                            <select name="season" id="season" class="form-control" required>
+                            <label for="orderSeason">Sæson</label>
+                            <select name="season" id="orderSeason" class="form-control" required>
                                 <!-- TODO check implementation -->
-                                {{#each season}}
-                                    <option value="{{season}}"></option>
+                                {{#each seasons}}
+                                    <option value="{{this._id}}">Sæson {{this.season}}</option>
                                 {{/each}}
                             </select>
                         </div>
