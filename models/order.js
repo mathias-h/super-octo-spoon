@@ -8,7 +8,7 @@ const Order = new Schema({
     season: {
         type: Schema.Types.ObjectId,
         ref: "Season",
-        // required: true
+        required: true
     },
     consultant: {
         type: Schema.Types.ObjectId,
@@ -146,6 +146,7 @@ Order.statics.createOrder = function createOrder(orderData) {
         const order = new this({
             consultant: orderData.consultant,
             signedDate: orderData.signedDate,
+            season: orderData.season,
             landlineNumber: orderData.landlineNumber,
             phoneNumber: orderData.phoneNumber,
             name: orderData.name,
@@ -204,18 +205,5 @@ Order.statics.getAll = async function getAll({query, sortBy="date", order}) {
         return o
     })
 }
-
-Order.index({
-    consultant:"text",
-    "address.zip":"text",
-    "address.city":"text",
-    "address.street":"text",
-    landlineNumber:"text",
-    phoneNumber:"text",
-    name:"text",
-    farmName:"text"
-}, {
-    name: "search-index"
-})
 
 module.exports.Order = Order
