@@ -4,3 +4,4 @@ data
 test/test-data
 test/test-data-user
 .vscode
+index_tmp\.js
