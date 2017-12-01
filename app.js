@@ -46,7 +46,6 @@ module.exports.createApp = function createApp({Order, User, session}) {
 
     // Default session check for all requests to this app
     app.use(function (req, res, next) {
-
         const sess = req.session;
         const url = req.url;
 
@@ -103,17 +102,15 @@ module.exports.createApp = function createApp({Order, User, session}) {
         });
     });
     
-    app.put("/order", (req,res) => {
+    app.put("/order", async (req,res) => {
         const order = req.body;
-        
-        User.findOne({ _id: req.session.userId }).exec().then(user => {
-            Order.editOrder(order, user._id).then(() => {
-                res.end("order updated");
-            }).catch(err => {
-                console.error(err)
-                res.status(500).json(err);
-            });
-        })
+        const user = await User.findOne({ _id: req.session.userId }).exec();
+
+        try {
+            await Order.editOrder(order, user._id)
+        } catch (error) {
+            res.status(500).json(error);
+        }
     });
 
     app.put("/order/dynamic/:orderId", (req,res) => {

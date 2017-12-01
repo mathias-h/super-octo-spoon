@@ -49,12 +49,13 @@ describe("order integration test", () => {
         await OrderModel.remove({})
         await UserModel.remove({})
 
-        await new UserModel({
+        const u = new UserModel({
             username: "admin",
             password: "pass",
             isAdmin: true,
             isDisabled: false
-        }).save()
+        })
+        await u.save()
 
         await page.evaluate(() => {
             document.getElementById("inputUsername").value = "admin"
@@ -72,7 +73,7 @@ describe("order integration test", () => {
 
     beforeEach(async () => {
         await OrderModel.remove({})
-        await UserModel.remove({})
+        await UserModel.remove({ username: { $not: /^admin$/ }})
     })
 
     it("should show orders in overview", async () => {
@@ -270,7 +271,7 @@ describe("order integration test", () => {
             }, 200)
         }, consultant1._id.toHexString())
 
-        await sleep(400)
+        await sleep(500)
 
         const order = await OrderModel.findOne({ _id: orderId })
 

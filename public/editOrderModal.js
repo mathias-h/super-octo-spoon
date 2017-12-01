@@ -123,7 +123,7 @@ class EditOrderModal {
                 addButton.type = "button"
                 addButton.innerHTML = '<img src="/add.svg" alt="tilføj dynamisk kolonne"/>'
                 addButton.addEventListener("click", evt => {
-                    const nameInput = document.querySelector("#newName")
+                    const nameInput = document.querySelector("#newName" + fase)
                     const name = nameInput.value
 
                     if (!name) {
@@ -137,11 +137,11 @@ class EditOrderModal {
 
                     _this.dynamics[fase][name] = ""
 
-                    $(getField(fase, name, "")).insertBefore($("label[for=newName]"))
+                    $(getField(fase, name, "")).insertBefore($("label[for=newName" + fase + "]"))
                 })
                 $(this).append(`
-                    <label for="newName">tilføj dynamisk kolonne</label>
-                    <input type="text" id="newName" name="newName">
+                    <label for="newName${fase}">tilføj dynamisk kolonne</label>
+                    <input type="text" id="newName${fase}" name="newName">
                 `)
                 $(this).append(addButton)
             })
@@ -263,6 +263,8 @@ class EditOrderModal {
         delete order.zip;
 
         order.dynamics = this.dynamics
+
+        console.log(order)
 
         return $.ajax({
             type: 'PUT',
