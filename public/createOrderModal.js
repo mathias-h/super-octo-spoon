@@ -96,18 +96,4 @@ window.addEventListener('load', function() {
 
         form.classList.add('was-validated');
     }, false);
-
-    $(".sortable").click(function () {
-        var id = $(this).attr("id");
-        var ls = location.search;
-        var order = (ls.indexOf("order=asc")!==-1) ? "&order=desc" : "&order=asc";
-        if (ls.length === 0 || (ls.indexOf("sortBy")!==-1 && ls.indexOf("query") === -1)){
-            location.search = "sortBy=" + id + order;
-        }
-        else if (ls.indexOf("query") !== -1 && ls.indexOf("sortBy") === -1){
-            location.search += "&sortBy=" + id + order;
-        }else {
-            location.search = location.search.substring(0,location.search.indexOf("&")) + "&sortBy=" + id + order;
-        }
-    })
 });
