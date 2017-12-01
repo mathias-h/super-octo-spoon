@@ -111,7 +111,7 @@ Order.statics.editOrder = async function updateOrder(order, userId) {
     if (dynamicChanges) {
         for (const fase of Object.keys(dynamicChanges)) {
             for (const [k,v] of Object.entries(dynamicChanges[fase])) {
-                if (v !== null) {
+                if (v !== null && v !== undefined) {
                     update.$set["dynamics." + fase + "." + k] = v
                 }
                 logChanges[k] = v

@@ -5,6 +5,7 @@ const { expect } = require("chai")
 const fs = require("fs")
 const rimraf = require("rimraf")
 const moment = require("moment")
+const session = require("express-session")
 
 const { Order : OrderSchema } = require("../../models/order")
 const { User : UserSchema } = require("../../models/user")
@@ -35,11 +36,32 @@ describe("order integration test", () => {
         OrderModel = connection.models.Order || connection.model("Order", OrderSchema)
         UserModel = connection.models.User || connection.model("User", UserSchema)
 
-        server = createApp(OrderModel, UserModel).listen(1025)
-        browser = await puppeteer.launch({ headless: false, devtools: true })
+        server = createApp({
+            Order: OrderModel,
+            User: UserModel,
+            session
+        }).listen(1025)
+        browser = await puppeteer.launch()
 
         page = await browser.newPage()
         await page.goto("http://localhost:1025/")
+
+        await OrderModel.remove({})
+        await UserModel.remove({})
+
+        const u = new UserModel({
+            username: "admin",
+            password: "pass",
+            isAdmin: true,
+            isDisabled: false
+        })
+        await u.save()
+
+        await page.evaluate(() => {
+            document.getElementById("inputUsername").value = "admin"
+            document.getElementById("inputPassword").value = "pass"
+            document.querySelector("button[type=submit]").click()
+        })
     })
 
     after(async () => {
@@ -50,8 +72,8 @@ describe("order integration test", () => {
     })
 
     beforeEach(async () => {
-        await OrderModel.remove({}).exec()
-        await UserModel.remove({}).exec()
+        await OrderModel.remove({})
+        await UserModel.remove({ username: { $not: /^admin$/ }})
     })
 
     it("should show orders in overview", async () => {
@@ -130,7 +152,7 @@ describe("order integration test", () => {
                 modal.querySelector("#inputTakeOwnSamples").checked = true
 
                 modal.querySelector("button[type=submit]").click()
-            }, 200)
+            }, 300)
         }, user._id)
 
         await sleep(500)
@@ -239,6 +261,8 @@ describe("order integration test", () => {
                 modal.querySelector("#inputMO").value = "1970-01-02"
                 modal.querySelector("#inputReceptApproved").value = "1970-01-02"
 
+                //TODO should test fase 3
+
                 //TODO should show log
 
                 //TODO should show dynamic
@@ -247,7 +271,7 @@ describe("order integration test", () => {
             }, 200)
         }, consultant1._id.toHexString())
 
-        await sleep(400)
+        await sleep(500)
 
         const order = await OrderModel.findOne({ _id: orderId })
 

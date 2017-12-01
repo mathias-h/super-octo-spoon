@@ -88,64 +88,64 @@ class EditOrderModal {
 
             const _this = this
 
-            if (order.dynamics) {
-                this.dynamics = order.dynamics
-                $(".dynamic").each(function() {
-                    function getField(fase, name, value) {
-                        const div = document.createElement("div")
-                        const input = document.createElement("input")
-                        input.value = value
-                        input.id = `dynamic-${fase}-${name}`
-                        input.name = name
-                        input.addEventListener("change", evt => {
-                            if (!_this.dynamics[fase]) {
-                                _this.dynamics[fase] = {}
-                            }
-        
-                            _this.dynamics[fase][name] = input.value
-                        })
-                        div.innerHTML = `<label for="dynamic-${fase}-${name}">${name}</label>`
-                        div.appendChild(input)
+            if (!order.dynamics) order.dynamics = {}
 
-                        return div
-                    }
-                    const fase = this.classList[1].replace("fase-", "")
-    
-                    for (const f of Object.keys(order.dynamics)) {
-                        if (fase !== f) continue
-    
-                        for (const [name, value] of Object.entries(order.dynamics[f])) {
-                            this.appendChild(getField(f,name,value))
-                        }
-                    }
-    
-                    const addButton = document.createElement("button")
-                    addButton.type = "button"
-                    addButton.innerHTML = '<img src="/add.svg" alt="tilføj dynamisk kolonne"/>'
-                    addButton.addEventListener("click", evt => {
-                        const nameInput = document.querySelector("#newName")
-                        const name = nameInput.value
-    
-                        if (!name) {
-                            // TODO handle no name
-                            return
-                        }
-    
+            this.dynamics = order.dynamics
+            $(".dynamic").each(function() {
+                function getField(fase, name, value) {
+                    const div = document.createElement("div")
+                    const input = document.createElement("input")
+                    input.value = value
+                    input.id = `dynamic-${fase}-${name}`
+                    input.name = name
+                    input.addEventListener("change", evt => {
                         if (!_this.dynamics[fase]) {
                             _this.dynamics[fase] = {}
                         }
-    
-                        _this.dynamics[fase][name] = ""
 
-                        $(getField(fase, name, "")).insertBefore($("label[for=newName]"))
+                        _this.dynamics[fase][name] = input.value
                     })
-                    $(this).append(`
-                        <label for="newName">tilføj dynamisk kolonne</label>
-                        <input type="text" id="newName" name="newName">
-                    `)
-                    $(this).append(addButton)
+                    div.innerHTML = `<label for="dynamic-${fase}-${name}">${name}</label>`
+                    div.appendChild(input)
+
+                    return div
+                }
+                const fase = this.classList[1].replace("fase-", "")
+
+                for (const f of Object.keys(order.dynamics)) {
+                    if (fase !== f) continue
+
+                    for (const [name, value] of Object.entries(order.dynamics[f])) {
+                        this.appendChild(getField(f,name,value))
+                    }
+                }
+
+                const addButton = document.createElement("button")
+                addButton.type = "button"
+                addButton.innerHTML = '<img src="/add.svg" alt="tilføj dynamisk kolonne"/>'
+                addButton.addEventListener("click", evt => {
+                    const nameInput = document.querySelector("#newName" + fase)
+                    const name = nameInput.value
+
+                    if (!name) {
+                        // TODO handle no name
+                        return
+                    }
+
+                    if (!_this.dynamics[fase]) {
+                        _this.dynamics[fase] = {}
+                    }
+
+                    _this.dynamics[fase][name] = ""
+
+                    $(getField(fase, name, "")).insertBefore($("label[for=newName" + fase + "]"))
                 })
-            }
+                $(this).append(`
+                    <label for="newName${fase}">tilføj dynamisk kolonne</label>
+                    <input type="text" id="newName${fase}" name="newName">
+                `)
+                $(this).append(addButton)
+            })
 
             const names = {
                 consultant: "Konsulent",
@@ -181,14 +181,63 @@ class EditOrderModal {
             }
 
             const logs = []
+            const properties = {}
 
             for (const log of order.log) {
-                const simmilarLogIndex = logs.findIndex(l => l.time == log.time && l.consultant === log.consultant)
+                for (const [k,v] of Object.entries(log.changes)) {
+                    if (!properties[k]) properties[k] = []
 
-                if (simmilarLogIndex !== -1) Object.assign(logs[simmilarLogIndex].changes, log.changes)
-                else logs.push(log)
+                    properties[k].push({
+                        time: log.time,
+                        consultant: log.consultant,
+                        value: v
+                    })
+                }
             }
 
+            $("#logElement").html(`
+                <div class="col form-group">
+                    <label for="inputLogProperty">Værdi</label>
+                    <select name="logProperty" id="inputLogProperty" class="form-control">
+                        ${Object.entries(properties).filter(([_,value]) => value.length > 1).map(([name]) => `<option value="${name}">${name}</option>`)}
+                    </select>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="Konsulent">Konsulent</th>
+                            <th scope="Dato">Dato</th>
+                            <th scope="Ændring">Ændring</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            `)
+
+            function updateLogValues() {
+                const name = $("#inputLogConsultant").val()
+
+                if (!name) return
+
+                const changes = properties[name]
+
+                if (!changes) {
+                    // TODO handle no log
+                    return
+                }
+
+                $("#logElement tbody").html(changes.map(c => `
+                    <tr>
+                        <td>${c.consultant.username}</td>
+                        <td>${moment(c.time).format("DD-MM-YYYY HH:MM")}</td>
+                        <td>${valueToString(c.value)}</td>
+                    </tr>
+                `).join(""))
+            }
+
+            $("#inputLogConsultant").change(updateLogValues)
+
+            updateLogValues()
         });
     }
 
@@ -197,7 +246,8 @@ class EditOrderModal {
             throw new Error("form not valid")
         }
 
-        const order = convertFormToObject(this.form[0]);
+        const order = convertFormToObject(this.form[0])
+
         order._id = this.orderId;
 
         order.samePlanAsLast = $("#editInputSamePlanAsLast")[0].checked;
@@ -214,6 +264,8 @@ class EditOrderModal {
         delete order.zip;
 
         order.dynamics = this.dynamics
+
+        console.log(order)
 
         return $.ajax({
             type: 'PUT',

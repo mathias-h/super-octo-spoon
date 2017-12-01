@@ -17,7 +17,19 @@ describe("overview view", () => {
         const UserMock = {
             find: () => ({ select: () => Promise.resolve({}) })
         }
-        const app = createApp(OrderMock, UserMock);
+        const app = createApp({
+            Order: OrderMock,
+            User: UserMock,
+            session: function sessionMock(req,res,next) {
+                return (req,res,next) => {
+                    req.session = {
+                        isLoggedIn: true
+                    }
+            
+                    next()
+                }
+            }
+        });
         
         return request(app)
             .get("/?query=test")

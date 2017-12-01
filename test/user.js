@@ -21,8 +21,8 @@ describe("user tests", () => {
 
     async function createUser(data = {}) {
         const d = {
-            username: "ndlarsen",
-            password: "1Qqqqqqq",
+            username: "testUser01",
+            password: "testUser01Password",
             isAdmin: true,
             isDisabled: false
         };
@@ -73,18 +73,6 @@ describe("user tests", () => {
     describe('create user', function () {
         it('should create a user', async () => {
 
-            // TODO - ryd op hvis alle tests er ok.
-            /*
-            const userData = {
-                username: "TESTUSER",
-                password: "TESTPASSWORD",
-                isAdmin: false,
-                isDisabled: false
-            };
-
-            await User.createUser(userData);
-            */
-
             const newUser = await User.findOne();
 
             expect(newUser.username).to.eq(userData.username);
@@ -100,21 +88,94 @@ describe("user tests", () => {
     });
 
     describe('edit user', function () {
-        it('should change username', function () {
-            //TODO
+        it('should change username', async function () {
+
+            const updateData = {
+                username: "NEWUSERNAME"
+            };
+
+            const user = await User.findOne();
+            await User.updateUser(user._id, updateData);
+
+            const updatedUser = await User.findById(user._id);
+
+            expect(updatedUser.username).to.eq(updateData.username);
 
         });
 
-        it('should change password', function () {
-            //TODO
+        it('should change password', async function () {
+            const updateData = {
+                password: "NEWPASSWORD"
+            };
+
+            const user = await User.findOne();
+            const updateResult = await User.updateUser(user._id, updateData);
+
+            const updatedUser = await User.findById(user._id);
+
+            expect(updatedUser.password).not.to.eq(updateData.password);
+            expect(updatedUser.password).not.to.eq(user.password);
         });
 
-        it('should change admin user level', function () {
-            //TODO
+        it('should change admin user level', async function () {
+
+            const user = await User.findOne();
+
+            const updateData = {
+                isAdmin: false,
+            };
+
+            let updateResult = await User.updateUser(user._id, updateData);
+            let updatedUser = await User.findById(user._id);
+
+            expect(updatedUser.isAdmin).is.eq(false);
+
+            updateData.isAdmin = true;
+
+            updateResult = await User.updateUser(user._id, updateData);
+            updatedUser = await User.findById(user._id);
+
+            expect(updatedUser.isAdmin).is.eq(true);
+
         });
 
-        it('should change activity status', function () {
-            //TODO
+        it('should change activity status', async function () {
+            const user = await User.findOne();
+
+            const updateData = {
+                isDisabled: false,
+            };
+
+            let updateResult = await User.updateUser(user._id, updateData);
+            let updatedUser = await User.findById(user._id);
+
+            expect(updatedUser.isDisabled).is.eq(false);
+
+            updateData.isDisabled = true;
+
+            updateResult = await User.updateUser(user._id, updateData);
+            updatedUser = await User.findById(user._id);
+
+            expect(updatedUser.isDisabled).is.eq(true);
+        });
+    });
+
+    describe('match passwords', function () {
+        it('should compare passwords and return true if they match else false', async function () {
+            const user = await User.findOne();
+
+            const updateData = {
+                password: "5up3r53r37P455w0rd",
+            };
+
+            let updateResult = await User.updateUser(user._id, updateData);
+            let updatedUser = await User.findById(user._id);
+
+            const mismatchResult = (await User.matchPasswords(updatedUser.username, "WRONGPASSWORD")).status;
+            const matchResult = (await User.matchPasswords(updatedUser.username, updateData.password)).status;
+
+            expect(mismatchResult).is.eq(false);
+            expect(matchResult).is.eq(true);
         });
     });
 

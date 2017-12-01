@@ -108,7 +108,7 @@ User.pre('findOneAndUpdate', function (next) {
             return next();
         });
     }
-    return next();
+    else return next();
 });
 
 User.statics.matchPasswords = async function (username, password) {
