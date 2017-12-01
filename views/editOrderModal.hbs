@@ -237,33 +237,39 @@
                                     </select>
                                 </div>
                                 <div class="col-4 form-group">
-                                    <label for="editInputContactFarmer">
-                                        <input name="contactFarmer" type="checkbox" id="editInputContactFarmer">
-                                        Landmand kontaktes til sommer ang. tildelingskort.</label>
-                                    <label for="inputApplicationMap">
-                                        <input name="applicationMap" type="checkbox" id="inputApplicationMap">Ønkes
-                                        tildelingskort?</label>
+                                    <div class="ml-3" style="line-height: 0; margin-bottom: 0; margin-top: 32px;">
+                                        <label for="editInputContactFarmer">
+                                            <input name="contactFarmer" type="checkbox" id="editInputContactFarmer">
+                                            Landmand kontaktes</label>
+                                        <label for="inputApplicationMap">
+                                            <input name="applicationMap" type="checkbox" id="inputApplicationMap">
+                                            Ønkes tildelingskort?</label>
+                                    </div>
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="col-4 form-group">
-                                    <label for="editInputRemarksAndComments">Bemærkninger & Aftaler</label>
-                                    <textarea name="remarksAndComments" id="editInputRemarksAndComments"
-                                              class="form-control" rows="5"
-                                              style="min-height: 74px"></textarea>
+                                    <label for="editInputRemarksAndComments">Bemærkninger & aftaler</label>
+                                    <textarea name="remarksAndComments" id="editInputRemarksAndComments" class="form-control" rows="4" style="min-height: 74px"></textarea>
                                 </div>
                                 <div class="col-4 form-group">
-                                    <label for="editInputAssignedFields">Tildelte Marker på Kort</label>
+                                    <label for="editInputSentToFarm">Sendt til landmand</label>
+                                    <input name="sentToFarm" type="date" id="editInputSentToFarm" class="form-control">
+                                    <label for="editInputSentToPit">Sendt til maskinstation</label>
+                                    <input name="sentToPit" type="date" id="editInputSentToPit" class="form-control">
+                                </div>
+                                <div class="col-4 form-group">
+                                    <label for="editInputAssignedFields">Tildelte marker på kort</label>
                                     <div class="input-group" id="editInputAssignedFields">
                                         <input name="assignedFields" type="number" min="0" id="editInputAssignedFields"
                                                class="form-control" placeholder="Antal marker">
                                         <span class="input-group-addon">marker</span>
                                     </div>
-                                    <label for="editInputAssignedHectare">Antal ha.</label>
+                                    <label for="editInputAssignedHectare">Antal ha</label>
                                     <div class="input-group" id="editInputAssignedHectare">
                                         <input name="AssignedHectare" type="number" min="0"
                                                id="editInputAssignedHectare"
-                                               class="form-control" placeholder="Antal Has">
+                                               class="form-control" placeholder="Antal ha">
                                         <span class="input-group-addon">ha</span>
                                     </div>
                                 </div>
@@ -277,9 +283,7 @@
                             <div class="dynamic fase-3"></div>
                         </div>
                         <div class="tab-pane" id="log" role="tabpanel" aria-labelledby="FaseLogTab">
-                            <div class="form-group" id="logElement">
-                                
-                            </div>
+                            <div class="form-group" id="logElement"></div>
                         </div>
                         <div class="tab-pane" id="sletOrdre" role="tabpanel" aria-labelledby="FaseDestroyTab">
                         </div>
