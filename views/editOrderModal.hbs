@@ -57,6 +57,15 @@
                                     <input name="signedDate" type="date" id="editInputSignedDate" class="form-control"
                                            required>
                                 </div>
+                                <!-- TODO check implementation NK -->
+                                <div class="col form-group">
+                                    <label for="editOrderSeason">Sæson</label>
+                                    <select name="seasonEdit" id="editOrderSeason" class="form-control" required>
+                                        {{#each seasons}}
+                                            <option value="{{this._id}}">{{this.season}}</option>
+                                        {{/each}}
+                                    </select>
+                                </div>
                             </div>
                             <div class="form-row">
                                 <div class="col-6 form-group">
@@ -113,8 +122,7 @@
                                     <label for="editInputSampleDensity">Prøvetæthed</label>
                                     <div class="input-group" id="sampleDensityContainer">
                                         <span class="input-group-addon">1/</span>
-                                        <input name="sampleDensity" type="number" min="0" id="editInputSampleDensity"
-                                               class="form-control" placeholder="Mængde">
+                                        <input name="sampleDensity" type="number" min="0" id="editInputSampleDensity" class="form-control" placeholder="Mængde">
                                         <span class="input-group-addon">ha</span>
                                     </div>
                                 </div>
@@ -231,7 +239,7 @@
                                 </div>
                                 <div class="col-4 form-group">
                                     <label for="editInputSentBy">Udsendt af:</label>
-                                    <select name="sentBy" id="editInputSentBy" class="form-control" required>
+                                    <select name="sentBy" id="editInputSentBy" class="form-control">
                                         {{#each consultants}}
                                             <option value="{{this._id}}">{{this.username}}</option>
                                         {{/each}}
@@ -242,9 +250,9 @@
                                         <label for="editInputContactFarmer">
                                             <input name="contactFarmer" type="checkbox" id="editInputContactFarmer">
                                             Landmand kontaktes</label>
-                                        <label for="applicationMap">
-                                            <input name="contactFarmer" type="checkbox" id="editInputContactFarmer">
-                                            Ønkes tildelingskort</label>
+                                        <label for="inputApplicationMap">
+                                            <input name="applicationMap" type="checkbox" id="inputApplicationMap">
+                                            Ønkes tildelingskort?</label>
                                     </div>
                                 </div>
                             </div>
@@ -254,15 +262,16 @@
                                     <textarea name="remarksAndComments" id="editInputRemarksAndComments" class="form-control" rows="4" style="min-height: 74px"></textarea>
                                 </div>
                                 <div class="col-4 form-group">
-                                    <label for="editInputSentToFarm">Sendt til landmand</label>
-                                    <input name="sentToFarm" type="date" id="editInputSentToFarm" class="form-control">
-                                    <label for="editInputSentToPit">Sendt til maskinstation</label>
-                                    <input name="sentToPit" type="date" id="editInputSentToPit" class="form-control">
+                                    <!-- disse har ikke de rigtige navne osv. mvh mathias -->
+                                    <!--label for="editInputSentToFarm">Sendt til landmand</label>
+                                    <input name="sentToFarm" type="date" id="editInputSentToFarm" class="form-control"-->
+                                    <!--label for="editInputSentToPit">Sendt til maskinstation</label>
+                                    <input name="sentToPit" type="date" id="editInputSentToPit" class="form-control"-->
                                 </div>
                                 <div class="col-4 form-group">
                                     <label for="editInputAssignedFields">Tildelte marker på kort</label>
                                     <div class="input-group" id="editInputAssignedFields">
-                                        <input name="sampleDensity" type="number" min="0" id="editInputAssignedFields"
+                                        <input name="assignedFields" type="number" min="0" id="editInputAssignedFields"
                                                class="form-control" placeholder="Antal marker">
                                         <span class="input-group-addon">marker</span>
                                     </div>
@@ -274,37 +283,17 @@
                                         <span class="input-group-addon">ha</span>
                                     </div>
                                 </div>
+                                <div class="col-4 form-group">
+                                    <div class="form group ml-3"
+                                         style="line-height: 0; margin-bottom: 0; margin-top: 32px;"></div>
+                                    <label for="editInputSentToPit">Sendt til Maskinstation</label>
+                                    <input name="sentToPit" type="date" id="editInputSentToPit" class="form-control">
+                                </div>
                             </div>
                             <div class="dynamic fase-3"></div>
                         </div>
                         <div class="tab-pane" id="log" role="tabpanel" aria-labelledby="FaseLogTab">
-                            <div class="form-group" id="logElement">
-                                <div class="col form-group">
-                                    <label for="editInputLogConsultant">Konsulent</label>
-                                    <select name="consultantLog" id="editInputLogConsultant" class="form-control"
-                                            required>
-                                        {{#each consultants}}
-                                            <option value="{{this._id}}">{{this.username}}</option>
-                                        {{/each}}
-                                    </select>
-                                </div>
-                                <table class="table">
-                                    <thead>
-                                    <tr>
-                                        <th scope="Konsulent">Konsulent</th>
-                                        <th scope="Dato">Dato</th>
-                                        <th scope="Ændring">Ændring</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr>
-                                        <td>Konsulent Navn her</td>
-                                        <td>Indsæt dato her</td>
-                                        <td>Indsæt ændring her</td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+                            <div class="form-group" id="logElement"></div>
                         </div>
                         <div class="tab-pane" id="sletOrdre" role="tabpanel" aria-labelledby="FaseDestroyTab">
                         </div>

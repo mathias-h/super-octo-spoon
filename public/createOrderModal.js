@@ -15,6 +15,10 @@ window.addEventListener('load', function() {
     $("#inputSignedDate").val(moment(new Date()).format("YYYY-MM-DD"));
     $("#inputSignedDate").val(moment(new Date()).format("YYYY-MM-DD"));
 
+    $("#createOrderModal").on('shown.bs.modal', function () {
+        $("#orderSeason").val($("#season").val())
+    })
+
     $("#orderCreateCancel").click(() => {
         clearOrderCreate();
     });
@@ -34,7 +38,7 @@ window.addEventListener('load', function() {
         var month = d.getMonth()+1;
         var day = d.getDate();
 
-        return d.getFullYear() + '/' + (month<10 ? '0' : '') + month + '/' + (day<10 ? '0' : '') + day;
+        return d.getFullYear() + '-' + (month<10 ? '0' : '') + month + '-' + (day<10 ? '0' : '') + day;
     }
 
     const form = document.getElementById('orderCreateForm');
@@ -96,18 +100,4 @@ window.addEventListener('load', function() {
 
         form.classList.add('was-validated');
     }, false);
-
-    $(".sortable").click(function () {
-        var id = $(this).attr("id");
-        var ls = location.search;
-        var order = (ls.indexOf("order=asc")!==-1) ? "&order=desc" : "&order=asc";
-        if (ls.length === 0 || (ls.indexOf("sortBy")!==-1 && ls.indexOf("query") === -1)){
-            location.search = "sortBy=" + id + order;
-        }
-        else if (ls.indexOf("query") !== -1 && ls.indexOf("sortBy") === -1){
-            location.search += "&sortBy=" + id + order;
-        }else {
-            location.search = location.search.substring(0,location.search.indexOf("&")) + "&sortBy=" + id + order;
-        }
-    })
 });

@@ -1,8 +1,19 @@
 const request = require('supertest');
+const testSession = require("supertest-session")
 const { expect } = require("chai");
 const { createApp } = require("../../app");
 
 describe("Order server tests", () => {
+    function sessionMock(req,res,next) {
+        return (req,res,next) => {
+            req.session = {
+                isLoggedIn: true
+            }
+    
+            next()
+        }
+    }
+
     describe("getOrder", () => {
         it("should get order", () => {
             const orderId = "ORDER_ID"
@@ -18,7 +29,10 @@ describe("Order server tests", () => {
                 populate() { return this },
                 exec() { return Promise.resolve(order) }
             }
-            const app = createApp(OrderMock)
+            const app = createApp({
+                Order: OrderMock,
+                session: sessionMock
+            })
 
             return request(app)
                 .get("/order/" + orderId)
@@ -40,7 +54,10 @@ describe("Order server tests", () => {
                 exec() { return Promise.resolve(null) }
             }
 
-            const app = createApp(OrderMock)
+            const app = createApp({
+                Order: OrderMock,
+                session: sessionMock
+            })
 
             return request(app)
                 .get("/order/" + orderId)
@@ -67,7 +84,11 @@ describe("Order server tests", () => {
             }
         }
         
-        const app = createApp(OrderMock, UserMock)
+        const app = createApp({
+            Order: OrderMock,
+            User: UserMock,
+            session: sessionMock
+        })
 
         return request(app)
             .put("/order")
@@ -99,7 +120,10 @@ describe("Order server tests", () => {
                 }
             };
 
-            const app = createApp(OrderMock);
+            const app = createApp({
+                Order: OrderMock,
+                session: sessionMock
+            });
 
             return request(app)
                 .post('/order')
@@ -120,7 +144,10 @@ describe("Order server tests", () => {
                 }
             };
 
-            const app = createApp(OrderMock);
+            const app = createApp({
+                Order: OrderMock,
+                session: sessionMock
+            });
 
             return request(app)
                 .post('/order')
@@ -141,7 +168,10 @@ describe("Order server tests", () => {
                 }
             };
 
-            const app = createApp(OrderMock);
+            const app = createApp({
+                Order: OrderMock,
+                session: sessionMock
+            });
 
             return request(app)
                 .post('/order')
@@ -167,7 +197,10 @@ describe("Order server tests", () => {
             }
         }
 
-        const app = createApp(OrderMock)
+        const app = createApp({
+            Order: OrderMock,
+            session: sessionMock
+        })
 
         return request(app)
             .put("/order/dynamic/" + orderId)

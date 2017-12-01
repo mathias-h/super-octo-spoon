@@ -5,6 +5,11 @@ const moment = require("moment");
 const { diff } = require("deep-object-diff");
 
 const Order = new Schema({
+    season: {
+        type: Schema.Types.ObjectId,
+        ref: "Season",
+        required: true
+    },
     consultant: {
         type: Schema.Types.ObjectId,
         ref: 'User',
@@ -90,7 +95,7 @@ Order.statics.editOrder = async function updateOrder(order, userId) {
 
     if (changes.consultant) {
         consultantId = order.consultant._doc._id.toHexString()
-        changes.consultant = order.consultant._doc.username    
+        changes.consultant = order.consultant._doc.username
     }
 
     delete changes._id
@@ -102,11 +107,11 @@ Order.statics.editOrder = async function updateOrder(order, userId) {
 
     const logChanges = Object.assign({}, changes, changes.address)
     delete logChanges.dynamics
-    
-    if (dynamicChanges) {   
+
+    if (dynamicChanges) {
         for (const fase of Object.keys(dynamicChanges)) {
             for (const [k,v] of Object.entries(dynamicChanges[fase])) {
-                if (v !== null) {
+                if (v !== null && v !== undefined) {
                     update.$set["dynamics." + fase + "." + k] = v
                 }
                 logChanges[k] = v
@@ -133,7 +138,7 @@ Order.statics.editOrder = async function updateOrder(order, userId) {
     if (changes.consultant) {
         changes.consultant = consultantId
     }
-    
+
     return this.findOneAndUpdate({ _id: order._id }, update)
 }
 Order.statics.createOrder = function createOrder(orderData) {
@@ -141,6 +146,7 @@ Order.statics.createOrder = function createOrder(orderData) {
         const order = new this({
             consultant: orderData.consultant,
             signedDate: orderData.signedDate,
+            season: orderData.season,
             landlineNumber: orderData.landlineNumber,
             phoneNumber: orderData.phoneNumber,
             name: orderData.name,
@@ -199,18 +205,5 @@ Order.statics.getAll = async function getAll({query, sortBy="date", order}) {
         return o
     })
 }
-
-Order.index({
-    consultant:"text",
-    "address.zip":"text",
-    "address.city":"text",
-    "address.street":"text",
-    landlineNumber:"text",
-    phoneNumber:"text",
-    name:"text",
-    farmName:"text"
-}, {
-    name: "search-index"
-})
 
 module.exports.Order = Order

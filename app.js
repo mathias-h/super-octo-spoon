@@ -5,7 +5,7 @@ const express = require("express");
 const session = require('express-session');
 const hbs = require("hbs");
 
-module.exports.createApp = function createApp(Order, User) {
+module.exports.createApp = function createApp({Order, User, session, Season}) {
     const app = express();
     app.set('view engine', 'hbs');
     
@@ -16,6 +16,7 @@ module.exports.createApp = function createApp(Order, User) {
 
         hbs.registerPartial("adminModal", require("fs").readFileSync(__dirname + "/views/admin.hbs").toString());
         hbs.registerPartial("createUser", require("fs").readFileSync(__dirname + "/views/admin/createUser.hbs").toString());
+        hbs.registerPartial("createSeason", require("fs").readFileSync(__dirname + "/views/admin/createSeason.hbs").toString());
 
         hbs.registerHelper("objectIter", function(obj, options) {
             let out = ""
@@ -47,7 +48,6 @@ module.exports.createApp = function createApp(Order, User) {
 
     // Default session check for all requests to this app
     app.use(function (req, res, next) {
-
         const sess = req.session;
         const url = req.url;
 
@@ -63,20 +63,23 @@ module.exports.createApp = function createApp(Order, User) {
     });
 
     // Session related stuff ends //
-    
+
     app.get("/", (req,res) => {
 
         Order.sampleTotals().then(({ totalSamples, totalTaken }) => {
             return Order.getAll(req.query).then(orders => {
                 return User.find({}).select({username: 1}).then(consultants => {
-                    const data = {
-                        orders,
-                        totalSamples,
-                        totalTaken,
-                        query: req.query.query,
-                        consultants: consultants
-                    };
+                    return Season.find({}).then(seasons => {
+                        const data = {
+                            orders,
+                            totalSamples,
+                            totalTaken,
+                            query: req.query.query,
+                            consultants: consultants,
+                            seasons: seasons
+                        };
                     res.render("overview", data);
+                    })
                 });
             })
         }).catch(err => {
@@ -104,17 +107,15 @@ module.exports.createApp = function createApp(Order, User) {
         });
     });
     
-    app.put("/order", (req,res) => {
+    app.put("/order", async (req,res) => {
         const order = req.body;
-        
-        User.findOne({ _id: req.session.userId }).exec().then(user => {
-            Order.editOrder(order, user._id).then(() => {
-                res.end("order updated");
-            }).catch(err => {
-                console.error(err)
-                res.status(500).json(err);
-            });
-        })
+        const user = await User.findOne({ _id: req.session.userId }).exec();
+
+        try {
+            await Order.editOrder(order, user._id)
+        } catch (error) {
+            res.status(500).json(error);
+        }
     });
 
     app.put("/order/dynamic/:orderId", (req,res) => {
@@ -124,7 +125,17 @@ module.exports.createApp = function createApp(Order, User) {
         Order.setDynamicField(orderId, fase, name, value)
             .then(() => res.end("ok"))
             .catch(err => res.status(500).json(err))
-    })
+    });
+
+    app.post("/season", function (req, res) {
+        Season.createSeason(req.body.userData)
+            .then(function (response) {
+                res.json({status:"ok", message:"season created"})
+            })
+            .catch(function (err) {
+                res.json({status: "ERROR", message: "Could not create season."});
+            })
+    });
 
     app.post("/user", function (req, res) {
 
