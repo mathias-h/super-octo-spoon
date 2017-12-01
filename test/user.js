@@ -12,12 +12,14 @@ mongoose.Promise = global.Promise;
 
 const sleep = time => new Promise(resolve => setTimeout(resolve, time));
 
-describe("user", function () {
+describe("user tests", () => {
 
     let db;
     let User;
+    let userData;
+    let newUser;
 
-    async function createUser(data = {}){
+    async function createUser(data = {}) {
         const d = {
             username: "ndlarsen",
             password: "1Qqqqqqq",
@@ -48,20 +50,31 @@ describe("user", function () {
 
     after(async () => {
         await mongoose.disconnect();
-        db.kill();
-        sleep(1000);
+        await db.kill();
         const dataPath = __dirname + '/test-data-users';
         rimraf.sync(dataPath);
-        //fs.rmdirSync(dataPath);
+
     });
 
     beforeEach(async () => {
         await User.remove({});
+
+        userData = {
+            username: "TESTUSER",
+            password: "TESTPASSWORD",
+            isAdmin: false,
+            isDisabled: false
+        };
+
+        await User.createUser(userData);
+
     });
 
     describe('create user', function () {
-        it('should create a user', async function () {
+        it('should create a user', async () => {
 
+            // TODO - ryd op hvis alle tests er ok.
+            /*
             const userData = {
                 username: "TESTUSER",
                 password: "TESTPASSWORD",
@@ -70,11 +83,16 @@ describe("user", function () {
             };
 
             await User.createUser(userData);
+            */
 
-            const newUser = User.findOne();
+            const newUser = await User.findOne();
 
             expect(newUser.username).to.eq(userData.username);
-            expect(newUser.password).to.eq(userData.password);
+            //TODO - Vi skal have fundet en bedre måde at teste password på. Problemet er at det pt. bliver hashed i en
+            //TODO - pre og der med aldrig vil være lig med test password.
+            expect(newUser.password).to.be.ok.and.not.to.eq(userData.password);
+            expect(newUser.password).to.exist.and.be.not.to.eq(userData.password);
+
             expect(newUser.isAdmin).to.eq(userData.isAdmin);
             expect(newUser.isDisabled).to.eq(userData.isDisabled);
 
@@ -84,6 +102,7 @@ describe("user", function () {
     describe('edit user', function () {
         it('should change username', function () {
             //TODO
+
         });
 
         it('should change password', function () {
