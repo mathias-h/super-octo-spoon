@@ -238,53 +238,41 @@
                                     </select>
                                 </div>
                                 <div class="col-4 form-group">
-                                    <label for="editInputContactFarmer">
-                                        <input name="contactFarmer" type="checkbox" id="editInputContactFarmer">
-                                        Landmand kontaktes til sommer ang. tildelingskort.</label>
-                                    <label for="applicationMap">
-                                        <input name="contactFarmer" type="checkbox" id="editInputContactFarmer">Ønkes
-                                        tildelingskort?</label>
+                                    <div class="ml-3" style="line-height: 0; margin-bottom: 0; margin-top: 32px;">
+                                        <label for="editInputContactFarmer">
+                                            <input name="contactFarmer" type="checkbox" id="editInputContactFarmer">
+                                            Landmand kontaktes</label>
+                                        <label for="applicationMap">
+                                            <input name="contactFarmer" type="checkbox" id="editInputContactFarmer">
+                                            Ønkes tildelingskort</label>
+                                    </div>
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="col-4 form-group">
-                                    <label for="editInputRemarksAndComments">Bemærkninger & Aftaler</label>
-                                    <textarea name="remarksAndComments" id="editInputRemarksAndComments"
-                                              class="form-control" rows="5"
-                                              style="min-height: 74px"></textarea>
+                                    <label for="editInputRemarksAndComments">Bemærkninger & aftaler</label>
+                                    <textarea name="remarksAndComments" id="editInputRemarksAndComments" class="form-control" rows="4" style="min-height: 74px"></textarea>
                                 </div>
                                 <div class="col-4 form-group">
-                                    <label for="editInputAssignedFields">Tildelte Marker på Kort</label>
+                                    <label for="editInputSentToFarm">Sendt til landmand</label>
+                                    <input name="sentToFarm" type="date" id="editInputSentToFarm" class="form-control">
+                                    <label for="editInputSentToPit">Sendt til maskinstation</label>
+                                    <input name="sentToPit" type="date" id="editInputSentToPit" class="form-control">
+                                </div>
+                                <div class="col-4 form-group">
+                                    <label for="editInputAssignedFields">Tildelte marker på kort</label>
                                     <div class="input-group" id="editInputAssignedFields">
                                         <input name="sampleDensity" type="number" min="0" id="editInputAssignedFields"
                                                class="form-control" placeholder="Antal marker">
                                         <span class="input-group-addon">marker</span>
                                     </div>
-                                    <label for="editInputAssignedHectare">Antal ha.</label>
+                                    <label for="editInputAssignedHectare">Antal ha</label>
                                     <div class="input-group" id="editInputAssignedHectare">
                                         <input name="AssignedHectare" type="number" min="0"
                                                id="editInputAssignedHectare"
-                                               class="form-control" placeholder="Antal Has">
+                                               class="form-control" placeholder="Antal ha">
                                         <span class="input-group-addon">ha</span>
                                     </div>
-                                </div>
-                                <div class="col-4 form-group">
-                                    <div class="form group ml-3"
-                                         style="line-height: 0; margin-bottom: 0; margin-top: 32px;"></div>
-                                    <label for="editInputSentToFarm">Sendt til Landmand</label>
-                                    <input name="sentToFarm" type="date" id="editInputSentToFarm" class="form-control">
-                                    <label for="editInputSentToPit">Sendt til Maskinstation</label>
-                                    <input name="sentToPit" type="date" id="editInputSentToPit" class="form-control">
-                                </div>
-
-                                <div class="form-group ml-3"
-                                     style="line-height: 0; margin-bottom: 0; margin-top: 32px;">
-                                    <label for="editInputSamePlanAsLast">
-                                        <input name="samePlanAsLast" type="checkbox" id="editInputSamePlanAsLast">
-                                        Samme plan som sidst</label>
-                                    <label for="editInputTakeOwnSamples">
-                                        <input name="takeOwnSamples" type="checkbox" id="editInputTakeOwnSamples">
-                                        Prøver selvudtaget</label>
                                 </div>
                             </div>
                             <div class="dynamic fase-3"></div>
@@ -293,7 +281,8 @@
                             <div class="form-group" id="logElement">
                                 <div class="col form-group">
                                     <label for="editInputLogConsultant">Konsulent</label>
-                                    <select name="consultantLog" id="editInputLogConsultant" class="form-control" required>
+                                    <select name="consultantLog" id="editInputLogConsultant" class="form-control"
+                                            required>
                                         {{#each consultants}}
                                             <option value="{{this._id}}">{{this.username}}</option>
                                         {{/each}}
