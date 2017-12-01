@@ -87,64 +87,64 @@ class EditOrderModal {
 
             const _this = this
 
-            if (order.dynamics) {
-                this.dynamics = order.dynamics
-                $(".dynamic").each(function() {
-                    function getField(fase, name, value) {
-                        const div = document.createElement("div")
-                        const input = document.createElement("input")
-                        input.value = value
-                        input.id = `dynamic-${fase}-${name}`
-                        input.name = name
-                        input.addEventListener("change", evt => {
-                            if (!_this.dynamics[fase]) {
-                                _this.dynamics[fase] = {}
-                            }
-        
-                            _this.dynamics[fase][name] = input.value
-                        })
-                        div.innerHTML = `<label for="dynamic-${fase}-${name}">${name}</label>`
-                        div.appendChild(input)
+            if (!order.dynamics) order.dynamics = {}
 
-                        return div
-                    }
-                    const fase = this.classList[1].replace("fase-", "")
-    
-                    for (const f of Object.keys(order.dynamics)) {
-                        if (fase !== f) continue
-    
-                        for (const [name, value] of Object.entries(order.dynamics[f])) {
-                            this.appendChild(getField(f,name,value))
-                        }
-                    }
-    
-                    const addButton = document.createElement("button")
-                    addButton.type = "button"
-                    addButton.innerHTML = '<img src="/add.svg" alt="tilføj dynamisk kolonne"/>'
-                    addButton.addEventListener("click", evt => {
-                        const nameInput = document.querySelector("#newName")
-                        const name = nameInput.value
-    
-                        if (!name) {
-                            // TODO handle no name
-                            return
-                        }
-    
+            this.dynamics = order.dynamics
+            $(".dynamic").each(function() {
+                function getField(fase, name, value) {
+                    const div = document.createElement("div")
+                    const input = document.createElement("input")
+                    input.value = value
+                    input.id = `dynamic-${fase}-${name}`
+                    input.name = name
+                    input.addEventListener("change", evt => {
                         if (!_this.dynamics[fase]) {
                             _this.dynamics[fase] = {}
                         }
-    
-                        _this.dynamics[fase][name] = ""
 
-                        $(getField(fase, name, "")).insertBefore($("label[for=newName]"))
+                        _this.dynamics[fase][name] = input.value
                     })
-                    $(this).append(`
-                        <label for="newName">tilføj dynamisk kolonne</label>
-                        <input type="text" id="newName" name="newName">
-                    `)
-                    $(this).append(addButton)
+                    div.innerHTML = `<label for="dynamic-${fase}-${name}">${name}</label>`
+                    div.appendChild(input)
+
+                    return div
+                }
+                const fase = this.classList[1].replace("fase-", "")
+
+                for (const f of Object.keys(order.dynamics)) {
+                    if (fase !== f) continue
+
+                    for (const [name, value] of Object.entries(order.dynamics[f])) {
+                        this.appendChild(getField(f,name,value))
+                    }
+                }
+
+                const addButton = document.createElement("button")
+                addButton.type = "button"
+                addButton.innerHTML = '<img src="/add.svg" alt="tilføj dynamisk kolonne"/>'
+                addButton.addEventListener("click", evt => {
+                    const nameInput = document.querySelector("#newName")
+                    const name = nameInput.value
+
+                    if (!name) {
+                        // TODO handle no name
+                        return
+                    }
+
+                    if (!_this.dynamics[fase]) {
+                        _this.dynamics[fase] = {}
+                    }
+
+                    _this.dynamics[fase][name] = ""
+
+                    $(getField(fase, name, "")).insertBefore($("label[for=newName]"))
                 })
-            }
+                $(this).append(`
+                    <label for="newName">tilføj dynamisk kolonne</label>
+                    <input type="text" id="newName" name="newName">
+                `)
+                $(this).append(addButton)
+            })
 
             const names = {
                 consultant: "Konsulent",
