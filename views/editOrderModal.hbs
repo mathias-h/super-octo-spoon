@@ -113,8 +113,7 @@
                                     <label for="editInputSampleDensity">Prøvetæthed</label>
                                     <div class="input-group" id="sampleDensityContainer">
                                         <span class="input-group-addon">1/</span>
-                                        <input name="sampleDensity" type="number" min="0" id="editInputSampleDensity"
-                                               class="form-control" placeholder="Mængde">
+                                        <input name="sampleDensity" type="number" min="0" id="editInputSampleDensity" class="form-control" placeholder="Mængde">
                                         <span class="input-group-addon">ha</span>
                                     </div>
                                 </div>
@@ -231,7 +230,7 @@
                                 </div>
                                 <div class="col-4 form-group">
                                     <label for="editInputSentBy">Udsendt af:</label>
-                                    <select name="sentBy" id="editInputSentBy" class="form-control" required>
+                                    <select name="sentBy" id="editInputSentBy" class="form-control">
                                         {{#each consultants}}
                                             <option value="{{this._id}}">{{this.username}}</option>
                                         {{/each}}
@@ -241,8 +240,8 @@
                                     <label for="editInputContactFarmer">
                                         <input name="contactFarmer" type="checkbox" id="editInputContactFarmer">
                                         Landmand kontaktes til sommer ang. tildelingskort.</label>
-                                    <label for="applicationMap">
-                                        <input name="contactFarmer" type="checkbox" id="editInputContactFarmer">Ønkes
+                                    <label for="inputApplicationMap">
+                                        <input name="applicationMap" type="checkbox" id="inputApplicationMap">Ønkes
                                         tildelingskort?</label>
                                 </div>
                             </div>
@@ -256,7 +255,7 @@
                                 <div class="col-4 form-group">
                                     <label for="editInputAssignedFields">Tildelte Marker på Kort</label>
                                     <div class="input-group" id="editInputAssignedFields">
-                                        <input name="sampleDensity" type="number" min="0" id="editInputAssignedFields"
+                                        <input name="assignedFields" type="number" min="0" id="editInputAssignedFields"
                                                class="form-control" placeholder="Antal marker">
                                         <span class="input-group-addon">marker</span>
                                     </div>
@@ -271,20 +270,8 @@
                                 <div class="col-4 form-group">
                                     <div class="form group ml-3"
                                          style="line-height: 0; margin-bottom: 0; margin-top: 32px;"></div>
-                                    <label for="editInputSentToFarm">Sendt til Landmand</label>
-                                    <input name="sentToFarm" type="date" id="editInputSentToFarm" class="form-control">
                                     <label for="editInputSentToPit">Sendt til Maskinstation</label>
                                     <input name="sentToPit" type="date" id="editInputSentToPit" class="form-control">
-                                </div>
-
-                                <div class="form-group ml-3"
-                                     style="line-height: 0; margin-bottom: 0; margin-top: 32px;">
-                                    <label for="editInputSamePlanAsLast">
-                                        <input name="samePlanAsLast" type="checkbox" id="editInputSamePlanAsLast">
-                                        Samme plan som sidst</label>
-                                    <label for="editInputTakeOwnSamples">
-                                        <input name="takeOwnSamples" type="checkbox" id="editInputTakeOwnSamples">
-                                        Prøver selvudtaget</label>
                                 </div>
                             </div>
                             <div class="dynamic fase-3"></div>

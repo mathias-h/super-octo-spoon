@@ -5,6 +5,7 @@ const { expect } = require("chai")
 const fs = require("fs")
 const rimraf = require("rimraf")
 const moment = require("moment")
+const session = require("express-session")
 
 const { Order : OrderSchema } = require("../../models/order")
 const { User : UserSchema } = require("../../models/user")
@@ -35,8 +36,12 @@ describe("order integration test", () => {
         OrderModel = connection.models.Order || connection.model("Order", OrderSchema)
         UserModel = connection.models.User || connection.model("User", UserSchema)
 
-        server = createApp(OrderModel, UserModel).listen(1025)
-        browser = await puppeteer.launch({ headless: false, devtools: true })
+        server = createApp({
+            Order: OrderModel,
+            User: UserModel,
+            session
+        }).listen(1025)
+        browser = await puppeteer.launch()
 
         page = await browser.newPage()
         await page.goto("http://localhost:1025/")
@@ -146,7 +151,7 @@ describe("order integration test", () => {
                 modal.querySelector("#inputTakeOwnSamples").checked = true
 
                 modal.querySelector("button[type=submit]").click()
-            }, 200)
+            }, 300)
         }, user._id)
 
         await sleep(500)
@@ -254,6 +259,8 @@ describe("order integration test", () => {
                 modal.querySelector("#inputFromLabDate").value = "1970-01-02"
                 modal.querySelector("#inputMO").value = "1970-01-02"
                 modal.querySelector("#inputReceptApproved").value = "1970-01-02"
+
+                //TODO should test fase 3
 
                 //TODO should show log
 

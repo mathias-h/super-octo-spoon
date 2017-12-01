@@ -196,8 +196,8 @@ class EditOrderModal {
 
             $("#logElement").html(`
                 <div class="col form-group">
-                    <label for="inputLogConsultant">Konsulent</label>
-                    <select name="consultantLog" id="inputLogConsultant" class="form-control" required>
+                    <label for="inputLogProperty">Værdi</label>
+                    <select name="logProperty" id="inputLogProperty" class="form-control">
                         ${Object.entries(properties).filter(([_,value]) => value.length > 1).map(([name]) => `<option value="${name}">${name}</option>`)}
                     </select>
                 </div>
@@ -215,7 +215,15 @@ class EditOrderModal {
 
             function updateLogValues() {
                 const name = $("#inputLogConsultant").val()
+
+                if (!name) return
+
                 const changes = properties[name]
+
+                if (!changes) {
+                    // TODO handle no log
+                    return
+                }
 
                 $("#logElement tbody").html(changes.map(c => `
                     <tr>
@@ -237,7 +245,8 @@ class EditOrderModal {
             throw new Error("form not valid")
         }
 
-        const order = convertFormToObject(this.form[0]);
+        const order = convertFormToObject(this.form[0])
+
         order._id = this.orderId;
 
         order.samePlanAsLast = $("#editInputSamePlanAsLast")[0].checked;
