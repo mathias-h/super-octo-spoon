@@ -36,7 +36,7 @@ describe("order integration test", () => {
         UserModel = connection.models.User || connection.model("User", UserSchema)
 
         server = createApp(OrderModel, UserModel).listen(1025)
-        browser = await puppeteer.launch({ headless: false, devtools: true })
+        browser = await puppeteer.launch()
 
         page = await browser.newPage()
         await page.goto("http://localhost:1025/")

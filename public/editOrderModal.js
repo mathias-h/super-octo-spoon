@@ -180,14 +180,55 @@ class EditOrderModal {
             }
 
             const logs = []
+            const properties = {}
 
             for (const log of order.log) {
-                const simmilarLogIndex = logs.findIndex(l => l.time == log.time && l.consultant === log.consultant)
+                for (const [k,v] of Object.entries(log.changes)) {
+                    if (!properties[k]) properties[k] = []
 
-                if (simmilarLogIndex !== -1) Object.assign(logs[simmilarLogIndex].changes, log.changes)
-                else logs.push(log)
+                    properties[k].push({
+                        time: log.time,
+                        consultant: log.consultant,
+                        value: v
+                    })
+                }
             }
 
+            $("#logElement").html(`
+                <div class="col form-group">
+                    <label for="inputLogConsultant">Konsulent</label>
+                    <select name="consultantLog" id="inputLogConsultant" class="form-control" required>
+                        ${Object.entries(properties).filter(([_,value]) => value.length > 1).map(([name]) => `<option value="${name}">${name}</option>`)}
+                    </select>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="Konsulent">Konsulent</th>
+                            <th scope="Dato">Dato</th>
+                            <th scope="Ændring">Ændring</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            `)
+
+            function updateLogValues() {
+                const name = $("#inputLogConsultant").val()
+                const changes = properties[name]
+
+                $("#logElement tbody").html(changes.map(c => `
+                    <tr>
+                        <td>${c.consultant.username}</td>
+                        <td>${moment(c.time).format("DD-MM-YYYY HH:MM")}</td>
+                        <td>${valueToString(c.value)}</td>
+                    </tr>
+                `).join(""))
+            }
+
+            $("#inputLogConsultant").change(updateLogValues)
+
+            updateLogValues()
         });
     }
 
