@@ -2,10 +2,9 @@
 
 const bodyParser = require('body-parser');
 const express = require("express");
-const session = require('express-session');
 const hbs = require("hbs");
 
-module.exports.createApp = function createApp(Order, User) {
+module.exports.createApp = function createApp({Order, User, session}) {
     const app = express();
     app.set('view engine', 'hbs');
     
