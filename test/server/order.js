@@ -28,7 +28,9 @@ describe("Order server tests", () => {
                     return this
                 },
                 populate: () => ({
-                    populate() { return Promise.resolve(order) }
+                    populate: () => ({
+                        populate() { return Promise.resolve(order) }
+                    })
                 })
             }
             const app = createApp({
@@ -53,7 +55,9 @@ describe("Order server tests", () => {
                     return this
                 },
                 populate: () => ({
-                    populate() { return Promise.resolve(null) }
+                    populate: () => ({
+                        populate() { return Promise.resolve(null) }
+                    })
                 })
             }
 

@@ -9,6 +9,7 @@ const session = require("express-session")
 
 const { Order : OrderSchema } = require("../../models/order")
 const { User : UserSchema } = require("../../models/user")
+const { Season : SeasonSchema } = require("../../models/season")
 const { createApp } = require("../../app")
 
 const sleep = time => new Promise(resolve => setTimeout(resolve, time))
@@ -28,17 +29,19 @@ describe("order integration test", () => {
 
         db = childProcess.spawn("mongod", ["--port", "27018", "--dbpath", dataPath])
         
-        await sleep(200)
+        await sleep(500)
 
         mongoose.Promise = global.Promise;
-        const connection = await mongoose.createConnection("mongodb://localhost:27018/super-octo-spoon");
+        const connection = await mongoose.createConnection("mongodb://localhost:27018/super-octo-spoon-test");
 
         OrderModel = connection.models.Order || connection.model("Order", OrderSchema)
         UserModel = connection.models.User || connection.model("User", UserSchema)
+        SeasonModel = connection.models.Season || connection.model("Season", SeasonSchema)
 
         server = createApp({
             Order: OrderModel,
             User: UserModel,
+            Season: SeasonModel,
             session
         }).listen(1025)
         browser = await puppeteer.launch()
@@ -46,7 +49,6 @@ describe("order integration test", () => {
         page = await browser.newPage()
         await page.goto("http://localhost:1025/")
 
-        await OrderModel.remove({})
         await UserModel.remove({})
 
         const u = new UserModel({
@@ -77,10 +79,8 @@ describe("order integration test", () => {
     })
 
     it("should show orders in overview", async () => {
-        const orderId = mongoose.Types.ObjectId()
-        const consultantId = mongoose.Types.ObjectId()
         const order = new OrderModel({
-            _id: orderId,
+            season: mongoose.Types.ObjectId(),
             consultant: mongoose.Types.ObjectId(),
             signedDate: new Date("2017-01-02"),
             name: "NAME",
@@ -91,10 +91,9 @@ describe("order integration test", () => {
                 zip: 9999
             }
         })
-        const orderId1 = mongoose.Types.ObjectId()
         const order1 = new OrderModel({
-            _id: orderId1,
-            consultant: consultantId,
+            season: mongoose.Types.ObjectId(),
+            consultant: mongoose.Types.ObjectId(),
             signedDate: new Date("2017-01-01"),
             name: "NAME",
             farmName: "FARM_NAME",
@@ -113,7 +112,7 @@ describe("order integration test", () => {
             Array.from(document.querySelectorAll("tr.order"))
                 .map(o => o.getAttribute("data-order-id")))
 
-        expect(orderIds).to.deep.eq([orderId.toHexString(), orderId1.toHexString()])
+        expect(orderIds).to.deep.eq([order._id.toHexString(), order1._id.toHexString()])
     })
 
     it("should create order", async () => {
@@ -124,10 +123,17 @@ describe("order integration test", () => {
             isDisabled: false
         })
         await user.save()
+        await new SeasonModel({
+            season: "SEASON1"
+        }).save()
+        const season = new SeasonModel({
+            season: "SEASON"
+        })
+        await season.save()
 
         await page.reload()
 
-        await page.evaluate((userId) => {
+        await page.evaluate((userId, seasonId) => {
             document.querySelector("#navbarSupportedContent > ul > li:nth-child(1) > a").click()
 
             const modal = document.querySelector("#createOrderModal")
@@ -137,6 +143,7 @@ describe("order integration test", () => {
                     throw new Error("modal not shown")
                 }
 
+                modal.querySelector("#orderSeason").value = seasonId
                 modal.querySelector("#inputConsultant").value = userId
                 modal.querySelector("#inputName").value = "NAME"
                 modal.querySelector("#inputFarmName").value = "FARM_NAME"
@@ -153,13 +160,14 @@ describe("order integration test", () => {
 
                 modal.querySelector("button[type=submit]").click()
             }, 300)
-        }, user._id)
+        }, user._id, season._id)
 
         await sleep(500)
 
         const orders = await OrderModel.find().lean().exec()
         const order = orders[0]
 
+        expect(order.season.toHexString()).to.eq(season._id.toHexString())
         expect(order.consultant.toHexString()).to.eq(user._id.toHexString())
         expect(moment(order.signedDate).format("YYYY-MM-DD")).to.eq(moment(new Date()).format("YYYY-MM-DD"))
         expect(order.name).to.eq("NAME")
@@ -189,6 +197,14 @@ describe("order integration test", () => {
             isAdmin: false,
             isDisabled: false
         })
+        const season = new SeasonModel({
+            season: "SEASON"
+        })
+        await season.save()
+        const season1 = new SeasonModel({
+            season: "SEASON1"
+        })
+        await season1.save()
 
         await consultant.save()
         await consultant1.save()
@@ -196,6 +212,7 @@ describe("order integration test", () => {
         const orderId = mongoose.Types.ObjectId()
         await new OrderModel({
             _id: orderId,
+            season: season._id,
             consultant: consultant._id,
             signedDate: new Date("2017-01-01"),
             name: "NAME",
@@ -227,7 +244,7 @@ describe("order integration test", () => {
 
         await page.reload()
 
-        await page.evaluate((newConsultantId) => {
+        await page.evaluate((newConsultantId, newSeasonId) => {
             document.querySelector(".order").click()
             const modal = document.getElementById("editOrderModal")
 
@@ -236,6 +253,7 @@ describe("order integration test", () => {
                     throw new Error("modal not shown")
                 }
 
+                modal.querySelector("#editOrderSeason").value = newSeasonId
                 modal.querySelector("#editInputConsultant").value = newConsultantId
                 modal.querySelector("#editInputName").value = "NEW_NAME"
                 modal.querySelector("#editInputFarmName").value = "NEW_FARM_NAME"
@@ -269,12 +287,13 @@ describe("order integration test", () => {
 
                 modal.querySelector("#orderEditSave").click()
             }, 200)
-        }, consultant1._id.toHexString())
+        }, consultant1._id, season1._id)
 
         await sleep(500)
 
         const order = await OrderModel.findOne({ _id: orderId })
 
+        expect(order.season.toHexString()).to.eq(season1._id.toHexString())
         expect(order.consultant.toHexString()).to.eq(consultant1._id.toHexString())
         expect(order.name).to.eq("NEW_NAME")
         expect(order.farmName).to.eq("NEW_FARM_NAME")

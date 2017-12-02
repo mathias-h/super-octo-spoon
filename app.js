@@ -65,7 +65,6 @@ module.exports.createApp = function createApp({Order, User, session, Season}) {
     // Session related stuff ends //
 
     app.get("/", (req,res) => {
-
         Order.sampleTotals().then(({ totalSamples, totalTaken }) => {
             return Order.getAll(req.query).then(orders => {
                 return User.find({}).select({username: 1}).then(consultants => {
@@ -99,7 +98,10 @@ module.exports.createApp = function createApp({Order, User, session, Season}) {
     
     app.get("/order/:orderId", async (req,res) => {
         const orderId = req.params.orderId;
-        const order = await Order.findOne({ _id: orderId }).populate("consultant", "username").populate("log.consultant", "username")
+        const order = await Order.findOne({ _id: orderId })
+            .populate("consultant", "username")
+            .populate("log.consultant", "username")
+            .populate('season', "season")
 
         if (!order) {
             res.header("Content-Type", "text/plain");

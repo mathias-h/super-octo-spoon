@@ -60,6 +60,7 @@ class EditOrderModal {
 
         return $.get(`/order/${orderId}`).then(order => {
             this.orderId = orderId;
+            $("#editOrderSeason").val(order.season._id);
             $("#editInputConsultant").val(order.consultant._id);
             setDate($("#editInputSignedDate"), order.signedDate);
             $("#editOrderSeason").val(order.season);

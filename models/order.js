@@ -83,9 +83,10 @@ const Order = new Schema({
 }, { strict: true });
 
 Order.statics.editOrder = async function updateOrder(order, userId) {
-    order = (await new this(order).populate("consultant", "username").execPopulate())._doc
-    const oldOrder = (await this.findOne({ _id: order._id }).populate("consultant", "username").exec())._doc
+    order = (await new this(order).populate("consultant", "username").populate("season", "season").execPopulate())._doc
+    const oldOrder = (await this.findOne({ _id: order._id }).populate("consultant", "username").populate("season", "season").exec())._doc
     let consultantId
+    let seasonId
 
     delete oldOrder.__v
     delete oldOrder.log
@@ -96,6 +97,11 @@ Order.statics.editOrder = async function updateOrder(order, userId) {
     if (changes.consultant) {
         consultantId = order.consultant._doc._id.toHexString()
         changes.consultant = order.consultant._doc.username
+    }
+
+    if (changes.season) {
+        seasonId = order.season._doc._id.toHexString()
+        changes.season = order.season._doc.season
     }
 
     delete changes._id
@@ -137,6 +143,9 @@ Order.statics.editOrder = async function updateOrder(order, userId) {
 
     if (changes.consultant) {
         changes.consultant = consultantId
+    }
+    if (changes.season) {
+        changes.season = seasonId
     }
 
     return this.findOneAndUpdate({ _id: order._id }, update)
@@ -184,7 +193,10 @@ Order.statics.sampleTotals = async function sampleTotals() {
 }
 
 Order.statics.getAll = async function getAll({query, sortBy="date", order}) {
-    let orders = await this.find().lean().populate('consultant', "username").exec()
+    let orders = await this.find().lean()
+        .populate('consultant', "username")
+        .populate('season', "season")
+        .exec()
 
     if (!query & !order){
         order = "desc";

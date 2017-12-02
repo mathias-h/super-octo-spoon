@@ -6,24 +6,27 @@ const rimraf = require("rimraf")
 const fs = require("fs")
 const { Order: OrderSchema } = require("../models/order")
 const { User: UserSchema } = require("../models/user")
+const { Season: SeasonSchema } = require("../models/season")
 
 mongoose.Promise = global.Promise;
 
 const sleep = time => new Promise(resolve => setTimeout(resolve, time))
 
-
 describe("order", () => {
     let db
     let Order
     let User
+    let Season
 
     async function createOrder(data = {}) {
-        const consultantId = mongoose.Types.ObjectId()
         const d = {
-            consultant: consultantId,
+            season: mongoose.Types.ObjectId(),
+            consultant: mongoose.Types.ObjectId(),
             signedDate: new Date("1970-01-01"),
             name: "NAME",
             farmName: "FARM_NAME",
+            landlineNumber: "88888888",
+            phoneNumber: "99999999",
             address: {
                 city: "CITY",
                 zip: 9999,
@@ -50,6 +53,7 @@ describe("order", () => {
 
         Order = connection.models.Order || connection.model("Order", OrderSchema)
         User = connection.models.User || connection.model("User", UserSchema)
+        Season = connection.models.Season || connection.model("Season", SeasonSchema)
     })
 
     after(async () => {
@@ -64,12 +68,12 @@ describe("order", () => {
 
     describe("edit order", () => {
         it("should edit order", async () => {
-            const consultantId = mongoose.Types.ObjectId()
             const order = await createOrder()
 
             await Order.editOrder({
                 _id: order._id,
-                consultant: consultantId,
+                season: order.season,
+                consultant: order.consultant,
                 signedDate: new Date("1970-01-01"),
                 name: "NEW_NAME",
                 farmName: "FARM_NAME",
@@ -86,13 +90,14 @@ describe("order", () => {
         });
 
         it("should update log", async () => {
-            const consultantId = mongoose.Types.ObjectId()
+
             const order = await createOrder()
             await order.save()
 
             await Order.editOrder({
                 _id: order._id,
-                consultant: consultantId,
+                season: order.season,
+                consultant: order.consultant,
                 signedDate: new Date("1970-01-01"),
                 name: "NEW_NAME",
                 farmName: "FARM_NAME",
@@ -101,27 +106,27 @@ describe("order", () => {
                     zip: 9999,
                     street: "STREET"
                 }
-            }, consultantId)
+            }, order.consultant)
 
             const newOrder = await Order.findById(order._id)
 
             const log = newOrder.log[0]
 
             expect(log.time.getTime()).to.eq(moment(new Date()).startOf("minute").toDate().getTime())
-            expect(log.consultant.toHexString()).to.eq(consultantId.toHexString())
+            expect(log.consultant.toHexString()).to.eq(order.consultant.toHexString())
             expect(log.changes).to.deep.eq({
                 name: "NEW_NAME"
             })
         })
 
         it("should handle address", async () => {
-            const consultantId = mongoose.Types.ObjectId()
             const order = await createOrder()
             await order.save()
 
             await Order.editOrder({
                 _id: order._id,
-                consultant: consultantId,
+                season: order.season,
+                consultant: order.consultant,
                 signedDate: new Date("1970-01-01"),
                 name: "NAME",
                 farmName: "FARM_NAME",
@@ -130,7 +135,7 @@ describe("order", () => {
                     zip: 8888,
                     street: "NEW_STREET"
                 }
-            }, consultantId)
+            }, order.consultant)
 
             const newOrder = await Order.findById(order._id)
 
@@ -144,16 +149,18 @@ describe("order", () => {
         })
 
         it("should handle no changes", async () => {
-            const consultantId = mongoose.Types.ObjectId()
             const order = await createOrder()
             await order.save()
 
             await Order.editOrder({
                 _id: order._id,
-                consultant: consultantId,
+                season: order.season,
+                consultant: order.consultant,
                 signedDate: new Date("1970-01-01"),
                 name: "NAME",
                 farmName: "FARM_NAME",
+                landlineNumber: "88888888",
+                phoneNumber: "99999999",
                 address: {
                     city: "CITY",
                     zip: 9999,
@@ -163,6 +170,8 @@ describe("order", () => {
 
             const newOrder = await Order.findById(order._id)
 
+            console.log(newOrder.log)
+
             expect(newOrder.log.length).to.eq(0)
         })
 
@@ -171,13 +180,13 @@ describe("order", () => {
             const name = "NAME";
             const value = "VALUE";
 
-            const consultantId = mongoose.Types.ObjectId();
             const order = await createOrder()
             await order.save();
 
             await Order.editOrder({
                 _id: order._id,
-                consultant: consultantId,
+                season: order.season,
+                consultant: order.consultant,
                 signedDate: new Date("1970-01-01"),
                 name: "NAME",
                 farmName: "FARM_NAME",
@@ -224,6 +233,7 @@ describe("order", () => {
 
             await Order.editOrder({
                 _id: order._id,
+                season: order.season,
                 consultant: consultant1._id,
                 signedDate: new Date("1970-01-01"),
                 name: "NAME",
@@ -241,15 +251,50 @@ describe("order", () => {
             expect(log.consultant).to.eq(consultant1.name)
         })
 
+        it("should handle log season", async () => {
+            const season = new Season({
+                season: "SEASON"
+            })
+            await season.save()
+            const season1 = new Season({
+                season: "SEASON1"
+            })
+            await season1.save()
+            
+            const order = await createOrder({ season: season._id })
+
+            await Order.editOrder({
+                _id: order._id,
+                season: season1._id,
+                consultant: order.consultant,
+                signedDate: new Date("1970-01-01"),
+                name: "NAME",
+                farmName: "FARM_NAME",
+                address: {
+                    city: "CITY",
+                    zip: 9999,
+                    street: "STREET"
+                }
+            });
+
+            const newOrder = await Order.findById(order._id)
+            const log = newOrder.log[0]
+
+            expect(log.changes.season).to.eq(season1.season)
+        })
+
         it("should not log null values", async () => {
             const order = await createOrder()
 
             await Order.editOrder({
                 _id: order._id,
-                consultant: mongoose.Types.ObjectId(),
+                season: order.season,
+                consultant: order.consultant,
                 signedDate: new Date("1970-01-01"),
                 name: "NAME",
                 farmName: "FARM_NAME",
+                landlineNumber: "88888888",
+                phoneNumber: "99999999",
                 address: {
                     city: "CITY",
                     zip: 9999,
@@ -275,10 +320,13 @@ describe("order", () => {
             
             await Order.editOrder({
                 _id: order._id,
+                season: order.season,
                 consultant: consultantId,
                 signedDate: new Date("1970-01-01"),
                 name: "NAME",
                 farmName: "FARM_NAME",
+                landlineNumber: "88888888",
+                phoneNumber: "99999999",
                 address: {
                     city: "CITY",
                     zip: 9999,
@@ -300,6 +348,7 @@ describe("order", () => {
 
             await Order.editOrder({
                 _id: order._id,
+                season: order.season,
                 consultant: order.consultant,
                 signedDate: new Date("1970-01-01"),
                 name: "NAME",
@@ -326,6 +375,7 @@ describe("order", () => {
    
     it("should create order", async () => {
         const orderData = {
+            season: mongoose.Types.ObjectId(),
             consultant: mongoose.Types.ObjectId(),
             signedDate: new Date('1970-01-01'),
             landlineNumber: "11223344",
@@ -341,6 +391,7 @@ describe("order", () => {
 
         const newOrder = await Order.findOne();
 
+        expect(newOrder.season.toHexString()).to.eq(orderData.season.toHexString())
         expect(newOrder.consultant.toHexString()).to.eq(orderData.consultant.toHexString());
         expect(newOrder.signedDate.getTime()).to.eq(orderData.signedDate.getTime());
         expect(newOrder.landlineNumber).to.eq(orderData.landlineNumber);
@@ -387,36 +438,10 @@ describe("order", () => {
                 isDisabled: false
             })
             await consultant.save()
-            const query = "X"
-            const order = new Order({ 
-                name: "X",
-                signedDate: new Date("1970-01-01"),
-                address: {
-                    zip: 8888,
-                    city: "CITY",
-                    street: "STREET"
-                },
-                consultant: consultant._id,
-                landlineNumber: "88888888",
-                phoneNumber: "88888888",
-                farmName: "FARM_NAME"
-            })
-            await order.save()
-            await new Order({ 
-                name: "Y",
-                signedDate: new Date("1970-01-01"),
-                address: {
-                    zip: 9999,
-                    city: "CITY",
-                    street: "STREET"
-                },
-                consultant: consultant._id,
-                landlineNumber: "99999999",
-                phoneNumber: "99999999",
-                farmName: "FARM_NAME"
-            }).save()
+            const order = await createOrder({ name: "X", consultant: consultant._id })
+            await createOrder({ name: "Y", consultant: consultant._id })
             
-            const result = await Order.getAll({ query })
+            const result = await Order.getAll({ query: "X" })
 
             expect(result.length).to.eq(1)
             expect(result[0]._id.toHexString()).to.eq(order._id.toHexString())
@@ -430,34 +455,14 @@ describe("order", () => {
                 isDisabled: false
             })
             await consultant.save()
-            const order = new Order({ 
+            const order = await createOrder({
                 name: "B",
-                signedDate: new Date("1970-01-01"),
-                address: {
-                    zip: 8888,
-                    city: "CITY",
-                    street: "STREET"
-                },
-                consultant: consultant._id,
-                landlineNumber: "88888888",
-                phoneNumber: "88888888",
-                farmName: "FARM_NAME"
+                consultant: consultant._id
             })
-            await order.save()
-            const order1 = new Order({ 
+            const order1 = await createOrder({
                 name: "A",
-                signedDate: new Date("1970-01-01"),
-                address: {
-                    zip: 9999,
-                    city: "CITY",
-                    street: "STREET"
-                },
-                consultant: consultant._id,
-                landlineNumber: "99999999",
-                phoneNumber: "99999999",
-                farmName: "FARM_NAME"
+                consultant: consultant._id
             })
-            await order1.save()
 
             const results = await Order.getAll({ sortBy: "name", order: "asc" })
 
@@ -472,34 +477,14 @@ describe("order", () => {
                 isDisabled: false
             })
             await consultant.save()
-            const order = new Order({ 
+            const order = await createOrder({
                 name: "A",
-                signedDate: new Date("1970-01-01"),
-                address: {
-                    zip: 8888,
-                    city: "CITY",
-                    street: "STREET"
-                },
-                consultant: consultant._id,
-                landlineNumber: "88888888",
-                phoneNumber: "88888888",
-                farmName: "FARM_NAME"
+                consultant: consultant._id
             })
-            await order.save()
-            const order1 = new Order({ 
+            const order1 = await createOrder({
                 name: "B",
-                signedDate: new Date("1970-01-01"),
-                address: {
-                    zip: 9999,
-                    city: "CITY",
-                    street: "STREET"
-                },
-                consultant: consultant._id,
-                landlineNumber: "99999999",
-                phoneNumber: "99999999",
-                farmName: "FARM_NAME"
+                consultant: consultant._id
             })
-            await order1.save()
 
             const results = await Order.getAll({ sortBy: "name", order: "desc" })
 
@@ -514,34 +499,14 @@ describe("order", () => {
                 isDisabled: false
             })
             await consultant.save()
-            const order = new Order({ 
-                name: "NAME",
+            const order = await createOrder({
                 signedDate: new Date("1970-01-01"),
-                address: {
-                    zip: 8888,
-                    city: "CITY",
-                    street: "STREET"
-                },
-                consultant: consultant._id,
-                landlineNumber: "88888888",
-                phoneNumber: "88888888",
-                farmName: "FARM_NAME"
+                consultant: consultant._id
             })
-            await order.save()
-            const order1 = new Order({ 
-                name: "NAME",
+            const order1 = await createOrder({
                 signedDate: new Date("1970-01-02"),
-                address: {
-                    zip: 9999,
-                    city: "CITY",
-                    street: "STREET"
-                },
-                consultant: consultant._id,
-                landlineNumber: "99999999",
-                phoneNumber: "99999999",
-                farmName: "FARM_NAME"
+                consultant: consultant._id
             })
-            await order1.save()
 
             const results = await Order.getAll({})
 
@@ -557,20 +522,10 @@ describe("order", () => {
                 isDisabled: false
             })
             await consultant.save()
-            const order = new Order({ 
-                name: "NAME",
+            await createOrder({
                 signedDate: new Date("1970-02-01"),
-                address: {
-                    zip: 8888,
-                    city: "CITY",
-                    street: "STREET"
-                },
-                consultant: consultant._id,
-                landlineNumber: "88888888",
-                phoneNumber: "88888888",
-                farmName: "FARM_NAME"
+                consultant: consultant._id
             })
-            await order.save()
 
             const [result] = await Order.getAll({})
 
@@ -584,26 +539,15 @@ describe("order", () => {
                 isDisabled: false
             })
             await consultant.save()
-            const order = new Order({ 
-                name: "NAME",
-                signedDate: new Date("1970-01-01"),
-                address: {
-                    zip: 8888,
-                    city: "CITY",
-                    street: "STREET"
-                },
-                consultant: consultant._id,
-                landlineNumber: "88888888",
-                phoneNumber: "88888888",
-                farmName: "FARM_NAME"
+            await createOrder({
+                consultant: consultant._id
             })
-            await order.save()
 
             const [result] = await Order.getAll({})
 
             expect(result.fase).to.eq(1)
         })
-        it("should set fase 1", async () => {
+        it("should set fase 2", async () => {
             const consultant = new User({
                 username: "CONSULTANT",
                 password: "PASS",
@@ -611,21 +555,10 @@ describe("order", () => {
                 isDisabled: false
             })
             await consultant.save()
-            const order = new Order({ 
-                name: "NAME",
-                signedDate: new Date("1970-01-01"),
-                address: {
-                    zip: 8888,
-                    city: "CITY",
-                    street: "STREET"
-                },
-                consultant: consultant._id,
-                landlineNumber: "88888888",
-                phoneNumber: "88888888",
-                farmName: "FARM_NAME",
-                mapDate: new Date("1970-01-01")
+            await createOrder({
+                mapDate: new Date("1970-01-01"),
+                consultant: consultant._id
             })
-            await order.save()
 
             const [result] = await Order.getAll({})
 
