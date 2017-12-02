@@ -77,11 +77,9 @@ describe("user tests", () => {
             const newUser = await User.findOne();
 
             expect(newUser.username).to.eq(userData.username);
-            //TODO - Vi skal have fundet en bedre måde at teste password på. Problemet er at det pt. bliver hashed i en
-            //TODO - pre og der med aldrig vil være lig med test password.
+
             expect(newUser.password).to.be.ok.and.not.to.eq(userData.password);
             expect(newUser.password).to.exist.and.be.not.to.eq(userData.password);
-            //TODO tilføjet næste linier for at test password
             const compareResult = bcrypt.compareSync(userData.password, newUser.password);
             expect(compareResult).to.eq(true);
 
