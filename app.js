@@ -85,42 +85,38 @@ module.exports.createApp = function createApp({Order, User, session}) {
     
     app.post("/order", (req, res) => {
         Order.createOrder(req.body).then(() => {
-            res.send("order created");
+            res.send("OK");
         }).catch(e => {
-            res.status(500).json(e);
+            console.error(e)
+            res.status(500).end("ERROR");
         })
     });
     
-    app.get("/order/:orderId", (req,res) => {
+    app.get("/order/:orderId", async (req,res) => {
         const orderId = req.params.orderId;
-        Order.findOne({ _id: orderId }).populate("consultant", "username").populate("log.consultant", "username").exec().then(order => {
-            if (!order) {
-                res.header("Content-Type", "text/plain");
-                res.status(404).send("order not found");
-            }
-            else res.json(order);
-        });
+        const order = await Order.findOne({ _id: orderId }).populate("consultant", "username").populate("log.consultant", "username")
+
+        if (!order) {
+            res.header("Content-Type", "text/plain");
+            res.status(404).send("order not found");
+        }
+        else {
+            res.json(order);
+        }
     });
     
     app.put("/order", async (req,res) => {
         const order = req.body;
-        const user = await User.findOne({ _id: req.session.userId }).exec();
 
         try {
+            const user = await User.findOne({ _id: req.session.userId });
             await Order.editOrder(order, user._id)
+            res.end("OK")
         } catch (error) {
-            res.status(500).json(error);
+            console.error(error)
+            res.status(500).end("ERROR");
         }
     });
-
-    app.put("/order/dynamic/:orderId", (req,res) => {
-        const orderId = req.params.orderId
-        const { fase, name, value } = req.body
-
-        Order.setDynamicField(orderId, fase, name, value)
-            .then(() => res.end("ok"))
-            .catch(err => res.status(500).json(err))
-    })
 
     app.post("/user", function (req, res) {
 
