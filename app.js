@@ -2,9 +2,10 @@
 
 const bodyParser = require('body-parser');
 const express = require("express");
+const session = require('express-session');
 const hbs = require("hbs");
 
-module.exports.createApp = function createApp({Order, User, session}) {
+module.exports.createApp = function createApp({Order, User, session, Season}) {
     const app = express();
     app.set('view engine', 'hbs');
     
@@ -15,6 +16,7 @@ module.exports.createApp = function createApp({Order, User, session}) {
 
         hbs.registerPartial("adminModal", require("fs").readFileSync(__dirname + "/views/admin.hbs").toString());
         hbs.registerPartial("createUser", require("fs").readFileSync(__dirname + "/views/admin/createUser.hbs").toString());
+        hbs.registerPartial("createSeason", require("fs").readFileSync(__dirname + "/views/admin/createSeason.hbs").toString());
 
         hbs.registerHelper("objectIter", function(obj, options) {
             let out = ""
@@ -61,20 +63,23 @@ module.exports.createApp = function createApp({Order, User, session}) {
     });
 
     // Session related stuff ends //
-    
+
     app.get("/", (req,res) => {
 
         Order.sampleTotals().then(({ totalSamples, totalTaken }) => {
             return Order.getAll(req.query).then(orders => {
                 return User.find({}).select({username: 1}).then(consultants => {
-                    const data = {
-                        orders,
-                        totalSamples,
-                        totalTaken,
-                        query: req.query.query,
-                        consultants: consultants
-                    };
+                    return Season.find({}).then(seasons => {
+                        const data = {
+                            orders,
+                            totalSamples,
+                            totalTaken,
+                            query: req.query.query,
+                            consultants: consultants,
+                            seasons: seasons
+                        };
                     res.render("overview", data);
+                    })
                 });
             })
         }).catch(err => {
@@ -116,6 +121,16 @@ module.exports.createApp = function createApp({Order, User, session}) {
             console.error(error)
             res.status(500).end("ERROR");
         }
+    });
+
+    app.post("/season", function (req, res) {
+        Season.createSeason(req.body.userData)
+            .then(function (response) {
+                res.json({status:"ok", message:"season created"})
+            })
+            .catch(function (err) {
+                res.json({status: "ERROR", message: "Could not create season."});
+            })
     });
 
     app.post("/user", function (req, res) {

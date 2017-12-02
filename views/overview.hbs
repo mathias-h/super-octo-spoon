@@ -33,6 +33,7 @@
                 border-right: 7px solid transparent;
                 border-bottom: 7px solid black;
                 display: inline-block;
+                margin-left: 5px;
             }
 
             .arrow-desc {
@@ -42,6 +43,7 @@
                 border-right: 7px solid transparent;
                 border-top: 7px solid black;
                 display: inline-block;
+                margin-left: 5px;
             }
 
             td[align=center] {
@@ -83,9 +85,15 @@
         <script src="/createOrderModal.js"></script>
         <script src="/editOrderModal.js"></script>
         <script src="/createUser.js"></script>
+        <script src="/createSeason.js"></script>
 
         <script>
             onload = () => {
+//                $("#season").val(location.search.substring(8,13))
+//                $("#season").on("change", function (){
+//                    location.search = "season=" + $("#season").val()
+//                })
+
                 $(".sortable").click(function () {
                     var id = $(this).attr("id");
                     var ls = location.search;
@@ -100,14 +108,14 @@
                     }
                 })
                 if (location.search.indexOf("sortBy") !== -1){
+                    $("#date")[0].removeChild($("#date")[0].children[0])
                     var url = new URL(location.href)
                     var sortBy = url.searchParams.get("sortBy").toString()
                     var orderBy = url.searchParams.get("order").toString()
-
                     if (orderBy == "asc"){
-                        $("#"+sortBy).append("     "+"<div class='arrow-asc'></div>")
+                        $("#"+sortBy).append("<div class='arrow-asc'></div>")
                     }else {
-                        $("#"+sortBy).append("     "+"<div class='arrow-desc'></div>")
+                        $("#"+sortBy).append("<div class='arrow-desc'></div>")
                     }
                 }
             }
@@ -126,6 +134,14 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#" data-toggle="modal" data-target="#adminModal">Administration</a>
+                </li>
+                <li>
+                    <select id="season" class="form-control btn-sm">
+                    <!-- TODO check implementation -->
+                        {{#each seasons}}
+                            <option value="{{this.id}}">Sæson {{this.season}}</option>
+                        {{/each}}
+                    </select>
                 </li>
             </ul>
 
@@ -151,7 +167,7 @@
                 <tr>
                     <th class="sortable" id="fase">Fase</th>
                     <th class="sortable" id="consultant">Konsulent</th>
-                    <th class="sortable" id="date">Oprettet dato</th>
+                    <th class="sortable" id="date">Oprettet dato <div class="arrow-desc"></div></th>
                     <th class="sortable" id="landline">Fastnet tlf.</th>
                     <th class="sortable" id="mobile">Mobil tlf.</th>
                     <th class="sortable" id="name">Navn</th>
