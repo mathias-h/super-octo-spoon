@@ -67,15 +67,15 @@ module.exports.createApp = function createApp({Order, User, session, Season}) {
     app.get("/", (req,res) => {
         Order.sampleTotals().then(({ totalSamples, totalTaken }) => {
             return Order.getAll(req.query).then(orders => {
-                return User.find({}).select({username: 1}).then(consultants => {
+                return User.find({}).then(consultants => {
                     return Season.find({}).then(seasons => {
                         const data = {
                             orders,
                             totalSamples,
                             totalTaken,
                             query: req.query.query,
-                            consultants: consultants,
-                            seasons: seasons
+                            consultants,
+                            seasons
                         };
                     res.render("overview", data);
                     })
