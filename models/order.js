@@ -5,6 +5,11 @@ const moment = require("moment");
 const { diff } = require("deep-object-diff");
 
 const Order = new Schema({
+    season: {
+        type: Schema.Types.ObjectId,
+        ref: "Season",
+        required: true
+    },
     consultant: {
         type: Schema.Types.ObjectId,
         ref: 'User',
@@ -78,9 +83,10 @@ const Order = new Schema({
 }, { strict: true });
 
 Order.statics.editOrder = async function updateOrder(order, userId) {
-    order = (await new this(order).populate("consultant", "username").execPopulate())._doc
-    const oldOrder = (await this.findOne({ _id: order._id }).populate("consultant", "username").exec())._doc
+    order = (await new this(order).populate("consultant", "username").populate("season", "season").execPopulate())._doc
+    const oldOrder = (await this.findOne({ _id: order._id }).populate("consultant", "username").populate("season", "season").exec())._doc
     let consultantId
+    let seasonId
 
     delete oldOrder.__v
     delete oldOrder.log
@@ -90,7 +96,12 @@ Order.statics.editOrder = async function updateOrder(order, userId) {
 
     if (changes.consultant) {
         consultantId = order.consultant._doc._id.toHexString()
-        changes.consultant = order.consultant._doc.username    
+        changes.consultant = order.consultant._doc.username
+    }
+
+    if (changes.season) {
+        seasonId = order.season._doc._id.toHexString()
+        changes.season = order.season._doc.season
     }
 
     delete changes._id
@@ -102,8 +113,8 @@ Order.statics.editOrder = async function updateOrder(order, userId) {
 
     const logChanges = Object.assign({}, changes, changes.address)
     delete logChanges.dynamics
-    
-    if (dynamicChanges) {   
+
+    if (dynamicChanges) {
         for (const fase of Object.keys(dynamicChanges)) {
             for (const [k,v] of Object.entries(dynamicChanges[fase])) {
                 if (v !== null && v !== undefined) {
@@ -133,7 +144,10 @@ Order.statics.editOrder = async function updateOrder(order, userId) {
     if (changes.consultant) {
         changes.consultant = consultantId
     }
-    
+    if (changes.season) {
+        changes.season = seasonId
+    }
+
     return this.findOneAndUpdate({ _id: order._id }, update)
 }
 Order.statics.createOrder = function createOrder(orderData) {
@@ -141,6 +155,7 @@ Order.statics.createOrder = function createOrder(orderData) {
         const order = new this({
             consultant: orderData.consultant,
             signedDate: orderData.signedDate,
+            season: orderData.season,
             landlineNumber: orderData.landlineNumber,
             phoneNumber: orderData.phoneNumber,
             name: orderData.name,
@@ -178,7 +193,10 @@ Order.statics.sampleTotals = async function sampleTotals() {
 }
 
 Order.statics.getAll = async function getAll({query, sortBy="date", order}) {
-    let orders = await this.find().lean().populate('consultant', "username").exec()
+    let orders = await this.find().lean()
+        .populate('consultant', "username")
+        .populate('season', "season")
+        .exec()
 
     if (!query & !order){
         order = "desc";
@@ -199,18 +217,5 @@ Order.statics.getAll = async function getAll({query, sortBy="date", order}) {
         return o
     })
 }
-
-Order.index({
-    consultant:"text",
-    "address.zip":"text",
-    "address.city":"text",
-    "address.street":"text",
-    landlineNumber:"text",
-    phoneNumber:"text",
-    name:"text",
-    farmName:"text"
-}, {
-    name: "search-index"
-})
 
 module.exports.Order = Order

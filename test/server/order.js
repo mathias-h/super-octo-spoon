@@ -4,10 +4,11 @@ const { expect } = require("chai");
 const { createApp } = require("../../app");
 
 describe("Order server tests", () => {
-    function sessionMock(req,res,next) {
-        return (req,res,next) => {
+    function sessionMock(userId) {
+        return () => (req,res,next) => {
             req.session = {
-                isLoggedIn: true
+                isLoggedIn: true,
+                userId: userId
             }
     
             next()
@@ -26,12 +27,15 @@ describe("Order server tests", () => {
                     expect(query._id).to.eq(orderId)
                     return this
                 },
-                populate() { return this },
-                exec() { return Promise.resolve(order) }
+                populate: () => ({
+                    populate: () => ({
+                        populate() { return Promise.resolve(order) }
+                    })
+                })
             }
             const app = createApp({
                 Order: OrderMock,
-                session: sessionMock
+                session: sessionMock()
             })
 
             return request(app)
@@ -50,13 +54,16 @@ describe("Order server tests", () => {
                 findOne() {
                     return this
                 },
-                populate() { return this },
-                exec() { return Promise.resolve(null) }
+                populate: () => ({
+                    populate: () => ({
+                        populate() { return Promise.resolve(null) }
+                    })
+                })
             }
 
             const app = createApp({
                 Order: OrderMock,
-                session: sessionMock
+                session: sessionMock()
             })
 
             return request(app)
@@ -68,33 +75,37 @@ describe("Order server tests", () => {
     })
     it("edit order", () => {
         const orderId = "ORDER_ID"
+        const userId = "USER_ID"
         const order = {
             _id: orderId,
             order: "order"
         }
         const OrderMock = { 
-            editOrder(o) {
+            editOrder(o, uid) {
                 expect(o).to.deep.eq(order)
+                expect(uid).to.eq(userId)
+                console.log()
                 return Promise.resolve()
             }
         };
         const UserMock = {
-            findOne() {
-                return { exec: () => Promise.resolve({}) }
+            findOne(query) {
+                expect(query).to.deep.eq({ _id: userId })
+                return Promise.resolve({ _id: userId })
             }
         }
         
         const app = createApp({
             Order: OrderMock,
             User: UserMock,
-            session: sessionMock
+            session: sessionMock(userId)
         })
 
         return request(app)
             .put("/order")
             .send(order)
             .expect(200)
-            .expect("order updated")
+            .expect("OK")
     });
     describe("create order", () => {
         it("should create order", () => {
@@ -122,14 +133,14 @@ describe("Order server tests", () => {
 
             const app = createApp({
                 Order: OrderMock,
-                session: sessionMock
+                session: sessionMock()
             });
 
             return request(app)
                 .post('/order')
                 .send(order)
                 .expect(200)
-                .expect('order created');
+                .expect('OK');
         });
 
         it('should handle create requests, which are missing all data', () => {
@@ -146,13 +157,12 @@ describe("Order server tests", () => {
 
             const app = createApp({
                 Order: OrderMock,
-                session: sessionMock
+                session: sessionMock()
             });
 
             return request(app)
                 .post('/order')
                 .send(order)
-                .expect('Content-Type', /application\/json/)
                 .expect(500);
         });
         it('should handle create requests, which are missing all data but phone number', () => {
@@ -170,41 +180,13 @@ describe("Order server tests", () => {
 
             const app = createApp({
                 Order: OrderMock,
-                session: sessionMock
+                session: sessionMock()
             });
 
             return request(app)
                 .post('/order')
                 .send(order)
                 .expect(500)
-                .expect('Content-Type', /application\/json/)
         });
-    })
-    it("should set dynamic fields", () => {
-        const orderId = "ORDER_ID"
-        const fase = 1
-        const name = "NAME"
-        const value = "VALUE"
-
-        const OrderMock = {
-            setDynamicField(id, f, n, v) {
-                expect(id).to.eq(orderId)
-                expect(f).to.eq(fase)
-                expect(n).to.eq(name)
-                expect(v).to.eq(value)
-
-                return Promise.resolve()
-            }
-        }
-
-        const app = createApp({
-            Order: OrderMock,
-            session: sessionMock
-        })
-
-        return request(app)
-            .put("/order/dynamic/" + orderId)
-            .send({ fase, name, value })
-            .expect(200)
     })
 });
