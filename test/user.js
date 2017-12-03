@@ -6,6 +6,7 @@ const moment = require("moment");
 const childProcess = require("child_process");
 const rimraf = require("rimraf");
 const fs = require("fs");
+const bcrypt = require('bcrypt');
 const { User: UserSchema } = require("../models/user");
 
 mongoose.Promise = global.Promise;
@@ -76,10 +77,11 @@ describe("user tests", () => {
             const newUser = await User.findOne();
 
             expect(newUser.username).to.eq(userData.username);
-            //TODO - Vi skal have fundet en bedre måde at teste password på. Problemet er at det pt. bliver hashed i en
-            //TODO - pre og der med aldrig vil være lig med test password.
+
             expect(newUser.password).to.be.ok.and.not.to.eq(userData.password);
             expect(newUser.password).to.exist.and.be.not.to.eq(userData.password);
+            const compareResult = bcrypt.compareSync(userData.password, newUser.password);
+            expect(compareResult).to.eq(true);
 
             expect(newUser.isAdmin).to.eq(userData.isAdmin);
             expect(newUser.isDisabled).to.eq(userData.isDisabled);
