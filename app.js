@@ -70,27 +70,28 @@ module.exports.createApp = function createApp({
 
     // Session related stuff ends //
 
-    app.get("/", (req,res) => {
-        Order.sampleTotals().then(({ totalSamples, totalTaken }) => {
-            return Order.getAll(req.query).then(orders => {
-                return User.find({}).then(consultants => {
-                    return Season.find({}).then(seasons => {
-                        const data = {
-                            orders,
-                            totalSamples,
-                            totalTaken,
-                            query: req.query.query,
-                            consultants,
-                            seasons
-                        };
-                    res.render("overview", data);
-                    })
-                });
-            })
-        }).catch(err => {
-            console.error(err)
-            res.render("error")
-        })
+    app.get("/", async (req,res) => {
+        try {
+            const { totalSamples, totalTaken } = await Order.sampleTotals();
+            const orders = await Order.getAll(req.query);
+            const consultants = await User.find({});
+            const seasons = await Season.find({});
+            const dynamics = await Dynamic.find({});
+            
+            const data = {
+                orders,
+                totalSamples,
+                totalTaken,
+                query: req.query.query,
+                consultants,
+                seasons,
+                dynamics
+            };
+            res.render("overview", data);
+        } catch(err) {
+            console.error(err);
+            res.render("error");
+        }
     });
     
     app.post("/order", (req, res) => {
@@ -175,8 +176,8 @@ module.exports.createApp = function createApp({
             res.status(500).end("ERROR");
         });
     });
-    app.post("/user", function (req, res) {
 
+    app.post("/user", function (req, res) {
         User.createUser(req.body)
             .then(function (response) {
                 //console.log(response);
@@ -190,7 +191,6 @@ module.exports.createApp = function createApp({
     });
 
     app.put('/user/:userId', function (req, res) {
-
         User.updateUser(req.params.userId, req.body)
             .then(function (response) {
                 //console.log("DEBUG: route then()");
@@ -205,7 +205,6 @@ module.exports.createApp = function createApp({
     });
 
     app.get('/login', (req, res) =>{
-
         res.render('login');
     });
 
