@@ -262,7 +262,7 @@
                                     <textarea name="remarksAndComments" id="editInputRemarksAndComments" class="form-control" rows="4" style="min-height: 74px"></textarea>
                                 </div>
                                 <div class="col-4 form-group">
-                                    <!-- disse har ikke de rigtige navne osv. mvh mathias -->
+                                    <!-- TODO disse har ikke de rigtige navne osv. mvh mathias -->
                                     <!--label for="editInputSentToFarm">Sendt til landmand</label>
                                     <input name="sentToFarm" type="date" id="editInputSentToFarm" class="form-control"-->
                                     <!--label for="editInputSentToPit">Sendt til maskinstation</label>
@@ -296,6 +296,12 @@
                             <div class="form-group" id="logElement"></div>
                         </div>
                         <div class="tab-pane" id="sletOrdre" role="tabpanel" aria-labelledby="FaseDestroyTab">
+                                <label for="deleteOrderCheck">
+                                    jeg er sikker *
+                                    <input id="deleteOrderCheck" type="checkbox">
+                                </label>
+                                <br>
+                                <button type="button" id="deleteOrderButton" class="btn btn-danger">slet</button>
                         </div>
                     </div>
                     <div class="modal-footer">

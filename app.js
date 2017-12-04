@@ -125,6 +125,18 @@ module.exports.createApp = function createApp({Order, User, session, Season}) {
         }
     });
 
+    app.delete("/order/:orderId", async (req,res) => {
+        const orderId = req.params.orderId;
+
+        try {
+            await Order.remove({ _id: orderId });
+            res.end("OK");
+        } catch (error) {
+            console.error(error);
+            res.status(500).end("ERROR");
+        }
+    })
+
     app.post("/season", function (req, res) {
         Season.createSeason(req.body.userData)
             .then(function (response) {
