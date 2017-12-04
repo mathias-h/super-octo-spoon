@@ -94,6 +94,8 @@ class EditOrderModal {
     }
 
     setDynamic(order) {
+        if (!order.dynamics) return
+        
         for (const [fase, keys] of Object.entries(order.dynamics)) {
             $("#editOrderModal .dynamic.fase-" + fase)
                 .html(Object.entries(keys).map(([key,value]) => {

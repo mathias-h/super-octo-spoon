@@ -85,7 +85,7 @@ const Order = new Schema({
 Order.statics.editOrder = async function updateOrder(order, consultantId) {
     order = (await new this(order).populate("consultant", "name").populate("season", "season").execPopulate())._doc
     const oldOrder = (await this.findOne({ _id: order._id }).populate("consultant", "name").populate("season", "season").exec())._doc
-    let consultantId
+    let consultantIdChange
     let seasonId
 
     delete oldOrder.__v
@@ -95,7 +95,7 @@ Order.statics.editOrder = async function updateOrder(order, consultantId) {
     const changes = diff(oldOrder, order)
 
     if (changes.consultant) {
-        consultantId = order.consultant._doc._id.toHexString()
+        consultantIdChange = order.consultant._doc._id.toHexString()
         changes.consultant = order.consultant._doc.name
     }
 
@@ -142,7 +142,7 @@ Order.statics.editOrder = async function updateOrder(order, consultantId) {
     }
 
     if (changes.consultant) {
-        changes.consultant = consultantId
+        changes.consultant = consultantIdChange
     }
     if (changes.season) {
         changes.season = seasonId

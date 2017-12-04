@@ -48,8 +48,9 @@ describe("order integration test", () => {
             Season,
             Dynamic,
             session
-        }).listen(1025)
-        browser = await puppeteer.launch()
+        }).listen(1025);
+
+        browser = await puppeteer.launch({ headless: false, devtools: true })
 
         page = await browser.newPage()
         await page.goto("http://localhost:1025/")
@@ -73,7 +74,7 @@ describe("order integration test", () => {
 
     after(async () => {
         await mongoose.disconnect()
-        await browser.close()
+        //await browser.close()
         server.close()
         db.kill()
     })
@@ -120,7 +121,7 @@ describe("order integration test", () => {
         expect(orderIds).to.deep.eq([order._id.toHexString(), order1._id.toHexString()])
     })
 
-    it.only("should create order", async () => {
+    it("should create order", async () => {
         const consultant = new Consultant({
             name: "CONSULTANTNAME",
             password: "PASSWORD",
@@ -162,6 +163,8 @@ describe("order integration test", () => {
                 modal.querySelector("#inputArea").value = 2
                 modal.querySelector("#inputSamePlanAsLast").checked = true
                 modal.querySelector("#inputTakeOwnSamples").checked = true
+
+                console.log(modal.querySelector("button[type=submit]"))
 
                 modal.querySelector("button[type=submit]").click()
             }, 300)

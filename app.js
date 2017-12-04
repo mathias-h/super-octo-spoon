@@ -157,8 +157,6 @@ module.exports.createApp = function createApp({
     app.post("/dynamic", (req,res) => {
         const { name, fase } = req.body;
 
-        console.log(Dynamic.createDynamic)
-
         Dynamic.createDynamic(name, fase).then(() => {
             res.end("OK");
         }).catch(err => {
@@ -233,9 +231,9 @@ module.exports.createApp = function createApp({
                     //console.log("Starting session.");
 
                     sess.isLoggedIn = true;
-                    sess.name = result.name;
-                    sess.consultantId = result.id;
-                    sess.isAdmin = result.isAdmin;
+                    sess.name = result.consultant.name;
+                    sess.consultantId = result.consultant.id;
+                    sess.isAdmin = result.consultant.isAdmin;
 
                     //console.log(sess);
 

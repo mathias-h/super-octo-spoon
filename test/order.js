@@ -4,10 +4,10 @@ const moment = require("moment");
 const childProcess = require("child_process")
 const rimraf = require("rimraf")
 const fs = require("fs")
-const { createOrder: createOrderModel } = require("../models/order")
+const { Order: OrderSchema } = require("../models/order")
 const { Consultant: ConsultantSchema } = require("../models/consultant")
 const { Season: SeasonSchema } = require("../models/season")
-const { createDynamic } = require("../models/dynamic")
+const { Dynamic: DynamicSchema } = require("../models/dynamic")
 
 mongoose.Promise = global.Promise;
 
@@ -53,8 +53,8 @@ describe("order", () => {
         mongoose.Promise = global.Promise;
         const connection = await mongoose.createConnection("mongodb://localhost:27018/super-octo-spoon");
 
-        Dynamic = connection.models.Dynamic || connection.model("Dynamic", createDynamic(Order));
-        Order = connection.models.Order || connection.model("Order", createOrderModel(Dynamic));
+        Dynamic = connection.models.Dynamic || connection.model("Dynamic", DynamicSchema);
+        Order = connection.models.Order || connection.model("Order", OrderSchema);
         Consultant = connection.models.Consultant || connection.model("Consultant", ConsultantSchema);
         Season = connection.models.Season || connection.model("Season", SeasonSchema);
     })
@@ -251,7 +251,7 @@ describe("order", () => {
             const newOrder = await Order.findById(order._id)
             const log = newOrder.log[0]
 
-            expect(log.consultant).to.eq(consultant1.name)
+            expect(log.changes.consultant).to.eq(consultant1.name)
         })
 
         it("should handle log season", async () => {

@@ -20,10 +20,14 @@ describe("overview view", () => {
         const SeasonMock = {
             find: () => Promise.resolve({})
         }
+        const DynamicMock = {
+            find: () => Promise.resolve({})
+        }
         const app = createApp({
             Order: OrderMock,
             Consultant: ConsultantMock,
             Season: SeasonMock,
+            Dynamic: DynamicMock,
             session: function sessionMock(req,res,next) {
                 return (req,res,next) => {
                     req.session = {
