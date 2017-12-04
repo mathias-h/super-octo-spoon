@@ -14,12 +14,12 @@ describe(' /GET on all end routes, session and login test', function () {
 });
 */
 
-process.env.NODE_ENV = 'test';
-
-const mongoose = require('mongoose');
-const User = require('../models/user');
-
-const chai = require('chai');
-const chaiHTTP = require('chai-http');
-
-const { createApp } = require("../app");
+// process.env.NODE_ENV = 'test';
+//
+// const mongoose = require('mongoose');
+// const User = require('../models/user');
+//
+// const chai = require('chai');
+// const chaiHTTP = require('chai-http');
+//
+// const { createApp } = require("../app");
