@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
-const { User } = require("./models/user");
+const { Consultant } = require("./models/consultant");
 
 mongoose.Promise = global.Promise;
 const connection = mongoose.createConnection("mongodb://localhost:27017/super-octo-spoon");
 
-const UserModel = connection.model('User', User);
+const ConsultantModel = connection.model('Consultant', Consultant);
 
-UserModel.createUser({username:"admin",password:"admin",isAdmin:true,isDisabled:false})
+ConsultantModel.createConsultant({name:"admin",password:"admin",isAdmin:true,dummy:false})

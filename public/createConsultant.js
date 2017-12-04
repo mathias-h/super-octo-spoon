@@ -17,33 +17,33 @@ function convertFormToObject(form) {
 }
 
 window.addEventListener('load', function() {
-    $("#createUserCancel").click(() => {
-        clearCreateUser();
+    $("#createConsultantCancel").click(() => {
+        clearCreateConsultant();
     });
 
-    $("#createUserClose").click(() => {
+    $("#createConsultantClose").click(() => {
 
-        clearCreateUser();
+        clearCreateConsultant();
     });
 
     $(document).keyup((e) => {
         if(e.which == 27){
-            clearCreateUser();
+            clearCreateConsultant();
         }
     });
 
-    function clearCreateUser(){
-        $("#inputCreateUser-consultant").val("");
-        $("#inputCreateUser-isSuperUser").prop('checked', false);
-        $("#inputCreateUser-password").val("");
-        $("#inputCreateUser-passwordRepeat").val("");
+    function clearCreateConsultant(){
+        $("#inputCreateConsultant-consultant").val("");
+        $("#inputCreateConsultant-isSuperConsultant").prop('checked', false);
+        $("#inputCreateConsultant-password").val("");
+        $("#inputCreateConsultant-passwordRepeat").val("");
 
-        $('#createUserForm').removeClass('was-validated');
+        $('#createConsultantForm').removeClass('was-validated');
         $('#passwordFields').removeClass('was-validated');
     }
 
-    var password = $('#inputCreateUser-password');
-    var passwordRepeat = $('#inputCreateUser-passwordRepeat');
+    var password = $('#inputCreateConsultant-password');
+    var passwordRepeat = $('#inputCreateConsultant-passwordRepeat');
 
     function matchPasswords() {
         console.log(password.val(), passwordRepeat.val())
@@ -58,15 +58,15 @@ window.addEventListener('load', function() {
         }
     }
 
-    $('#inputCreateUser-password').keyup(() => {
+    $('#inputCreateConsultant-password').keyup(() => {
         matchPasswords();
     });
 
-    $('#inputCreateUser-passwordRepeat').keyup(() => {
+    $('#inputCreateConsultant-passwordRepeat').keyup(() => {
         matchPasswords();
     });
 
-    const form = document.getElementById('createUserForm');
+    const form = document.getElementById('createConsultantForm');
     form.addEventListener('submit', function(event) {
         event.preventDefault();
         event.stopPropagation();
@@ -75,11 +75,11 @@ window.addEventListener('load', function() {
 
         if (form.checkValidity() === true) {
             const data = convertFormToObject(form);
-            const userData = {username: data.consultant, password: data.password, isAdmin: data.isSuperUser == "on"};
+            const consultantData = {name: data.consultant, password: data.password, isAdmin: data.isSuperUser == "on"};
             $.ajax({
-                url: "/user",
+                url: "/consultant",
                 method: "POST",
-                data: JSON.stringify(userData),
+                data: JSON.stringify(consultantData),
                 headers: {
                     "content-type": "application/json"
                 }

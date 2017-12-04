@@ -7,11 +7,11 @@ describe('Login/session testing', function () {
 
     describe('Testing GET route endpoints when not logged in', function () {
 
-        function sessionMock(userId) {
+        function sessionMock(consultantId) {
             return () => (req,res,next) => {
                 req.session = {
                     isLoggedIn: false,
-                    userId: userId
+                    consultantId: consultantId
                 };
 
                 next();
@@ -81,31 +81,50 @@ describe('Login/session testing', function () {
         });
     });
 
-    describe('testing GET endpoint response when logged in', function () {
+    describe('testing POST endpoint response when logged in', function () {
 
-        function sessionMock(userId) {
+        function sessionMock(consultantId) {
             return () => (req,res,next) => {
                 req.session = {
                     isLoggedIn: true,
-                    userId: userId
+                    consultantId: consultantId
                 };
 
                 next();
             }
         }
 
-        it('GET / should redirect to GET /login', function () {
+        it('POST consultant', function () {
+            // TODO
+
+            const app = createApp({
+                session: sessionMock()
+            });
+
+            request(app)
+                .get('/')
+                .then(function (res) {
+                    console.log(res);
+                })
 
         });
 
-        it('should fail at GET /', function () {
-
+        it('PUT consultant', function () {
+            // TODO
         });
 
-        it('', function () {
-
+        it('POST /login', function () {
+            // TODO
         })
 
     });
 
 });
+
+/*
+    TODO
+    login
+    delete Order
+    /season
+    dynamics når de kommer
+ */

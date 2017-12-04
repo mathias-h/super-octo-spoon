@@ -13,7 +13,7 @@ const Order = new Schema({
     },
     consultant: {
         type: Schema.Types.ObjectId,
-        ref: 'User',
+        ref: 'Consultant',
         required: true
     },
     signedDate: {
@@ -76,16 +76,16 @@ const Order = new Schema({
         changes: Object,
         consultant: {
             type: Schema.Types.ObjectId,
-            ref: "User"
+            ref: "Consultant"
         }
     }],
     dynamics: Object
 }, { strict: true });
 
-Order.statics.editOrder = async function updateOrder(order, userId) {
-    order = (await new this(order).populate("consultant", "username").populate("season", "season").execPopulate())._doc
-    const oldOrder = (await this.findOne({ _id: order._id }).populate("consultant", "username").populate("season", "season").exec())._doc
-    let consultantId
+Order.statics.editOrder = async function updateOrder(order, consultantId) {
+    order = (await new this(order).populate("consultant", "name").populate("season", "season").execPopulate())._doc
+    const oldOrder = (await this.findOne({ _id: order._id }).populate("consultant", "name").populate("season", "season").exec())._doc
+    let consultantIdChange
     let seasonId
 
     delete oldOrder.__v
@@ -95,8 +95,8 @@ Order.statics.editOrder = async function updateOrder(order, userId) {
     const changes = diff(oldOrder, order)
 
     if (changes.consultant) {
-        consultantId = order.consultant._doc._id.toHexString()
-        changes.consultant = order.consultant._doc.username
+        consultantIdChange = order.consultant._doc._id.toHexString()
+        changes.consultant = order.consultant._doc.name
     }
 
     if (changes.season) {
@@ -134,7 +134,7 @@ Order.statics.editOrder = async function updateOrder(order, userId) {
     if (Object.keys(logChanges).length > 0) {
         const newLog = {
             time: moment(new Date()).startOf("minute").toDate(),
-            consultant: userId,
+            consultant: consultantId,
             changes: logChanges
         }
 
@@ -142,7 +142,7 @@ Order.statics.editOrder = async function updateOrder(order, userId) {
     }
 
     if (changes.consultant) {
-        changes.consultant = consultantId
+        changes.consultant = consultantIdChange
     }
     if (changes.season) {
         changes.season = seasonId
@@ -202,7 +202,7 @@ Order.statics.sampleTotals = async function sampleTotals() {
 
 Order.statics.getAll = async function getAll({query, sortBy="date", order}) {
     let orders = await this.find().lean()
-        .populate('consultant', "username")
+        .populate('consultant', "name")
         .populate('season', "season")
         .exec()
 
