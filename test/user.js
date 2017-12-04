@@ -79,7 +79,7 @@ describe("user tests", () => {
             expect(newUser.username).to.eq(userData.username);
 
             expect(newUser.password).to.be.ok.and.not.to.eq(userData.password);
-            expect(newUser.password).to.exist.and.be.not.to.eq(userData.password);
+            expect(newUser.password).to.exist.and.not.to.eq(userData.password);
             const compareResult = bcrypt.compareSync(userData.password, newUser.password);
             expect(compareResult).to.eq(true);
 
@@ -166,6 +166,12 @@ describe("user tests", () => {
         it('should compare passwords and return true if they match else false', async function () {
             const user = await User.findOne();
 
+            const mismatchResult1 = (await User.matchPasswords(user.username, "WRONGPASSWORD")).status;
+            const matchResult1 = (await User.matchPasswords(user.username, "TESTPASSWORD")).status;
+
+            expect(mismatchResult1).is.eq(false);
+            expect(matchResult1).is.eq(true);
+
             const updateData = {
                 password: "5up3r53r37P455w0rd",
             };
@@ -173,11 +179,11 @@ describe("user tests", () => {
             let updateResult = await User.updateUser(user._id, updateData);
             let updatedUser = await User.findById(user._id);
 
-            const mismatchResult = (await User.matchPasswords(updatedUser.username, "WRONGPASSWORD")).status;
-            const matchResult = (await User.matchPasswords(updatedUser.username, updateData.password)).status;
+            const mismatchResult2 = (await User.matchPasswords(updatedUser.username, "WRONGPASSWORD")).status;
+            const matchResult2 = (await User.matchPasswords(updatedUser.username, updateData.password)).status;
 
-            expect(mismatchResult).is.eq(false);
-            expect(matchResult).is.eq(true);
+            expect(mismatchResult2).is.eq(false);
+            expect(matchResult2).is.eq(true);
         });
     });
 

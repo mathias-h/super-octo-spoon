@@ -209,15 +209,13 @@ module.exports.createApp = function createApp({
     });
 
     app.post('/login', function (req, res) {
-
-        const sess = req.session;
-
         User.matchPasswords(req.body.username, req.body.password)
             .then(function (result) {
                 //console.log("DEBUG: route then()");
                 //console.log(result);
 
                 if(result.status){
+                    const sess = req.session;
                     // TODO Start session her
                     //console.log("Starting session.");
 
@@ -233,7 +231,6 @@ module.exports.createApp = function createApp({
                 else{
                     res.json({status: "INCORRECT_CREDENTIALS", message: "Forkert brugernavn eller kodeord."});
                 }
-                res.json(result);
             })
             .catch(function (error) {
                 res.status(500).end({status: "ERROR", message: "Unknown error"});
