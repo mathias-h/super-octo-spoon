@@ -7,11 +7,11 @@ describe('Login/session testing', function () {
 
     describe('Testing GET route endpoints when not logged in', function () {
 
-        function sessionMock(userId) {
+        function sessionMock(consultantId) {
             return () => (req,res,next) => {
                 req.session = {
                     isLoggedIn: false,
-                    userId: userId
+                    consultantId: consultantId
                 };
 
                 next();
@@ -83,18 +83,18 @@ describe('Login/session testing', function () {
 
     describe('testing POST endpoint response when logged in', function () {
 
-        function sessionMock(userId) {
+        function sessionMock(consultantId) {
             return () => (req,res,next) => {
                 req.session = {
                     isLoggedIn: true,
-                    userId: userId
+                    consultantId: consultantId
                 };
 
                 next();
             }
         }
 
-        it('POST user', function () {
+        it('POST consultant', function () {
             // TODO
 
             const app = createApp({
@@ -109,7 +109,7 @@ describe('Login/session testing', function () {
 
         });
 
-        it('PUT user', function () {
+        it('PUT consultant', function () {
             // TODO
         });
 

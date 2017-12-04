@@ -5,7 +5,7 @@ const childProcess = require("child_process")
 const rimraf = require("rimraf")
 const fs = require("fs")
 const { createOrder: createOrderModel } = require("../models/order")
-const { User: UserSchema } = require("../models/user")
+const { Consultant: ConsultantSchema } = require("../models/consultant")
 const { Season: SeasonSchema } = require("../models/season")
 const { createDynamic } = require("../models/dynamic")
 
@@ -16,7 +16,7 @@ const sleep = time => new Promise(resolve => setTimeout(resolve, time))
 describe("order", () => {
     let db
     let Order = null
-    let User
+    let Consultant
     let Season
     let Dynamic = null
 
@@ -55,7 +55,7 @@ describe("order", () => {
 
         Dynamic = connection.models.Dynamic || connection.model("Dynamic", createDynamic(Order));
         Order = connection.models.Order || connection.model("Order", createOrderModel(Dynamic));
-        User = connection.models.User || connection.model("User", UserSchema);
+        Consultant = connection.models.Consultant || connection.model("Consultant", ConsultantSchema);
         Season = connection.models.Season || connection.model("Season", SeasonSchema);
     })
 
@@ -66,7 +66,7 @@ describe("order", () => {
 
     beforeEach(async () => {
         await Order.remove({})
-        await User.remove({})
+        await Consultant.remove({})
     })
 
     describe("edit order", () => {
@@ -218,14 +218,14 @@ describe("order", () => {
         })
 
         it("should handle log consultant", async () => {
-            const consultant = new User({
+            const consultant = new Consultant({
                 name: "CONSULTANT",
                 password: "PASS",
                 isAdmin: false,
                 dummy: false
             })
             await consultant.save()
-            const consultant1 = new User({
+            const consultant1 = new Consultant({
                 name: "CONSULTANT1",
                 password: "PASS",
                 isAdmin: false,
@@ -444,7 +444,7 @@ describe("order", () => {
 
     describe("get all", () => {
         it("should search", async () => {
-            const consultant = new User({
+            const consultant = new Consultant({
                 name: "CONSULTANT",
                 password: "PASS",
                 isAdmin: false,
@@ -461,7 +461,7 @@ describe("order", () => {
         })
   
         it("should sort asc", async () => {
-            const consultant = new User({
+            const consultant = new Consultant({
                 name: "CONSULTANT",
                 password: "PASS",
                 isAdmin: false,
@@ -483,7 +483,7 @@ describe("order", () => {
             expect(results[0]._id.toHexString()).to.eq(order1._id.toHexString())
         })
         it("should sort asc", async () => {
-            const consultant = new User({
+            const consultant = new Consultant({
                 name: "CONSULTANT",
                 password: "PASS",
                 isAdmin: false,
@@ -505,7 +505,7 @@ describe("order", () => {
             expect(results[0]._id.toHexString()).to.eq(order1._id.toHexString())
         })
         it("should sort by signed date by default", async () => {
-            const consultant = new User({
+            const consultant = new Consultant({
                 name: "CONSULTANT",
                 password: "PASS",
                 isAdmin: false,
@@ -528,7 +528,7 @@ describe("order", () => {
         })
 
         it("should format signed date", async () => {
-            const consultant = new User({
+            const consultant = new Consultant({
                 name: "CONSULTANT",
                 password: "PASS",
                 isAdmin: false,
@@ -545,7 +545,7 @@ describe("order", () => {
             expect(result.signedDate).to.eq("01-02-1970")
         })
         it("should set fase 1", async () => {
-            const consultant = new User({
+            const consultant = new Consultant({
                 name: "CONSULTANT",
                 password: "PASS",
                 isAdmin: false,
@@ -561,7 +561,7 @@ describe("order", () => {
             expect(result.fase).to.eq(1)
         })
         it("should set fase 2", async () => {
-            const consultant = new User({
+            const consultant = new Consultant({
                 name: "CONSULTANT",
                 password: "PASS",
                 isAdmin: false,

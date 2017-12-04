@@ -7,7 +7,7 @@ const hbs = require("hbs");
 
 module.exports.createApp = function createApp({
     Order,
-    User,
+    Consultant,
     session,
     Season,
     Dynamic
@@ -21,7 +21,7 @@ module.exports.createApp = function createApp({
         hbs.registerPartial("editOrderModal", require("fs").readFileSync(__dirname + "/views/editOrderModal.hbs").toString());
 
         hbs.registerPartial("adminModal", require("fs").readFileSync(__dirname + "/views/admin.hbs").toString());
-        hbs.registerPartial("createUser", require("fs").readFileSync(__dirname + "/views/admin/createUser.hbs").toString());
+        hbs.registerPartial("createConsultant", require("fs").readFileSync(__dirname + "/views/admin/createConsultant.hbs").toString());
         hbs.registerPartial("createSeason", require("fs").readFileSync(__dirname + "/views/admin/createSeason.hbs").toString());
 
         hbs.registerHelper("objectIter", function(obj, options) {
@@ -74,7 +74,7 @@ module.exports.createApp = function createApp({
         try {
             const { totalSamples, totalTaken } = await Order.sampleTotals();
             const orders = await Order.getAll(req.query);
-            const consultants = await User.find({});
+            const consultants = await Consultant.find({});
             const seasons = await Season.find({});
             const dynamics = await Dynamic.find({});
             
@@ -177,8 +177,8 @@ module.exports.createApp = function createApp({
         });
     });
 
-    app.post("/user", function (req, res) {
-        User.createUser(req.body)
+    app.post("/consultant", function (req, res) {
+        Consultant.createConsultant(req.body)
             .then(function (response) {
                 //console.log(response);
                 res.json({status: "OK", message: "Consultant created."});
@@ -190,8 +190,8 @@ module.exports.createApp = function createApp({
 
     });
 
-    app.put('/user/:userId', function (req, res) {
-        User.updateUser(req.params.userId, req.body)
+    app.put('/consultant/:consultantId', function (req, res) {
+        Consultant.updateConsultant(req.params.consultantId, req.body)
             .then(function (response) {
                 res.json({status: "OK", message: "Consultant updated."});
             })

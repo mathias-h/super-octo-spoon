@@ -82,9 +82,9 @@ const Order = new Schema({
     dynamics: Object
 }, { strict: true });
 
-Order.statics.editOrder = async function updateOrder(order, userId) {
-    order = (await new this(order).populate("consultant", "username").populate("season", "season").execPopulate())._doc
-    const oldOrder = (await this.findOne({ _id: order._id }).populate("consultant", "username").populate("season", "season").exec())._doc
+Order.statics.editOrder = async function updateOrder(order, consultantId) {
+    order = (await new this(order).populate("consultant", "name").populate("season", "season").execPopulate())._doc
+    const oldOrder = (await this.findOne({ _id: order._id }).populate("consultant", "name").populate("season", "season").exec())._doc
     let consultantId
     let seasonId
 
@@ -134,7 +134,7 @@ Order.statics.editOrder = async function updateOrder(order, userId) {
     if (Object.keys(logChanges).length > 0) {
         const newLog = {
             time: moment(new Date()).startOf("minute").toDate(),
-            consultant: userId,
+            consultant: consultantId,
             changes: logChanges
         }
 
@@ -202,7 +202,7 @@ Order.statics.sampleTotals = async function sampleTotals() {
 
 Order.statics.getAll = async function getAll({query, sortBy="date", order}) {
     let orders = await this.find().lean()
-        .populate('consultant', "username")
+        .populate('consultant', "name")
         .populate('season', "season")
         .exec()
 

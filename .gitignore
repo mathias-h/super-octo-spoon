@@ -2,10 +2,8 @@ node_modules
 data
 *.idea
 test/test-data
-test/test-data-user
+test/test-data-consultants
 .vscode
 index_tmp\.js
-
 insert_data\.js
-
 testjs\.js

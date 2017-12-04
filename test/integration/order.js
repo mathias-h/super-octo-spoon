@@ -8,7 +8,7 @@ const moment = require("moment")
 const session = require("express-session")
 
 const { Order: OrderSchema } = require("../../models/order")
-const { User : UserSchema } = require("../../models/user")
+const { Consultant : ConsultantSchema } = require("../../models/consultant")
 const { Season : SeasonSchema } = require("../../models/season")
 const { Dynamic: DynamicSchema } = require("../../models/dynamic")
 const { createApp } = require("../../app")
@@ -21,7 +21,7 @@ describe("order integration test", () => {
     let browser
     let page
     let Order
-    let User
+    let Consultant
     let Dynamic
     let Season
     
@@ -38,13 +38,13 @@ describe("order integration test", () => {
         const connection = await mongoose.createConnection("mongodb://localhost:27018/super-octo-spoon-test");
 
         Order = connection.models.Order || connection.model("Order", OrderSchema)
-        User = connection.models.User || connection.model("User", UserSchema)
+        Consultant = connection.models.Consultant || connection.model("Consultant", ConsultantSchema)
         Season = connection.models.Season || connection.model("Season", SeasonSchema)
         Dynamic = connection.models.Dynamic || connection.model("Dynamic", DynamicSchema)
 
         server = createApp({
             Order,
-            User,
+            Consultant,
             Season,
             Dynamic,
             session
@@ -54,10 +54,10 @@ describe("order integration test", () => {
         page = await browser.newPage()
         await page.goto("http://localhost:1025/")
 
-        await User.remove({})
+        await Consultant.remove({})
 
-        const u = new User({
-            username: "admin",
+        const u = new Consultant({
+            name: "admin",
             password: "pass",
             isAdmin: true,
             dummy: false
@@ -65,7 +65,7 @@ describe("order integration test", () => {
         await u.save()
 
         await page.evaluate(() => {
-            document.getElementById("inputUsername").value = "admin"
+            document.getElementById("inputConsultantname").value = "admin"
             document.getElementById("inputPassword").value = "pass"
             document.querySelector("button[type=submit]").click()
         })
@@ -80,7 +80,7 @@ describe("order integration test", () => {
 
     beforeEach(async () => {
         await Order.remove({})
-        await User.remove({ username: { $not: /^admin$/ }})
+        await Consultant.remove({ name: { $not: /^admin$/ }})
     })
 
     it("should show orders in overview", async () => {
@@ -121,13 +121,13 @@ describe("order integration test", () => {
     })
 
     it.only("should create order", async () => {
-        const user = new User({
-            username: "USERNAME",
+        const consultant = new Consultant({
+            name: "CONSULTANTNAME",
             password: "PASSWORD",
             isAdmin: true,
             dummy: false
         })
-        await user.save()
+        await consultant.save()
         await new Season({
             season: "SEASON1"
         }).save()
@@ -138,7 +138,7 @@ describe("order integration test", () => {
 
         await page.reload()
 
-        await page.evaluate((userId, seasonId) => {
+        await page.evaluate((consultantId, seasonId) => {
             document.querySelector("#navbarSupportedContent > ul > li:nth-child(1) > a").click()
 
             const modal = document.querySelector("#createOrderModal")
@@ -149,7 +149,7 @@ describe("order integration test", () => {
                 }
 
                 modal.querySelector("#orderSeason").value = seasonId
-                modal.querySelector("#inputConsultant").value = userId
+                modal.querySelector("#inputConsultant").value = consultantId
                 modal.querySelector("#inputName").value = "NAME"
                 modal.querySelector("#inputFarmName").value = "FARM_NAME"
                 modal.querySelector("#inputStreet").value = "STREET"
@@ -165,7 +165,7 @@ describe("order integration test", () => {
 
                 modal.querySelector("button[type=submit]").click()
             }, 300)
-        }, user._id, season._id)
+        }, consultant._id, season._id)
 
         await sleep(500)
 
@@ -175,7 +175,7 @@ describe("order integration test", () => {
         console.log(order.season)
 
         expect(order.season.toHexString()).to.eq(season._id.toHexString())
-        expect(order.consultant.toHexString()).to.eq(user._id.toHexString())
+        expect(order.consultant.toHexString()).to.eq(consultant._id.toHexString())
         expect(moment(order.signedDate).format("YYYY-MM-DD")).to.eq(moment(new Date()).format("YYYY-MM-DD"))
         expect(order.name).to.eq("NAME")
         expect(order.farmName).to.eq("FARM_NAME")
@@ -192,14 +192,14 @@ describe("order integration test", () => {
     })
 
     it("should edit order", async () => {
-        const consultant = new User({
-            username: "CONSULTANT",
+        const consultant = new Consultant({
+            name: "CONSULTANT",
             password: "PASSWORD",
             isAdmin: false,
             dummy: false
         })
-        const consultant1 = new User({
-            username: "CONSULTANT1",
+        const consultant1 = new Consultant({
+            name: "CONSULTANT1",
             password: "PASSWORD",
             isAdmin: false,
             dummy: false
@@ -335,9 +335,9 @@ describe("order integration test", () => {
 
     it("should login")
 
-    it("should create user")
+    it("should create consultant")
 
-    it("should update user")
+    it("should update consultant")
 
     it("should set season")
 

@@ -11,7 +11,7 @@ const connection = mongoose.createConnection("mongodb://localhost:27017/super-oc
 
 const app = createApp({
     Order: connection.model("Order", Order),
-    User: connection.model('User', User),
+    Consultant: connection.model('Consultant', Consultant),
     session,
     Season: connection.model('Season', Season),
     Dynamic: connection.model('Dynamic', Dynamic)
