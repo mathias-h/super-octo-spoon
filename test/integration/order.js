@@ -120,7 +120,7 @@ describe("order integration test", () => {
         expect(orderIds).to.deep.eq([order._id.toHexString(), order1._id.toHexString()])
     })
 
-    it.only("should create order", async () => {
+    it("should create order", async () => {
         const user = new User({
             username: "USERNAME",
             password: "PASSWORD",
@@ -285,12 +285,8 @@ describe("order integration test", () => {
                 modal.querySelector("#inputFromLabDate").value = "1970-01-02"
                 modal.querySelector("#inputMO").value = "1970-01-02"
                 modal.querySelector("#inputReceptApproved").value = "1970-01-02"
-
-                //TODO should test fase 3
-
-                //TODO should show log
-
-                //TODO should show dynamic
+                
+                // TODO should test fase 3
 
                 modal.querySelector("#orderEditSave").click()
             }, 200)
@@ -329,7 +325,7 @@ describe("order integration test", () => {
 
     it("should search")
 
-    it("should order")
+    it("should sort orders")
 
     it("should display statistics")
 
@@ -343,5 +339,13 @@ describe("order integration test", () => {
 
     it("should create season")
 
+    it("should edit season")
+
     it("should select season")
+
+    it("should show order")
+
+    it("should create dynamic")
+
+    it("should delete dynamic")
 })

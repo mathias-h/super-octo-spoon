@@ -415,6 +415,10 @@ describe("order", () => {
                 "NAME": null
             }
         })
+
+        it("should create log")
+
+        it("should set dynamics")
     })
 
     it("sample totals", async () => {
