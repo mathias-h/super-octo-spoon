@@ -12,7 +12,7 @@ const Order = new Schema({
     },
     consultant: {
         type: Schema.Types.ObjectId,
-        ref: 'User',
+        ref: 'Consultant',
         required: true
     },
     signedDate: {
@@ -76,7 +76,7 @@ const Order = new Schema({
         changes: Object,
         consultant: {
             type: Schema.Types.ObjectId,
-            ref: "User"
+            ref: "Consultant"
         }
     }],
     dynamics: Object
@@ -96,7 +96,7 @@ Order.statics.editOrder = async function updateOrder(order, userId) {
 
     if (changes.consultant) {
         consultantId = order.consultant._doc._id.toHexString()
-        changes.consultant = order.consultant._doc.username
+        changes.consultant = order.consultant._doc.name
     }
 
     if (changes.season) {

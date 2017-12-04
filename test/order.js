@@ -5,7 +5,7 @@ const childProcess = require("child_process")
 const rimraf = require("rimraf")
 const fs = require("fs")
 const { Order: OrderSchema } = require("../models/order")
-const { User: UserSchema } = require("../models/user")
+const { Consultant: UserSchema } = require("../models/consultant")
 const { Season: SeasonSchema } = require("../models/season")
 
 mongoose.Promise = global.Promise;
@@ -52,7 +52,7 @@ describe("order", () => {
         const connection = await mongoose.createConnection("mongodb://localhost:27018/super-octo-spoon");
 
         Order = connection.models.Order || connection.model("Order", OrderSchema)
-        User = connection.models.User || connection.model("User", UserSchema)
+        User = connection.models.Consultant || connection.model("Consultant", UserSchema)
         Season = connection.models.Season || connection.model("Season", SeasonSchema)
     })
 
@@ -216,17 +216,17 @@ describe("order", () => {
 
         it("should handle log consultant", async () => {
             const consultant = new User({
-                username: "CONSULTANT",
+                name: "CONSULTANT",
                 password: "PASS",
                 isAdmin: false,
-                isDisabled: false
+                dummy: false
             })
             await consultant.save()
             const consultant1 = new User({
-                username: "CONSULTANT1",
+                name: "CONSULTANT1",
                 password: "PASS",
                 isAdmin: false,
-                isDisabled: false
+                dummy: false
             })
             await consultant1.save()
             const order = await createOrder({ consultant: consultant._id })
@@ -432,10 +432,10 @@ describe("order", () => {
     describe("get all", () => {
         it("should search", async () => {
             const consultant = new User({
-                username: "CONSULTANT",
+                name: "CONSULTANT",
                 password: "PASS",
                 isAdmin: false,
-                isDisabled: false
+                dummy: false
             })
             await consultant.save()
             const order = await createOrder({ name: "X", consultant: consultant._id })
@@ -449,10 +449,10 @@ describe("order", () => {
   
         it("should sort asc", async () => {
             const consultant = new User({
-                username: "CONSULTANT",
+                name: "CONSULTANT",
                 password: "PASS",
                 isAdmin: false,
-                isDisabled: false
+                dummy: false
             })
             await consultant.save()
             const order = await createOrder({
@@ -471,10 +471,10 @@ describe("order", () => {
         })
         it("should sort asc", async () => {
             const consultant = new User({
-                username: "CONSULTANT",
+                name: "CONSULTANT",
                 password: "PASS",
                 isAdmin: false,
-                isDisabled: false
+                dummy: false
             })
             await consultant.save()
             const order = await createOrder({
@@ -493,10 +493,10 @@ describe("order", () => {
         })
         it("should sort by signed date by default", async () => {
             const consultant = new User({
-                username: "CONSULTANT",
+                name: "CONSULTANT",
                 password: "PASS",
                 isAdmin: false,
-                isDisabled: false
+                dummy: false
             })
             await consultant.save()
             const order = await createOrder({
@@ -516,10 +516,10 @@ describe("order", () => {
 
         it("should format signed date", async () => {
             const consultant = new User({
-                username: "CONSULTANT",
+                name: "CONSULTANT",
                 password: "PASS",
                 isAdmin: false,
-                isDisabled: false
+                dummy: false
             })
             await consultant.save()
             await createOrder({
@@ -533,10 +533,10 @@ describe("order", () => {
         })
         it("should set fase 1", async () => {
             const consultant = new User({
-                username: "CONSULTANT",
+                name: "CONSULTANT",
                 password: "PASS",
                 isAdmin: false,
-                isDisabled: false
+                dummy: false
             })
             await consultant.save()
             await createOrder({
@@ -549,10 +549,10 @@ describe("order", () => {
         })
         it("should set fase 2", async () => {
             const consultant = new User({
-                username: "CONSULTANT",
+                name: "CONSULTANT",
                 password: "PASS",
                 isAdmin: false,
-                isDisabled: false
+                dummy: false
             })
             await consultant.save()
             await createOrder({

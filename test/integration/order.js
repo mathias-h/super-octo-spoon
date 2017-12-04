@@ -8,7 +8,7 @@ const moment = require("moment")
 const session = require("express-session")
 
 const { Order : OrderSchema } = require("../../models/order")
-const { User : UserSchema } = require("../../models/user")
+const { Consultant : UserSchema } = require("../../models/consultant")
 const { Season : SeasonSchema } = require("../../models/season")
 const { createApp } = require("../../app")
 
@@ -35,12 +35,12 @@ describe("order integration test", () => {
         const connection = await mongoose.createConnection("mongodb://localhost:27018/super-octo-spoon-test");
 
         OrderModel = connection.models.Order || connection.model("Order", OrderSchema)
-        UserModel = connection.models.User || connection.model("User", UserSchema)
+        UserModel = connection.models.Consultant || connection.model("Consultant", UserSchema)
         SeasonModel = connection.models.Season || connection.model("Season", SeasonSchema)
 
         server = createApp({
             Order: OrderModel,
-            User: UserModel,
+            Consultant: UserModel,
             Season: SeasonModel,
             session
         }).listen(1025)
@@ -52,10 +52,10 @@ describe("order integration test", () => {
         await UserModel.remove({})
 
         const u = new UserModel({
-            username: "admin",
+            name: "admin",
             password: "pass",
             isAdmin: true,
-            isDisabled: false
+            dummy: false
         })
         await u.save()
 
@@ -75,7 +75,7 @@ describe("order integration test", () => {
 
     beforeEach(async () => {
         await OrderModel.remove({})
-        await UserModel.remove({ username: { $not: /^admin$/ }})
+        await UserModel.remove({ name: { $not: /^admin$/ }})
     })
 
     it("should show orders in overview", async () => {
@@ -117,10 +117,10 @@ describe("order integration test", () => {
 
     it("should create order", async () => {
         const user = new UserModel({
-            username: "USERNAME",
+            name: "USERNAME",
             password: "PASSWORD",
             isAdmin: true,
-            isDisabled: false
+            dummy: false
         })
         await user.save()
         await new SeasonModel({
@@ -186,16 +186,16 @@ describe("order integration test", () => {
 
     it("should edit order", async () => {
         const consultant = new UserModel({
-            username: "CONSULTANT",
+            name: "CONSULTANT",
             password: "PASSWORD",
             isAdmin: false,
-            isDisabled: false
+            dummy: false
         })
         const consultant1 = new UserModel({
-            username: "CONSULTANT1",
+            name: "CONSULTANT1",
             password: "PASSWORD",
             isAdmin: false,
-            isDisabled: false
+            dummy: false
         })
         const season = new SeasonModel({
             season: "SEASON"

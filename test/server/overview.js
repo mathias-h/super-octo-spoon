@@ -22,7 +22,7 @@ describe("overview view", () => {
         }
         const app = createApp({
             Order: OrderMock,
-            User: UserMock,
+            Consultant: UserMock,
             Season: SeasonMock,
             session: function sessionMock(req,res,next) {
                 return (req,res,next) => {

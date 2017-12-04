@@ -234,7 +234,7 @@ class EditOrderModal {
 
                 $("#logElement tbody").html(changes.map(c => `
                     <tr>
-                        <td>${c.consultant.username}</td>
+                        <td>${c.consultant.name}</td>
                         <td>${valueToString(c.value)}</td>
                         <td>${moment(c.time).format("DD-MM-YYYY HH:MM")}</td>
                     </tr>

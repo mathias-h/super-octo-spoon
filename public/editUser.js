@@ -9,7 +9,7 @@ window.addEventListener("load", () => {
         const password = passwordInput ? passwordInput.value : undefined
 
         const user = {
-            username,
+            name: username,
             isAdmin,
             password
         }
@@ -40,7 +40,7 @@ window.addEventListener("load", () => {
         await $.ajax({
             url: "/user/" + userId,
             method: "PUT",
-            data: JSON.stringify({ isDisabled: true }),
+            data: JSON.stringify({ dummy: true }),
             contentType: "application/json"
         })
 
@@ -57,7 +57,7 @@ window.addEventListener("load", () => {
             deleteUser(this)
         })
         this.querySelector(".editUserSaveBtn").addEventListener("click", function() {
-            updateUser(this)
+            updateConsultant(this)
         })
         this.querySelector(".editUserPasswordBtn").addEventListener("click", function() {
             changePassword(this)

@@ -7,6 +7,6 @@ mongoose.Promise = global.Promise;
 const connection = mongoose.createConnection("mongodb://localhost:27017/super-octo-spoon");
 
 const OrderModel = connection.model("Order", Order);
-const UserModel = connection.model('User', User);
+const UserModel = connection.model('Consultant', User);
 
-UserModel.createUser({username:"admin",password:"admin",isAdmin:true,isDisabled:false})
+UserModel.createConsultant({name:"admin",password:"admin",isAdmin:true,dummy:false})

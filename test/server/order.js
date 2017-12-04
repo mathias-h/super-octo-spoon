@@ -97,7 +97,7 @@ describe("Order server tests", () => {
         
         const app = createApp({
             Order: OrderMock,
-            User: UserMock,
+            Consultant: UserMock,
             session: sessionMock(userId)
         })
 

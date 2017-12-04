@@ -1,32 +1,56 @@
 [
     {
-        "username": "SuperUser",
+        "name": "SuperUser",
         "password": "5up3r53cr37P455w0rd",
         "isAdmin": true,
-        "isDisabled": false
+        "dummy": false
     },
     {
-        "username": "TestUser01",
+        "name": "admin",
+        "password": "admin",
+        "isAdmin": false,
+        "dummy": false
+    },
+    {
+        "name": "dummy",
+        "password": "dummy",
+        "isAdmin": false,
+        "dummy": true
+    },
+    {
+        "name": "ndlarsen",
+        "password": "ndarsen",
+        "isAdmin": false,
+        "dummy": false
+    },
+    {
+        "name": "TestUser01",
         "password": "TestUser01Password",
         "isAdmin": false,
-        "isDisabled": false
+        "dummy": false
     },
     {
-        "username": "TestUser02",
+        "name": "TestUser02",
         "password": "TestUser02Password",
         "isAdmin": false,
-        "isDisabled": false
+        "dummy": false
     },
     {
-        "username": "TestUser03",
+        "name": "TestUser03",
         "password": "TestUser03Password",
         "isAdmin": false,
-        "isDisabled": false
+        "dummy": false
     },
     {
-        "username": "TestUser04",
+        "name": "TestUser04",
         "password": "TestUser04Password",
         "isAdmin": false,
-        "isDisabled": false
+        "dummy": false
+    },
+    {
+        "name": "TestUser04",
+        "password": "TestUser04Password",
+        "isAdmin": false,
+        "dummy": false
     }
 ]

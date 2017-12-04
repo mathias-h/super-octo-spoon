@@ -5,7 +5,7 @@ const express = require("express");
 const session = require('express-session');
 const hbs = require("hbs");
 
-module.exports.createApp = function createApp({Order, User, session, Season}) {
+module.exports.createApp = function createApp({Order, Consultant, session, Season}) {
     const app = express();
     app.set('view engine', 'hbs');
     
@@ -41,8 +41,8 @@ module.exports.createApp = function createApp({Order, User, session, Season}) {
         resave: false,
         saveUninitialized: false,
         isLoggedIn: false,
-        username: null,
-        userId: null,
+        name: null,
+        consultantId: null,
         isAdmin: false
     }));
 
@@ -67,7 +67,7 @@ module.exports.createApp = function createApp({Order, User, session, Season}) {
     app.get("/", (req,res) => {
         Order.sampleTotals().then(({ totalSamples, totalTaken }) => {
             return Order.getAll(req.query).then(orders => {
-                return User.find({}).then(consultants => {
+                return Consultant.find({}).then(consultants => {
                     return Season.find({}).then(seasons => {
                         const data = {
                             orders,
@@ -99,8 +99,8 @@ module.exports.createApp = function createApp({Order, User, session, Season}) {
     app.get("/order/:orderId", async (req,res) => {
         const orderId = req.params.orderId;
         const order = await Order.findOne({ _id: orderId })
-            .populate("consultant", "username")
-            .populate("log.consultant", "username")
+            .populate("consultant", "name")
+            .populate("log.consultant", "name")
             .populate('season', "season")
 
         if (!order) {
@@ -116,8 +116,8 @@ module.exports.createApp = function createApp({Order, User, session, Season}) {
         const order = req.body;
 
         try {
-            const user = await User.findOne({ _id: req.session.userId });
-            await Order.editOrder(order, user._id)
+            const consultant = await Consultant.findOne({ _id: req.session.consultantId });
+            await Order.editOrder(order, consultant._id)
             res.end("OK")
         } catch (error) {
             console.error(error)
@@ -138,7 +138,7 @@ module.exports.createApp = function createApp({Order, User, session, Season}) {
     })
 
     app.post("/season", function (req, res) {
-        Season.createSeason(req.body.userData)
+        Season.createSeason(req.body.consultantData)
             .then(function (response) {
                 res.json({status:"ok", message:"season created"})
             })
@@ -147,31 +147,44 @@ module.exports.createApp = function createApp({Order, User, session, Season}) {
             })
     });
 
-    app.post("/user", function (req, res) {
+    app.post('/consultant', function (req, res) {
 
-        User.createUser(req.body)
+        Consultant.createConsultant(req.body)
             .then(function (response) {
                 //console.log(response);
-                res.json({status: "OK", message: "User created."});
+                res.json({status: "OK", message: "Consultant created."});
             })
             .catch(function (error) {
                 //console.log(error);
-                res.json({status: "ERROR", message: "Could not create user."});
+                res.json({status: "ERROR", message: "Could not create consultant."});
             });
 
     });
 
-    app.put('/user/:userId', function (req, res) {
+    app.put('/consultant/:consultantId', function (req, res) {
 
-        User.updateUser(req.params.userId, req.body)
+        Consultant.updateConsultant(req.params.consultantId, req.body)
             .then(function (response) {
+                res.json({status: "OK", message: "Consultant updated."});
+            })
+            .catch(function (error) {
+                res.status(500).end("ERROR");
+            });
+    });
+
+    app.delete('/consultant/:consultantId', function (req, res) {
+        //TODO - finish implementation
+        Consultant.deleteConsultant(req.params.consultantId)
+            .then(function (result) {
                 //console.log("DEBUG: route then()");
                 //console.log(response);
-                res.json({status: "OK", message: "User updated."});
+                console.log(result);
+                res.json({status: "OK", message: "Consultant deleted."});
             })
             .catch(function (error) {
                 //console.log("DEBUG: route catch()");
                 //console.log(error);
+                console.log(error);
                 res.status(500).end("ERROR");
             });
     });
@@ -182,7 +195,7 @@ module.exports.createApp = function createApp({Order, User, session, Season}) {
     });
 
     app.post('/login', function (req, res) {
-        User.matchPasswords(req.body.username, req.body.password)
+        Consultant.matchPasswords(req.body.name, req.body.password)
             .then(function (result) {
                 //console.log("DEBUG: route then()");
                 //console.log(result);
@@ -193,9 +206,9 @@ module.exports.createApp = function createApp({Order, User, session, Season}) {
                     //console.log("Starting session.");
 
                     sess.isLoggedIn = true;
-                    sess.username = result.user.username;
-                    sess.userId = result.user.id;
-                    sess.isAdmin = result.user.isAdmin;
+                    sess.name = result.name;
+                    sess.consultantId = result.id;
+                    sess.isAdmin = result.isAdmin;
 
                     //console.log(sess);
 

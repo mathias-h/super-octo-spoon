@@ -69,7 +69,7 @@ window.addEventListener('load', function() {
 
         if (form.checkValidity() === true) {
             const data = convertFormToObject(form);
-            const userData = {username: data.consultant, password: data.password, isAdmin: data.isSuperUser == "on"};
+            const userData = {name: data.consultant, password: data.password, isAdmin: data.isSuperUser == "on"};
             $.ajax({
                 url: "/user",
                 method: "POST",

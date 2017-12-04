@@ -16,7 +16,7 @@ window.addEventListener('load', function () {
             $.ajax({
                 url: "/season",
                 method: "POST",
-                data: JSON.stringify({userData}),
+                data: JSON.stringify({consultantData: userData}),
                 headers: {
                     "content-type": "application/json"
                 }

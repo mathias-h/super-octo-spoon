@@ -5,3 +5,7 @@ test/test-data
 test/test-data-user
 .vscode
 index_tmp\.js
+
+insert_data\.js
+
+testjs\.js
