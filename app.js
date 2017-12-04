@@ -171,8 +171,6 @@ module.exports.createApp = function createApp({Order, User, session, Season}) {
 
     app.post('/login', function (req, res) {
 
-        const sess = req.session;
-
         User.matchPasswords(req.body.username, req.body.password)
             .then(function (result) {
                 //console.log("DEBUG: route then()");
