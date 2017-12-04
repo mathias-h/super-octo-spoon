@@ -65,18 +65,17 @@ module.exports.createApp = function createApp({Order, User, session, Season}) {
     // Session related stuff ends //
 
     app.get("/", (req,res) => {
-
         Order.sampleTotals().then(({ totalSamples, totalTaken }) => {
             return Order.getAll(req.query).then(orders => {
-                return User.find({}).select({username: 1}).then(consultants => {
+                return User.find({}).then(consultants => {
                     return Season.find({}).then(seasons => {
                         const data = {
                             orders,
                             totalSamples,
                             totalTaken,
                             query: req.query.query,
-                            consultants: consultants,
-                            seasons: seasons
+                            consultants,
+                            seasons
                         };
                     res.render("overview", data);
                     })
@@ -90,42 +89,53 @@ module.exports.createApp = function createApp({Order, User, session, Season}) {
     
     app.post("/order", (req, res) => {
         Order.createOrder(req.body).then(() => {
-            res.send("order created");
+            res.send("OK");
         }).catch(e => {
-            res.status(500).json(e);
+            console.error(e)
+            res.status(500).end("ERROR");
         })
     });
     
-    app.get("/order/:orderId", (req,res) => {
+    app.get("/order/:orderId", async (req,res) => {
         const orderId = req.params.orderId;
-        Order.findOne({ _id: orderId }).populate("consultant", "username").populate("log.consultant", "username").exec().then(order => {
-            if (!order) {
-                res.header("Content-Type", "text/plain");
-                res.status(404).send("order not found");
-            }
-            else res.json(order);
-        });
+        const order = await Order.findOne({ _id: orderId })
+            .populate("consultant", "username")
+            .populate("log.consultant", "username")
+            .populate('season', "season")
+
+        if (!order) {
+            res.header("Content-Type", "text/plain");
+            res.status(404).send("order not found");
+        }
+        else {
+            res.json(order);
+        }
     });
     
     app.put("/order", async (req,res) => {
         const order = req.body;
-        const user = await User.findOne({ _id: req.session.userId }).exec();
 
         try {
+            const user = await User.findOne({ _id: req.session.userId });
             await Order.editOrder(order, user._id)
+            res.end("OK")
         } catch (error) {
-            res.status(500).json(error);
+            console.error(error)
+            res.status(500).end("ERROR");
         }
     });
 
-    app.put("/order/dynamic/:orderId", (req,res) => {
-        const orderId = req.params.orderId
-        const { fase, name, value } = req.body
+    app.delete("/order/:orderId", async (req,res) => {
+        const orderId = req.params.orderId;
 
-        Order.setDynamicField(orderId, fase, name, value)
-            .then(() => res.end("ok"))
-            .catch(err => res.status(500).json(err))
-    });
+        try {
+            await Order.remove({ _id: orderId });
+            res.end("OK");
+        } catch (error) {
+            console.error(error);
+            res.status(500).end("ERROR");
+        }
+    })
 
     app.post("/season", function (req, res) {
         Season.createSeason(req.body.userData)

@@ -194,7 +194,6 @@ User.statics.updateUser = function (userId, userData) {
 };
 
 User.statics.createUser = function (userData) {
-
     const user = new this();
 
     // TODO Check lige op på følgende checks. De holder vidst ikke helt i praksis - ndlarsen
@@ -215,6 +214,7 @@ User.statics.createUser = function (userData) {
         .then(function (response) {
             return {status: "OK", message: "User created."};
         }).catch(function (error) {
+            console.error(error)
             throw new Error("Could not create user.");
         });
 };

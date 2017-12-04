@@ -30,6 +30,10 @@ class EditOrderModal {
             }
         })
 
+        $("#deleteOrderButton").click(() => {
+            this.deleteOrder().then(() => location.reload())
+        })
+
         $("#editOrderModal #editInputLandlineNumber").on("input", () => this.validatePhoneNumbers());
         $("#editInputPhoneNumber").on("input", () => this.validatePhoneNumbers());
 
@@ -60,9 +64,10 @@ class EditOrderModal {
 
         return $.get(`/order/${orderId}`).then(order => {
             this.orderId = orderId;
+            console.log(order.season)
+            $("#editOrderSeason").val(order.season._id);
             $("#editInputConsultant").val(order.consultant._id);
             setDate($("#editInputSignedDate"), order.signedDate);
-            $("#editOrderSeason").val(order.season);
             $("#editInputName").val(order.name);
             $("#editInputFarmName").val(order.farmName);
             $("#editInputStreet").val(order.address.street);
@@ -206,8 +211,8 @@ class EditOrderModal {
                     <thead>
                         <tr>
                             <th scope="Konsulent">Konsulent</th>
-                            <th scope="Dato">Dato</th>
                             <th scope="Ændring">Ændring</th>
+                            <th scope="Dato">Dato</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
@@ -215,13 +220,14 @@ class EditOrderModal {
             `)
 
             function updateLogValues() {
-                const name = $("#inputLogConsultant").val()
+                const name = $("#inputLogProperty").val()
 
                 if (!name) return
 
                 const changes = properties[name]
 
                 if (!changes) {
+                    throw new Error("no logs for " + name)
                     // TODO handle no log
                     return
                 }
@@ -229,8 +235,8 @@ class EditOrderModal {
                 $("#logElement tbody").html(changes.map(c => `
                     <tr>
                         <td>${c.consultant.username}</td>
-                        <td>${moment(c.time).format("DD-MM-YYYY HH:MM")}</td>
                         <td>${valueToString(c.value)}</td>
+                        <td>${moment(c.time).format("DD-MM-YYYY HH:MM")}</td>
                     </tr>
                 `).join(""))
             }
@@ -239,6 +245,18 @@ class EditOrderModal {
 
             updateLogValues()
         });
+    }
+
+    deleteOrder() {
+        if (!$("#deleteOrderCheck").prop("checked")) {
+            // TODO show you must check
+            throw new Error("you must check")
+        }
+
+        return $.ajax({
+            url: "/order/" + this.orderId,
+            method: "DELETE"
+        })
     }
 
     save() {

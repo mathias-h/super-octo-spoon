@@ -1,5 +1,12 @@
 'use strict';
 
+function validatePassword(password) {
+    if (!password) return "Kodeord er ikke udfyldt."
+    if (password.length < 8) return "Kodeord er for kort."
+    if (!/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/.test(password)) return "Kode skal indeholde midst et tal, et stort og et lille bogstav."
+    return true
+}
+
 function convertFormToObject(form) {
     const data = {};
     const f = new FormData(form);
@@ -38,28 +45,15 @@ window.addEventListener('load', function() {
     var password = $('#inputCreateUser-password');
     var passwordRepeat = $('#inputCreateUser-passwordRepeat');
 
-    function matchPasswords(){
-        if(password.val() != passwordRepeat.val()){
-            passwordRepeat[0].setCustomValidity('Kodeord ikke ens');
-        }else if(!passwordRepeat.val()){
-            passwordRepeat[0].setCustomValidity('Kodeord er ikke udfyldt');
-        }else if(passwordRepeat.val().length < 8) {
-            passwordRepeat[0].setCustomValidity('Kodeord er for kort');
-        }else{
-            passwordRepeat[0].setCustomValidity('');
-        }
-
-        $('#passwordFields').addClass('was-validated');
-    }
-
     $('#inputCreateUser-password').keyup(() => {
-        if(!/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/.test(password.val())){
-            password[0].setCustomValidity('Usikkert kodeord');
-        }else{
-            password[0].setCustomValidity('');
-        }
+        if (password.val() != passwordRepeat.val()) {
+            passwordRepeat[0].setCustomValidity('Kodeord ikke ens');
+        } else {
+            const error = validatePassword(password.val())
 
-        matchPasswords();
+            if (error === true) password[0].setCustomValidity('');
+            else password[0].setCustomValidity(error);
+        }
     });
 
     $('#inputCreateUser-passwordRepeat').keyup(() => {
