@@ -292,7 +292,7 @@ Consultant.statics.deleteConsultant = function (consultantName) {
     - remove isDisabled - DONE
     - add property to indicate user is a the dummy user for former employees - DONE (added dummy property)
     - implement delete functionality. Deleting a user should replace all references to that user with a dummy user
-    "tidligereAnsat" and then delete user
+      and then delete user - DONE
     - update edit/delete consultant GUI to reflect above changes
  */
 
