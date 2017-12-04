@@ -1,4 +1,5 @@
 const { Schema, Types } = require("mongoose");
+const mongoose = require("mongoose");
 const { sort } = require("./sort");
 const { search } = require("./search");
 const moment = require("moment");
@@ -27,7 +28,6 @@ const Order = new Schema({
     },
     farmName: {
         type: String,
-        require: true
     },
     address: {
         street: {
@@ -150,7 +150,14 @@ Order.statics.editOrder = async function updateOrder(order, userId) {
 
     return this.findOneAndUpdate({ _id: order._id }, update)
 }
-Order.statics.createOrder = function createOrder(orderData) {
+Order.statics.createOrder = async function createOrder(orderData) {
+    let dynamics = {}
+    
+    ;(await this.model("Dynamic").find()).forEach(({ fase, name }) => {
+        if (!dynamics.hasOwnProperty(fase)) dynamics[fase] = {};
+        dynamics[fase][name] = null;
+    });
+
     if(orderData.landlineNumber || orderData.phoneNumber) {
         const order = new this({
             consultant: orderData.consultant,
@@ -169,9 +176,10 @@ Order.statics.createOrder = function createOrder(orderData) {
             sampleDensity: orderData.sampleDensity,
             area: orderData.area,
             samePlanAsLast: orderData.samePlanAsLast,
-            takeOwnSamples: orderData.takeOwnSamples
+            takeOwnSamples: orderData.takeOwnSamples,
+            dynamics
         });
-        return order.save();
+        await order.save();
     } else {
         return Promise.reject(new Error("no landline or phone number"));
     }

@@ -7,9 +7,10 @@ const rimraf = require("rimraf")
 const moment = require("moment")
 const session = require("express-session")
 
-const { Order : OrderSchema } = require("../../models/order")
-const { Consultant : UserSchema } = require("../../models/consultant")
+const { Order: OrderSchema } = require("../../models/order")
+const { User : UserSchema } = require("../../models/user")
 const { Season : SeasonSchema } = require("../../models/season")
+const { Dynamic: DynamicSchema } = require("../../models/dynamic")
 const { createApp } = require("../../app")
 
 const sleep = time => new Promise(resolve => setTimeout(resolve, time))
@@ -19,8 +20,10 @@ describe("order integration test", () => {
     let db
     let browser
     let page
-    let OrderModel
-    let UserModel
+    let Order
+    let User
+    let Dynamic
+    let Season
     
     before(async () => {
         const dataPath = __dirname + "/../test-data"
@@ -34,14 +37,16 @@ describe("order integration test", () => {
         mongoose.Promise = global.Promise;
         const connection = await mongoose.createConnection("mongodb://localhost:27018/super-octo-spoon-test");
 
-        OrderModel = connection.models.Order || connection.model("Order", OrderSchema)
-        UserModel = connection.models.Consultant || connection.model("Consultant", UserSchema)
-        SeasonModel = connection.models.Season || connection.model("Season", SeasonSchema)
+        Order = connection.models.Order || connection.model("Order", OrderSchema)
+        User = connection.models.User || connection.model("User", UserSchema)
+        Season = connection.models.Season || connection.model("Season", SeasonSchema)
+        Dynamic = connection.models.Dynamic || connection.model("Dynamic", DynamicSchema)
 
         server = createApp({
-            Order: OrderModel,
-            Consultant: UserModel,
-            Season: SeasonModel,
+            Order,
+            User,
+            Season,
+            Dynamic,
             session
         }).listen(1025)
         browser = await puppeteer.launch()
@@ -49,10 +54,10 @@ describe("order integration test", () => {
         page = await browser.newPage()
         await page.goto("http://localhost:1025/")
 
-        await UserModel.remove({})
+        await User.remove({})
 
-        const u = new UserModel({
-            name: "admin",
+        const u = new User({
+            username: "admin",
             password: "pass",
             isAdmin: true,
             dummy: false
@@ -74,12 +79,12 @@ describe("order integration test", () => {
     })
 
     beforeEach(async () => {
-        await OrderModel.remove({})
-        await UserModel.remove({ name: { $not: /^admin$/ }})
+        await Order.remove({})
+        await User.remove({ username: { $not: /^admin$/ }})
     })
 
     it("should show orders in overview", async () => {
-        const order = new OrderModel({
+        const order = new Order({
             season: mongoose.Types.ObjectId(),
             consultant: mongoose.Types.ObjectId(),
             signedDate: new Date("2017-01-02"),
@@ -91,7 +96,7 @@ describe("order integration test", () => {
                 zip: 9999
             }
         })
-        const order1 = new OrderModel({
+        const order1 = new Order({
             season: mongoose.Types.ObjectId(),
             consultant: mongoose.Types.ObjectId(),
             signedDate: new Date("2017-01-01"),
@@ -115,18 +120,18 @@ describe("order integration test", () => {
         expect(orderIds).to.deep.eq([order._id.toHexString(), order1._id.toHexString()])
     })
 
-    it("should create order", async () => {
-        const user = new UserModel({
-            name: "USERNAME",
+    it.only("should create order", async () => {
+        const user = new User({
+            username: "USERNAME",
             password: "PASSWORD",
             isAdmin: true,
             dummy: false
         })
         await user.save()
-        await new SeasonModel({
+        await new Season({
             season: "SEASON1"
         }).save()
-        const season = new SeasonModel({
+        const season = new Season({
             season: "SEASON"
         })
         await season.save()
@@ -164,8 +169,10 @@ describe("order integration test", () => {
 
         await sleep(500)
 
-        const orders = await OrderModel.find().lean().exec()
+        const orders = await Order.find().lean().exec()
         const order = orders[0]
+
+        console.log(order.season)
 
         expect(order.season.toHexString()).to.eq(season._id.toHexString())
         expect(order.consultant.toHexString()).to.eq(user._id.toHexString())
@@ -185,23 +192,23 @@ describe("order integration test", () => {
     })
 
     it("should edit order", async () => {
-        const consultant = new UserModel({
-            name: "CONSULTANT",
+        const consultant = new User({
+            username: "CONSULTANT",
             password: "PASSWORD",
             isAdmin: false,
             dummy: false
         })
-        const consultant1 = new UserModel({
-            name: "CONSULTANT1",
+        const consultant1 = new User({
+            username: "CONSULTANT1",
             password: "PASSWORD",
             isAdmin: false,
             dummy: false
         })
-        const season = new SeasonModel({
+        const season = new Season({
             season: "SEASON"
         })
         await season.save()
-        const season1 = new SeasonModel({
+        const season1 = new Season({
             season: "SEASON1"
         })
         await season1.save()
@@ -210,7 +217,7 @@ describe("order integration test", () => {
         await consultant1.save()
 
         const orderId = mongoose.Types.ObjectId()
-        await new OrderModel({
+        await new Order({
             _id: orderId,
             season: season._id,
             consultant: consultant._id,
@@ -291,7 +298,7 @@ describe("order integration test", () => {
 
         await sleep(500)
 
-        const order = await OrderModel.findOne({ _id: orderId })
+        const order = await Order.findOne({ _id: orderId })
 
         expect(order.season.toHexString()).to.eq(season1._id.toHexString())
         expect(order.consultant.toHexString()).to.eq(consultant1._id.toHexString())

@@ -5,7 +5,13 @@ const express = require("express");
 const session = require('express-session');
 const hbs = require("hbs");
 
-module.exports.createApp = function createApp({Order, Consultant, session, Season}) {
+module.exports.createApp = function createApp({
+    Order,
+    User,
+    session,
+    Season,
+    Dynamic
+}) {
     const app = express();
     app.set('view engine', 'hbs');
     
@@ -64,27 +70,28 @@ module.exports.createApp = function createApp({Order, Consultant, session, Seaso
 
     // Session related stuff ends //
 
-    app.get("/", (req,res) => {
-        Order.sampleTotals().then(({ totalSamples, totalTaken }) => {
-            return Order.getAll(req.query).then(orders => {
-                return Consultant.find({}).then(consultants => {
-                    return Season.find({}).then(seasons => {
-                        const data = {
-                            orders,
-                            totalSamples,
-                            totalTaken,
-                            query: req.query.query,
-                            consultants,
-                            seasons
-                        };
-                    res.render("overview", data);
-                    })
-                });
-            })
-        }).catch(err => {
-            console.error(err)
-            res.render("error")
-        })
+    app.get("/", async (req,res) => {
+        try {
+            const { totalSamples, totalTaken } = await Order.sampleTotals();
+            const orders = await Order.getAll(req.query);
+            const consultants = await User.find({});
+            const seasons = await Season.find({});
+            const dynamics = await Dynamic.find({});
+            
+            const data = {
+                orders,
+                totalSamples,
+                totalTaken,
+                query: req.query.query,
+                consultants,
+                seasons,
+                dynamics
+            };
+            res.render("overview", data);
+        } catch(err) {
+            console.error(err);
+            res.render("error");
+        }
     });
     
     app.post("/order", (req, res) => {
@@ -147,9 +154,31 @@ module.exports.createApp = function createApp({Order, Consultant, session, Seaso
             })
     });
 
-    app.post('/consultant', function (req, res) {
+    app.post("/dynamic", (req,res) => {
+        const { name, fase } = req.body;
 
-        Consultant.createConsultant(req.body)
+        console.log(Dynamic.createDynamic)
+
+        Dynamic.createDynamic(name, fase).then(() => {
+            res.end("OK");
+        }).catch(err => {
+            console.error(err);
+            res.status(500).end("ERROR");
+        });
+    });
+    app.delete("/dynamic/:id", (req,res) => {
+        const id = req.params.id
+
+        Dynamic.deleteDynamic(id).then(() => {
+            res.end("OK");
+        }).catch(err => {
+            console.error(err);
+            res.status(500).end("ERROR");
+        });
+    });
+
+    app.post("/user", function (req, res) {
+        User.createUser(req.body)
             .then(function (response) {
                 //console.log(response);
                 res.json({status: "OK", message: "Consultant created."});
@@ -161,9 +190,8 @@ module.exports.createApp = function createApp({Order, Consultant, session, Seaso
 
     });
 
-    app.put('/consultant/:consultantId', function (req, res) {
-
-        Consultant.updateConsultant(req.params.consultantId, req.body)
+    app.put('/user/:userId', function (req, res) {
+        User.updateUser(req.params.userId, req.body)
             .then(function (response) {
                 res.json({status: "OK", message: "Consultant updated."});
             })
@@ -190,7 +218,6 @@ module.exports.createApp = function createApp({Order, Consultant, session, Seaso
     });
 
     app.get('/login', (req, res) =>{
-
         res.render('login');
     });
 

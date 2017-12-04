@@ -45,15 +45,21 @@ window.addEventListener('load', function() {
     var password = $('#inputCreateUser-password');
     var passwordRepeat = $('#inputCreateUser-passwordRepeat');
 
-    $('#inputCreateUser-password').keyup(() => {
+    function matchPasswords() {
+        console.log(password.val(), passwordRepeat.val())
         if (password.val() != passwordRepeat.val()) {
             passwordRepeat[0].setCustomValidity('Kodeord ikke ens');
         } else {
-            const error = validatePassword(password.val())
+            passwordRepeat[0].setCustomValidity('');
+            const result = validatePassword(password.val());
 
-            if (error === true) password[0].setCustomValidity('');
-            else password[0].setCustomValidity(error);
+            if (result === true) password[0].setCustomValidity('');
+            else password[0].setCustomValidity(result);
         }
+    }
+
+    $('#inputCreateUser-password').keyup(() => {
+        matchPasswords();
     });
 
     $('#inputCreateUser-passwordRepeat').keyup(() => {

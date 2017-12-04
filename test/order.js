@@ -4,9 +4,10 @@ const moment = require("moment");
 const childProcess = require("child_process")
 const rimraf = require("rimraf")
 const fs = require("fs")
-const { Order: OrderSchema } = require("../models/order")
-const { Consultant: UserSchema } = require("../models/consultant")
+const { createOrder: createOrderModel } = require("../models/order")
+const { User: UserSchema } = require("../models/user")
 const { Season: SeasonSchema } = require("../models/season")
+const { createDynamic } = require("../models/dynamic")
 
 mongoose.Promise = global.Promise;
 
@@ -14,9 +15,10 @@ const sleep = time => new Promise(resolve => setTimeout(resolve, time))
 
 describe("order", () => {
     let db
-    let Order
+    let Order = null
     let User
     let Season
+    let Dynamic = null
 
     async function createOrder(data = {}) {
         const d = {
@@ -51,9 +53,10 @@ describe("order", () => {
         mongoose.Promise = global.Promise;
         const connection = await mongoose.createConnection("mongodb://localhost:27018/super-octo-spoon");
 
-        Order = connection.models.Order || connection.model("Order", OrderSchema)
-        User = connection.models.Consultant || connection.model("Consultant", UserSchema)
-        Season = connection.models.Season || connection.model("Season", SeasonSchema)
+        Dynamic = connection.models.Dynamic || connection.model("Dynamic", createDynamic(Order));
+        Order = connection.models.Order || connection.model("Order", createOrderModel(Dynamic));
+        User = connection.models.User || connection.model("User", UserSchema);
+        Season = connection.models.Season || connection.model("Season", SeasonSchema);
     })
 
     after(async () => {
@@ -374,6 +377,11 @@ describe("order", () => {
     });
    
     it("should create order", async () => {
+        await new Dynamic({
+            name: "NAME",
+            fase: 1
+        }).save()
+
         const orderData = {
             season: mongoose.Types.ObjectId(),
             consultant: mongoose.Types.ObjectId(),
@@ -402,6 +410,11 @@ describe("order", () => {
         expect(newOrder.address.city).to.eq(orderData.city);
         expect(newOrder.address.zip).to.eq(orderData.zip);
         expect(newOrder.comment).to.eq(orderData.comment);
+        expect(newOrder.dynamics).to.deep.eq({
+            "1": {
+                "NAME": null
+            }
+        })
     })
 
     it("sample totals", async () => {
