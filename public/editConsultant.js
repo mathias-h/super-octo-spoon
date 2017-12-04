@@ -45,6 +45,23 @@ window.addEventListener("load", () => {
         })
 
         row.parentElement.removeChild(row)
+
+        // TODO - skal ændres så det stemmer overens med delete
+        // Forslag til ny kode:
+
+        /*
+        const row = btn.parentElement.parentElement
+        const consultantId = row.getAttribute("data-consultant-id")
+
+        await $.ajax({
+            url: '/consultant/' + consultantId,
+            method: 'DELETE',
+            sucess: function () {
+                row.parentElement.removeChild(row)
+            }
+        });
+        // Der mangler muligvis noget fejlhåndtering her.
+        */
     }
 
     function changePassword(btn) {
