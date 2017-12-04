@@ -148,7 +148,7 @@ Consultant.statics.matchPasswords = async function (name, password) {
                 response.status = bcrypt.compareSync(password, consultant.password);
 
                 if(response.status){
-                    response.message = "OK Credentials",
+                    response.message = "OK Credentials";
                     response.consultant = {
                         id: consultant._id,
                         name: consultant.name,
@@ -204,16 +204,16 @@ Consultant.statics.createConsultant = function (consultantData) {
     const consultant = new this();
 
     // TODO Check lige op på følgende checks. De holder vidst ikke helt i praksis - ndlarsen
-    if(consultantData.name){
+    if(consultantData.name && typeof consultantData.name === 'string'){
         consultant.name = consultantData.name;
     }
-    if(consultantData.password){
+    if(consultantData.password && typeof consultantData.password === 'string'){
         consultant.password = consultantData.password;
     }
-    if(consultantData.isAdmin){
+    if(consultantData.isAdmin !== undefined && typeof consultantData.isAdmin === 'boolean'){
         consultant.isAdmin = consultantData.isAdmin;
     }
-    if(consultantData.dummy){
+    if(consultantData.dummy !== undefined && typeof consultantData.dummy === 'boolean'){
         consultant.dummy = consultantData.dummy;
     }
 
@@ -221,11 +221,19 @@ Consultant.statics.createConsultant = function (consultantData) {
         .then(function (response) {
             return {status: "OK", message: "Consultant created."};
         }).catch(function (error) {
-            console.error(error)
+            console.error(error);
             throw new Error("Could not create consultant.");
         });
 };
 
+//TODO - måske burde dette være med id i stedet for navn?
+//TODO - der skal lige laves kode review af deleteConsultant()
+
+/**
+ * Deletes a consultant.
+ * @param consultantName - the name of the consultant to delete.
+ * @returns {Promise|Promise.<T>}
+ */
 Consultant.statics.deleteConsultant = function (consultantName) {
     /*
     implement delete functionality. Deleting a user should replace all references to that user with a dummy user
@@ -234,6 +242,10 @@ Consultant.statics.deleteConsultant = function (consultantName) {
 
     return this.findOne({name: "dummy"})
         .then(function (result) {
+
+            if(result === null){
+                throw new Error('Could not process delete.');
+            }
 
             const condition = {
                 dummyId: result._id
@@ -247,12 +259,23 @@ Consultant.statics.deleteConsultant = function (consultantName) {
             Order.updateMany(condition, update)
                 .then(function (result) {
                     console.log(result);
-                    return result;
+
+                    this.findOneAndRemove({name: consultantName})
+                        .then(function (result) {
+                            return {
+                                status: 'OK',
+                                message: 'Deletion successfully completed.'
+                            };
+                        });
                 });
 
         })
         .catch(function (error) {
-            console.log(error)
+            console.log(error);
+            return {
+                status: 'ERROR',
+                message: error
+            };
         });
 
     //this.findAndModify().then().catch();
