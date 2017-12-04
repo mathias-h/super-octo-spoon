@@ -15,7 +15,7 @@ describe("overview view", () => {
             }
         };
         const UserMock = {
-            find: () => ({ select: () => Promise.resolve({}) })
+            find: () => Promise.resolve({})
         }
         const SeasonMock = {
             find: () => Promise.resolve({})

@@ -5,7 +5,13 @@ const express = require("express");
 const session = require('express-session');
 const hbs = require("hbs");
 
-module.exports.createApp = function createApp({Order, User, session, Season}) {
+module.exports.createApp = function createApp({
+    Order,
+    User,
+    session,
+    Season,
+    Dynamic
+}) {
     const app = express();
     app.set('view engine', 'hbs');
     
@@ -147,6 +153,28 @@ module.exports.createApp = function createApp({Order, User, session, Season}) {
             })
     });
 
+    app.post("/dynamic", (req,res) => {
+        const { name, fase } = req.body;
+
+        console.log(Dynamic.createDynamic)
+
+        Dynamic.createDynamic(name, fase).then(() => {
+            res.end("OK");
+        }).catch(err => {
+            console.error(err);
+            res.status(500).end("ERROR");
+        });
+    });
+    app.delete("/dynamic/:id", (req,res) => {
+        const id = req.params.id
+
+        Dynamic.deleteDynamic(id).then(() => {
+            res.end("OK");
+        }).catch(err => {
+            console.error(err);
+            res.status(500).end("ERROR");
+        });
+    });
     app.post("/user", function (req, res) {
 
         User.createUser(req.body)
