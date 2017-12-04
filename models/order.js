@@ -27,7 +27,6 @@ const Order = new Schema({
     },
     farmName: {
         type: String,
-        require: true
     },
     address: {
         street: {

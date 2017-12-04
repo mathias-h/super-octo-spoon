@@ -281,7 +281,7 @@ class EditOrderModal {
         delete order.city;
         delete order.zip;
 
-        order.dynamics = this.dynamics
+        order.dynamics = this.dynamics;
 
         console.log(order)
 
