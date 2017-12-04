@@ -28,13 +28,11 @@
                 </div>
 
                 <div class="tab-pane" id="editUser" role="tabpanel" aria-labelledby="editUser-tab">
-                    <table>
+                    <table class="table table-striped">
                         <thead>
                             <th>Brugernavn</th>
                             <th>Kode</th>
                             <th>Admin</th>
-                            <th></th>
-                            <th></th>
                         </thead>
                         <tbody>
                             {{#each consultants}}
@@ -42,10 +40,10 @@
                                 {{else}}
                                     <tr class="user" data-user-id="{{_id}}">
                                         <td><input class="editUserUsername form-control" type="text" value="{{username}}" name="brugernavn" placeholder="Brugernavn"/></td>
-                                        <td><button class="editUserPasswordBtn btn btn-secondary">skift kode</button></td>
+                                        <td><button class="editUserPasswordBtn btn btn-info">skift kode</button></td>
                                         <td><input class="editUserIsAdmin form-control" type="checkbox" name="er admin" checked="{{isAdmin}}"></td>
-                                        <td><button class="editUserSaveBtn btn btn-secondary">gem</button></td>
-                                        <td><button class="editUserDeleteBtn btn btn-secondary">slet</button></td>
+                                        <td><button class="editUserSaveBtn btn btn-info">gem</button></td>
+                                        <td><button class="editUserDeleteBtn btn btn-info">slet</button></td>
                                     </tr>
                                 {{/if}}
                             {{/each}}
