@@ -433,7 +433,64 @@ describe("order integration test", () => {
         await page.goto("http://localhost:1025/");
     })
 
-    it("should display statistics")
+    it("should display statistics", async () => {
+        const consultant = new Consultant({
+            name: "CONSULTANT",
+            password: "PASS",
+            isAdmin: false
+        })
+        await consultant.save()
+        const order = new Order({
+            season: mongoose.Types.ObjectId(),
+            consultant: consultant._id,
+            signedDate: new Date("2017-01-02"),
+            name: "NAME",
+            farmName: "FARM_NAME",
+            address: {
+                city: "CITY",
+                street: "STREET",
+                zip: 9999
+            },
+            cutSamples: 1,
+            mgSamples: 1,
+            otherSamples: 1,
+            area: 3
+        })
+        const order1 = new Order({
+            season: mongoose.Types.ObjectId(),
+            consultant: consultant._id,
+            signedDate: new Date("2017-01-01"),
+            name: "NAME",
+            farmName: "FARM_NAME",
+            address: {
+                city: "CITY",
+                street: "STREET",
+                zip: 9999
+            },
+            cutSamples: 1,
+            mgSamples: 1,
+            otherSamples: 1,
+            area: 3
+        })
+        await order.save()
+        await order1.save()
+
+        await page.reload()
+
+        await page.evaluate(() => {
+            $("#name").click()
+        })
+
+        await sleep(1000)
+
+        const { totalSamples, totalTaken } = await page.evaluate(() => {
+            const [_,totalSamples,totalTaken] = $("#navbar-statistics").text().match(/Prøver Udtaget: (\d+)\s*\/\s*(\d+)/).map(Number)
+            return { totalSamples, totalTaken }
+        });
+
+        expect(totalSamples).to.eq(6)
+        expect(totalTaken).to.eq(6)
+    })
 
     it("should login")
 
