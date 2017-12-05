@@ -217,7 +217,16 @@
                     {{#if farmName}}{{farmName}},{{/if}} {{address.street}}, {{address.zip}} {{address.city}}
                 </td>
                 <td>
-                    {{comment}}
+                    <script>
+                        var current = $('script').last();
+                        var c = '{{comment}}';
+
+                        if(c.length > 70){
+                            c = c.substring(0, 70).trim() + "...";
+                        }
+
+                        current.parent().append(c);
+                    </script>
                 </td>
                 <td>
                     {{#if sampleDensity}}
