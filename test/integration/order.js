@@ -76,7 +76,7 @@ describe("order integration test", () => {
 
     after(async () => {
         await mongoose.disconnect()
-        //await browser.close()
+        await browser.close()
         server.close()
         db.kill()
     })
@@ -87,8 +87,6 @@ describe("order integration test", () => {
         await Order.remove({})
         await Consultant.remove({ name: { $not: /^admin$/ }})
     })
-
-    
 
     it("should show orders in overview", async () => {
         const order = new Order({
