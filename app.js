@@ -61,8 +61,62 @@ module.exports.createApp = function createApp({
     // Default session check for all requests to this app
     app.use(function (req, res, next) {
         const sess = req.session;
+        const method = req.method;
         const url = req.url;
 
+        // TODO - Skal lige bruge review/respons på nedenstående som er kommenteret ud.
+        // TODO - Burde nok blive hevet ud en en separat fil/funktion af hensyn til overskuelighed og læsbarhed.
+        /*
+        const isLoggedIn = req.session.isLoggedIn || false;
+
+        if(method === 'GET'){
+            if(isLoggedIn && url === '/login'){
+                res.redirect('/');
+            }
+            else if((isLoggedIn && url !== '/login') || (!isLoggedIn && url === '/login')){
+                next();
+            }
+            else{
+                res.redirect('/login');
+            }
+        }
+        else if(method === 'POST'){
+            if(isLoggedIn && url === '/login'){
+                // respond with successful login or already logged in?
+                res.status(200).send('Successfully logged in');
+            }
+            else if((isLoggedIn && url !== '/login') || (!isLoggedIn && url === '/login')){
+                next();
+            }
+            else{
+                // respond with not authorized?
+                res.status(401).send('Not autorized.');
+            }
+        }
+        else if(method === 'PUT'){
+            if(!isLoggedIn){
+                // respond with not authorized?
+                res.status(401).send('Not autorized.');
+            }
+            else{
+                next();
+            }
+        }
+        else if(method === 'DELETE'){
+            if(!isLoggedIn){
+                // respond with not authorized?
+                res.status(401).send('Not autorized.');
+            }
+            else{
+                next();
+            }
+        }
+        else{
+            // TODO - hvad skal der være her?
+            // respond with method not allowed?
+            res.status(405).send('Method not supported.');
+        }
+        */
         if(sess.isLoggedIn && url === '/login'){
             res.redirect('/');
         }
@@ -72,6 +126,7 @@ module.exports.createApp = function createApp({
         else{
             res.redirect('/login');
         }
+
     });
 
     // Session related stuff ends //
@@ -151,7 +206,7 @@ module.exports.createApp = function createApp({
             console.error(error);
             res.status(500).end("ERROR");
         }
-    })
+    });
 
     app.post("/season", function (req, res) {
         Season.createSeason(req.body.consultantData)
@@ -185,6 +240,11 @@ module.exports.createApp = function createApp({
     });
 
     app.post("/consultant", function (req, res) {
+
+        if(!session.isAdmin){
+            res.status(403).send('Must be admin to create consultants');
+        }
+
         Consultant.createConsultant(req.body)
             .then(function (response) {
                 //console.log(response);
@@ -198,6 +258,11 @@ module.exports.createApp = function createApp({
     });
 
     app.put('/consultant/:consultantId', function (req, res) {
+
+        if(!session.isAdmin){
+            res.status(403).send('Must be admin to edit consultants');
+        }
+
         Consultant.updateConsultant(req.params.consultantId, req.body)
             .then(function (response) {
                 res.json({status: "OK", message: "Consultant updated."});
@@ -208,6 +273,11 @@ module.exports.createApp = function createApp({
     });
 
     app.delete('/consultant/:consultantId', function (req, res) {
+
+        if(!session.isAdmin){
+            res.status(403).send('Must be admin to delete consultants');
+        }
+
         Consultant.deleteConsultant(req.params.consultantId)
             .then(function (result) {
                 console.log(result);
@@ -224,6 +294,10 @@ module.exports.createApp = function createApp({
     });
 
     app.post('/login', function (req, res) {
+
+        // TODO - Jeg burde måske nok sende http status koder tilbage i stedet for?
+        // 401 hvis login fejler og 200 hvis ok
+
         Consultant.matchPasswords(req.body.name, req.body.password)
             .then(function (result) {
                 //console.log("DEBUG: route then()");

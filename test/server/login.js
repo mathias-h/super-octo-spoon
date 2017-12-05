@@ -292,7 +292,6 @@ describe('Login/session testing', function () {
 
         describe('POST /consultant', function () {
             it('should redirect to /login', function () {
-                // TODO
 
                 const consultant = {
                     name: "testConsultant",
@@ -315,18 +314,71 @@ describe('Login/session testing', function () {
             });
         });
 
-        describe('PUT /consultant', function () {
-            it('should ', function () {
-                // TODO
+        describe('POST /login', function () {
+            it('should check login and respond with OK status if correct username and password is supplied', function () {
+                // TODO NOT DONE
+
+                const consultant = {
+                    name: "testConsultant",
+                    password: "testPassword"
+                };
+
+                const app = createApp({
+                    session: sessionMock()
+                });
+
+                return request(app)
+                    .post('/consultant')
+                    .send(consultant)
+                    .expect(302)
+                    .expect('Found. Redirecting to /login')
+                    .then(function (res) {
+                        expect(res.header.location).to.eq('/login');
+                    })
+            });
+
+            it('should check login and redirect to / if valid username and password is supplied', function () {
+
             });
         });
 
-        describe('', function () {
-            it('POST /login', function () {
-                // TODO
-            })
-        });
+    });
 
+    describe('Testing PUT endpoints when not logged in', function () {
+
+        function sessionMock(consultantId) {
+            return () => (req,res,next) => {
+                req.session = {
+                    isLoggedIn: false,
+                    consultantId: consultantId
+                };
+
+                next();
+            }
+        }
+
+        describe('PUT /consultant', function () {
+            it('should redirect to /login', function () {
+
+                const consultant = {
+                    name: "testConsultant",
+                    password: "testPassword"
+                };
+
+                const app = createApp({
+                    session: sessionMock()
+                });
+
+                return request(app)
+                    .post('/consultant')
+                    .send(consultant)
+                    .expect(302)
+                    .expect('Found. Redirecting to /login')
+                    .then(function (res) {
+                        expect(res.header.location).to.eq('/login');
+                    })
+            });
+        });
     });
 
 });
