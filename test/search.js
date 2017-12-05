@@ -96,4 +96,7 @@ describe("search", () => {
 
         expect(results).to.eq(testOrders)
     })
+
+    it("should handle no landlinenumber")
+    it("should handle no phonenumber")
 });

@@ -326,7 +326,58 @@ describe("order integration test", () => {
         expect(order.receptApproved).to.deep.eq(new Date("1970-01-02"))
     })
 
-    it("should search")
+    it("should search", async () => {
+        const consultant = new Consultant({
+            name: "CONSULTANT",
+            password: "PASS",
+            isAdmin: false
+        })
+        await consultant.save()
+        const order = new Order({
+            season: mongoose.Types.ObjectId(),
+            consultant: consultant._id,
+            signedDate: new Date("2017-01-02"),
+            name: "X",
+            farmName: "FARM_NAME",
+            address: {
+                city: "CITY",
+                street: "STREET",
+                zip: 9999
+            }
+        })
+        const order1 = new Order({
+            season: mongoose.Types.ObjectId(),
+            consultant: consultant._id,
+            signedDate: new Date("2017-01-01"),
+            name: "Y",
+            farmName: "FARM_NAME",
+            address: {
+                city: "CITY",
+                street: "STREET",
+                zip: 9999
+            }
+        })
+        await order.save();
+        await order1.save();
+
+        await page.reload();
+
+        await page.evaluate(() => {
+            $("#search input").val("X")
+
+            $("#search").submit()
+        });
+
+        await sleep(1000);
+
+        const orderIds = await page.evaluate(() =>
+        Array.from(document.querySelectorAll("tr.order"))
+            .map(o => o.getAttribute("data-order-id")));
+
+        expect(orderIds).to.deep.eq([order._id.toHexString()]);
+
+        await page.goto("http://localhost:1025/");
+    })
 
     it("should sort orders")
 
