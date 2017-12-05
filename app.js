@@ -175,16 +175,6 @@ module.exports.createApp = function createApp({
         });
     });
 
-    app.get('/consultant', function (req, res) {
-        Consultant.getAllConsultants()
-            .then(function (result) {
-                res.json(result);
-            })
-            .catch(function (error) {
-                res.status(500).end("ERROR");
-            });
-    });
-
     app.post("/consultant", function (req, res) {
         Consultant.createConsultant(req.body)
             .then(function (response) {
