@@ -1,6 +1,6 @@
 const request = require("supertest");
 const { expect } = require("chai");
-const {createApp} = require("../app.js");
+const {createApp} = require("../../app.js");
 
 describe("dynamic server tests", () => {
     describe("create dynamic", () => {
