@@ -16,14 +16,11 @@ const Dynamic = new Schema({
 });
 
 Dynamic.statics.createDynamic = async function(name, fase) {
-    await new this({
-        name,
-        fase
-    }).save()
+    await new this({ name, fase }).save()
 
-    await this.model("Order").update(
-        { [`dynamics.${fase}.${name}`]: { $exists: false } },
-        { $set: { [`dynamics.${fase}.${name}`]: undefined } })
+    await this.model("Order").update({}, {
+        $set: { [`dynamics.${fase}.${name}`]: "" }
+    })
 }
 
 Dynamic.statics.deleteDynamic = async function(id) {

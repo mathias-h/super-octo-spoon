@@ -2,12 +2,11 @@
 
 const { expect } = require("chai");
 const mongoose = require("mongoose");
-const moment = require("moment");
 const childProcess = require("child_process");
 const rimraf = require("rimraf");
 const fs = require("fs");
 const bcrypt = require('bcrypt');
-const { Consultant: ConsultantSchema } = require("../models/consultant");
+const { Consultant: ConsultantSchema } = require("../models/consultant.js");
 
 mongoose.Promise = global.Promise;
 
@@ -18,7 +17,6 @@ describe("consultant tests", () => {
     let db;
     let Consultant;
     let consultantData;
-    let newConsultant;
 
     async function createConsultant(data = {}) {
         const d = {
@@ -46,7 +44,6 @@ describe("consultant tests", () => {
         const connection = await mongoose.createConnection("mongodb://localhost:27018/super-octo-spoon");
 
         Consultant = connection.models.Consultant || connection.model("Consultant", ConsultantSchema);
-
     });
 
     after(async () => {

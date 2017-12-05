@@ -150,16 +150,22 @@ Order.statics.editOrder = async function updateOrder(order, consultantId) {
 
     return this.findOneAndUpdate({ _id: order._id }, update)
 }
-Order.statics.createOrder = async function createOrder(orderData) {
-    let dynamics = {}
-
-    ;(await this.model("Dynamic").find()).forEach(({ fase, name }) => {
+Order.statics.createOrder = async function createOrder(orderData, userId) {
+    const dynamics = {};
+    
+    (await this.model("Dynamic").find()).forEach(({ fase, name }) => {
         if (!dynamics.hasOwnProperty(fase)) dynamics[fase] = {};
         dynamics[fase][name] = null;
     });
 
     if(orderData.landlineNumber || orderData.phoneNumber) {
-        orderData.dynamics = dynamics;
+        const log = {
+            time: moment(new Date()).startOf("minute").toDate(),
+            consultant: userId,
+            changes: JSON.parse(JSON.stringify(orderData))
+        }
+        orderData.dynamics = dynamics
+        orderData.log = [log]
         const order = new this(orderData);
         await order.save();
     } else {
