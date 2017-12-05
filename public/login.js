@@ -23,7 +23,6 @@ window.addEventListener('load', function() {
                 "content-type": "application/json"
             }
         }).done((data) => {
-            // TODO: Bedre tjek, det her kan ikke være sikkert... Det føles... Klamt.
             if(data.status == "OK"){
                 location.replace('/');
             }

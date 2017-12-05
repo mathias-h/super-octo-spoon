@@ -7,7 +7,7 @@ const hbs = require("hbs");
 
 module.exports.createApp = function createApp({
     Order,
-    User,
+    Consultant,
     session,
     Season,
     Dynamic
@@ -21,7 +21,7 @@ module.exports.createApp = function createApp({
         hbs.registerPartial("editOrderModal", require("fs").readFileSync(__dirname + "/views/editOrderModal.hbs").toString());
 
         hbs.registerPartial("adminModal", require("fs").readFileSync(__dirname + "/views/admin.hbs").toString());
-        hbs.registerPartial("createUser", require("fs").readFileSync(__dirname + "/views/admin/createUser.hbs").toString());
+        hbs.registerPartial("createConsultant", require("fs").readFileSync(__dirname + "/views/admin/createConsultant.hbs").toString());
         hbs.registerPartial("createSeason", require("fs").readFileSync(__dirname + "/views/admin/createSeason.hbs").toString());
 
         hbs.registerHelper("objectIter", function(obj, options) {
@@ -47,8 +47,8 @@ module.exports.createApp = function createApp({
         resave: false,
         saveUninitialized: false,
         isLoggedIn: false,
-        username: null,
-        userId: null,
+        name: null,
+        consultantId: null,
         isAdmin: false
     }));
 
@@ -74,7 +74,7 @@ module.exports.createApp = function createApp({
         try {
             const { totalSamples, totalTaken } = await Order.sampleTotals();
             const orders = await Order.getAll(req.query);
-            const consultants = await User.find({});
+            const consultants = await Consultant.find({});
             const seasons = await Season.find({});
             const dynamics = await Dynamic.find({});
             
@@ -106,8 +106,8 @@ module.exports.createApp = function createApp({
     app.get("/order/:orderId", async (req,res) => {
         const orderId = req.params.orderId;
         const order = await Order.findOne({ _id: orderId })
-            .populate("consultant", "username")
-            .populate("log.consultant", "username")
+            .populate("consultant", "name")
+            .populate("log.consultant", "name")
             .populate('season', "season")
 
         if (!order) {
@@ -123,8 +123,8 @@ module.exports.createApp = function createApp({
         const order = req.body;
 
         try {
-            const user = await User.findOne({ _id: req.session.userId });
-            await Order.editOrder(order, user._id)
+            const consultant = await Consultant.findOne({ _id: req.session.consultantId });
+            await Order.editOrder(order, consultant._id)
             res.end("OK")
         } catch (error) {
             console.error(error)
@@ -145,7 +145,7 @@ module.exports.createApp = function createApp({
     })
 
     app.post("/season", function (req, res) {
-        Season.createSeason(req.body.userData)
+        Season.createSeason(req.body.consultantData)
             .then(function (response) {
                 res.json({status:"ok", message:"season created"})
             })
@@ -156,8 +156,6 @@ module.exports.createApp = function createApp({
 
     app.post("/dynamic", (req,res) => {
         const { name, fase } = req.body;
-
-        console.log(Dynamic.createDynamic)
 
         Dynamic.createDynamic(name, fase).then(() => {
             res.end("OK");
@@ -177,29 +175,47 @@ module.exports.createApp = function createApp({
         });
     });
 
-    app.post("/user", function (req, res) {
-        User.createUser(req.body)
+    app.get('/consultant', function (req, res) {
+        Consultant.getAllConsultants()
+            .then(function (result) {
+                res.json(result);
+            })
+            .catch(function (error) {
+                res.status(500).end("ERROR");
+            });
+    });
+
+    app.post("/consultant", function (req, res) {
+        Consultant.createConsultant(req.body)
             .then(function (response) {
                 //console.log(response);
-                res.json({status: "OK", message: "User created."});
+                res.json({status: "OK", message: "Consultant created."});
             })
             .catch(function (error) {
                 //console.log(error);
-                res.json({status: "ERROR", message: "Could not create user."});
+                res.json({status: "ERROR", message: "Could not create consultant."});
             });
 
     });
 
-    app.put('/user/:userId', function (req, res) {
-        User.updateUser(req.params.userId, req.body)
+    app.put('/consultant/:consultantId', function (req, res) {
+        Consultant.updateConsultant(req.params.consultantId, req.body)
             .then(function (response) {
-                //console.log("DEBUG: route then()");
-                //console.log(response);
-                res.json({status: "OK", message: "User updated."});
+                res.json({status: "OK", message: "Consultant updated."});
             })
             .catch(function (error) {
-                //console.log("DEBUG: route catch()");
-                //console.log(error);
+                res.status(500).end("ERROR");
+            });
+    });
+
+    app.delete('/consultant/:consultantId', function (req, res) {
+        Consultant.deleteConsultant(req.params.consultantId)
+            .then(function (result) {
+                console.log(result);
+                res.json({status: "OK", message: "Consultant deleted."});
+            })
+            .catch(function (error) {
+                console.log(error);
                 res.status(500).end("ERROR");
             });
     });
@@ -209,22 +225,18 @@ module.exports.createApp = function createApp({
     });
 
     app.post('/login', function (req, res) {
-        User.matchPasswords(req.body.username, req.body.password)
+        Consultant.matchPasswords(req.body.name, req.body.password)
             .then(function (result) {
                 //console.log("DEBUG: route then()");
                 //console.log(result);
 
                 if(result.status){
                     const sess = req.session;
-                    // TODO Start session her
-                    //console.log("Starting session.");
 
                     sess.isLoggedIn = true;
-                    sess.username = result.user.username;
-                    sess.userId = result.user.id;
-                    sess.isAdmin = result.user.isAdmin;
-
-                    //console.log(sess);
+                    sess.name = result.consultant.name;
+                    sess.consultantId = result.consultant.id;
+                    sess.isAdmin = result.consultant.isAdmin;
 
                     res.json({status: "OK"});
                 }

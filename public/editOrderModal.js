@@ -95,7 +95,6 @@ class EditOrderModal {
 
     setDynamic(order) {
         if (!order.dynamics) return
-
         for (const [fase, keys] of Object.entries(order.dynamics)) {
             $("#editOrderModal .dynamic.fase-" + fase)
                 .html(Object.entries(keys).map(([key,value]) => {
@@ -198,7 +197,7 @@ class EditOrderModal {
 
             $("#logElement tbody").html(changes.map(c => `
                 <tr>
-                    <td>${c.consultant.username}</td>
+                    <td>${c.consultant.name}</td>
                     <td>${valueToString(c.value)}</td>
                     <td>${moment(c.time).format("DD-MM-YYYY HH:MM")}</td>
                 </tr>

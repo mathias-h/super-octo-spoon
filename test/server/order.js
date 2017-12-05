@@ -4,11 +4,11 @@ const { expect } = require("chai");
 const { createApp } = require("../../app");
 
 describe("Order server tests", () => {
-    function sessionMock(userId) {
+    function sessionMock(consultantId) {
         return () => (req,res,next) => {
             req.session = {
                 isLoggedIn: true,
-                userId: userId
+                consultantId: consultantId
             }
     
             next()
@@ -75,7 +75,7 @@ describe("Order server tests", () => {
     })
     it("edit order", () => {
         const orderId = "ORDER_ID"
-        const userId = "USER_ID"
+        const consultantId = "CONSULTANT_ID"
         const order = {
             _id: orderId,
             order: "order"
@@ -83,22 +83,22 @@ describe("Order server tests", () => {
         const OrderMock = { 
             editOrder(o, uid) {
                 expect(o).to.deep.eq(order)
-                expect(uid).to.eq(userId)
+                expect(uid).to.eq(consultantId)
                 console.log()
                 return Promise.resolve()
             }
         };
-        const UserMock = {
+        const ConsultantMock = {
             findOne(query) {
-                expect(query).to.deep.eq({ _id: userId })
-                return Promise.resolve({ _id: userId })
+                expect(query).to.deep.eq({ _id: consultantId })
+                return Promise.resolve({ _id: consultantId })
             }
         }
         
         const app = createApp({
             Order: OrderMock,
-            User: UserMock,
-            session: sessionMock(userId)
+            Consultant: ConsultantMock,
+            session: sessionMock(consultantId)
         })
 
         return request(app)

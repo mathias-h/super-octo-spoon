@@ -1,6 +1,7 @@
 'use strict'
 
 window.addEventListener('load', function () {
+
     $("#createSeasonCancel").click(() => {
         $("#seasonInput").val("");
     });

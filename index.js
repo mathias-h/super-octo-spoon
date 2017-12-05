@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const {createApp} = require("./app");
 const { Order } = require("./models/order");
-const { User } = require("./models/user");
+const { Consultant } = require("./models/consultant");
 const session = require('express-session');
 const { Season } = require("./models/season");
 const { Dynamic } = require("./models/dynamic");
@@ -11,7 +11,7 @@ const connection = mongoose.createConnection("mongodb://localhost:27017/super-oc
 
 const app = createApp({
     Order: connection.model("Order", Order),
-    User: connection.model('User', User),
+    Consultant: connection.model('Consultant', Consultant),
     session,
     Season: connection.model('Season', Season),
     Dynamic: connection.model('Dynamic', Dynamic)
