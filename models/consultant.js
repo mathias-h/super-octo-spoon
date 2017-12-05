@@ -4,7 +4,6 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const bcrypt = require('bcrypt');
 const SALT_ROUNDS = 10;
-const Order = mongoose.model('Order', require('./order'));
 
 const Consultant = new Schema({
     name: {
@@ -240,7 +239,7 @@ Consultant.statics.deleteConsultant = function (consultantId) {
                 }
             };
 
-            Order.updateMany(condition, update)
+            this.model("Order").updateMany(condition, update)
                 .then(function () {
 
                     this.findOneAndRemove({_id: consultantId})
