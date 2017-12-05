@@ -154,10 +154,10 @@ module.exports.createApp = function createApp({
     app.post("/season", function (req, res) {
         Season.createSeason(req.body.consultantData)
             .then(function (response) {
-                res.json({status:"ok", message:"season created"})
+                res.send("season created")
             })
             .catch(function (err) {
-                res.json({status: "ERROR", message: "Could not create season."});
+                res.status(500).end("seasonal error")
             })
     });
 

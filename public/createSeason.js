@@ -12,16 +12,13 @@ window.addEventListener('load', function () {
         event.stopPropagation();
 
         if (form.checkValidity() === true){
-            var userData = $("#seasonInput").val()
-            console.log(userData)
+            var consultantData = $("#seasonInput").val()
             $.ajax({
                 url: "/season",
                 method: "POST",
-                data: JSON.stringify({userData}),
-                headers: {
-                    "content-type": "application/json"
-                }
-            }).then(location.reload());
+                data: JSON.stringify({consultantData}),
+                contentType: "application/json"
+            }).then(() => location.reload());
         }
 
     },false)
