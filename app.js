@@ -298,6 +298,12 @@ module.exports.createApp = function createApp({
         // TODO - Jeg burde måske nok sende http status koder tilbage i stedet for?
         // 401 hvis login fejler og 200 hvis ok
 
+        // TODO - der bør nok være en test efter eksisterende gyldig session, og sende et OK eller 200 hvis så.
+
+        if(req.session.isLoggedIn){
+            res.json({status: "OK"});
+        }
+
         Consultant.matchPasswords(req.body.name, req.body.password)
             .then(function (result) {
                 //console.log("DEBUG: route then()");
