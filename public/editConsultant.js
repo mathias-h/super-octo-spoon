@@ -34,34 +34,15 @@ window.addEventListener("load", () => {
     }
 
     async function deleteConsultant(btn) {
-        const row = btn.parentElement.parentElement
-        const consultantId = row.getAttribute("data-consultant-id")
 
-        await $.ajax({
-            url: "/consultant/" + consultantId,
-            method: "PUT",
-            data: JSON.stringify({ dummy: true }),
-            contentType: "application/json"
-        })
-
-        row.parentElement.removeChild(row)
-
-        // TODO - skal ændres så det stemmer overens med delete
-        // Forslag til ny kode:
-
-        /*
-        const row = btn.parentElement.parentElement
-        const consultantId = row.getAttribute("data-consultant-id")
+        const row = btn.parentElement.parentElement;
+        const consultantId = row.getAttribute("data-consultant-id");
 
         await $.ajax({
             url: '/consultant/' + consultantId,
-            method: 'DELETE',
-            sucess: function () {
-                row.parentElement.removeChild(row)
-            }
+            method: 'DELETE'
         });
-        // Der mangler muligvis noget fejlhåndtering her.
-        */
+        row.parentElement.removeChild(row)
     }
 
     function changePassword(btn) {
