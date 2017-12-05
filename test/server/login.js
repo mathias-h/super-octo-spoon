@@ -3,7 +3,7 @@
 const request = require('supertest');
 const testSession = require("supertest-session");
 const { expect } = require("chai");
-const { createApp } = require("../app");
+const { createApp } = require("../../app");
 
 describe('Login/session testing', function () {
 
