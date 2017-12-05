@@ -89,17 +89,10 @@
 
     <script>
         onload = () => {
-//                 $("#season").prop("selectedIndex", 1)
-//                $("#season").on("change", function () {
-//                    var season = this[$("#season").prop("selectedIndex")].innerHTML.substring(6);
-//                    console.log($(this).prop("selectedIndex"))
-//                    console.log(this[$(this).prop("selectedIndex")].innerHTML.substring(6)) //this one
-//                });
-
             let urlParams = new URL(location.href).searchParams;
 
             $("#season").change(function () {
-            var season = decodeURIComponent(this[$("#season").prop("selectedIndex")].innerHTML.substring(6));
+            var season = this[$("#season").prop("selectedIndex")].innerHTML.substring(6);
             if (!urlParams.has("season")){
                     urlParams.append("season", season)
             } else {
@@ -123,12 +116,13 @@
 
             });
                 if (urlParams.has("sortBy")){
-                    $("#date")[0].removeChild($("#date")[0].children[0])
                     if (urlParams.get("order") == "asc") {
                         $("#" + urlParams.get("sortBy")).append("<div class='arrow-asc'></div>")
                     } else {
                         $("#" + urlParams.get("sortBy")).append("<div class='arrow-desc'></div>")
                     }
+                }else {
+                    $("#date").append("<div class='arrow-desc'></div>")
                 }
 
         }
@@ -155,7 +149,7 @@
                 <select id="season" class="btn btn-sm mt-1">
                     <!-- TODO check implementation -->
                     {{#each seasons}}
-                        <option value="{{this.id}}">Sæson {{this.season}}</option>
+                        <option value="{{this.id}}" {{#equals ../selectedSeason this.season}}selected{{/equals}}>Sæson {{this.season}}</option>
                     {{/each}}
                 </select>
             </li>
@@ -187,7 +181,6 @@
                 Kon.
             </th>
             <th class="sortable" id="date" data-toggle="tooltip" title="Dato for oprettelse">Opr.d.
-                <div class="arrow-desc"></div>
             </th>
             <th class="sortable" id="landline" data-toggle="tooltip" title="Kundens fastnet nummer">Fasnet</th>
             <th class="sortable" id="mobile" data-toggle="tooltip" title="Kundens mobiltelefon nummer">Mobil</th>
