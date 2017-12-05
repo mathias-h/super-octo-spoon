@@ -95,6 +95,10 @@ class EditOrderModal {
 
     setDynamic(order) {
         if (!order.dynamics) return
+<<<<<<< Updated upstream
+=======
+        
+>>>>>>> Stashed changes
         for (const [fase, keys] of Object.entries(order.dynamics)) {
             $("#editOrderModal .dynamic.fase-" + fase)
                 .html(Object.entries(keys).map(([key,value]) => {
@@ -167,7 +171,7 @@ class EditOrderModal {
             <div class="col form-group">
                 <label for="inputLogProperty">Værdi</label>
                 <select name="logProperty" id="inputLogProperty" class="form-control">
-                    ${Object.entries(properties).filter(([_,value]) => value.length > 1).map(([name]) => `<option value="${name}">${name}</option>`)}
+                    ${Object.entries(properties).filter(([_,value]) => value.length > 1).map(([name]) => `<option value="${name}">${this.nameMap[name] || name}</option>`)}
                 </select>
             </div>
             <table class="table">
@@ -204,7 +208,7 @@ class EditOrderModal {
             `).join(""))
         }
 
-        $("#inputLogConsultant").change(updateLogValues)
+        $("#inputLogProperty").change(updateLogValues)
 
         updateLogValues()
     }

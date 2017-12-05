@@ -94,13 +94,15 @@ module.exports.createApp = function createApp({
         }
     });
     
-    app.post("/order", (req, res) => {
-        Order.createOrder(req.body).then(() => {
+    app.post("/order", async (req, res) => {
+        try {
+            const user = await User.findOne({ _id: req.session.userId });
+            await Order.createOrder(req.body, user._id)
             res.send("OK");
-        }).catch(e => {
-            console.error(e)
+        } catch (error) {
+            console.error(error);
             res.status(500).end("ERROR");
-        })
+        }
     });
     
     app.get("/order/:orderId", async (req,res) => {
