@@ -152,7 +152,7 @@ Order.statics.editOrder = async function updateOrder(order, consultantId) {
 }
 Order.statics.createOrder = async function createOrder(orderData) {
     let dynamics = {}
-    
+
     ;(await this.model("Dynamic").find()).forEach(({ fase, name }) => {
         if (!dynamics.hasOwnProperty(fase)) dynamics[fase] = {};
         dynamics[fase][name] = null;
