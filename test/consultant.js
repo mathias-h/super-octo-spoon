@@ -2,7 +2,6 @@
 
 const { expect } = require("chai");
 const mongoose = require("mongoose");
-const moment = require("moment");
 const childProcess = require("child_process");
 const rimraf = require("rimraf");
 const fs = require("fs");
@@ -18,7 +17,6 @@ describe("consultant tests", () => {
     let db;
     let Consultant;
     let consultantData;
-    let newConsultant;
 
     async function createConsultant(data = {}) {
         const d = {
