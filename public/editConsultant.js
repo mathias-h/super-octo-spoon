@@ -9,7 +9,7 @@ window.addEventListener("load", () => {
         const password = passwordInput ? passwordInput.value : undefined
 
         const consultant = {
-            name: name,
+            name,
             isAdmin,
             password
         }

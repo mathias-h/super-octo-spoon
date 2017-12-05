@@ -41,12 +41,12 @@
                             {{#each consultants}}
                                 {{#if isDisabled}}
                                 {{else}}
-                                    <tr class="user" data-user-id="{{_id}}">
-                                        <td><input class="editUserUsername form-control" type="text" value="{{username}}" name="brugernavn" placeholder="Brugernavn"/></td>
-                                        <td><button class="editUserPasswordBtn btn btn-info">skift kode</button></td>
-                                        <td><input class="editUserIsAdmin form-control" type="checkbox" name="er admin" checked="{{isAdmin}}"></td>
-                                        <td><button class="editUserSaveBtn btn btn-info">gem</button></td>
-                                        <td><button class="editUserDeleteBtn btn btn-info">slet</button></td>
+                                    <tr class="consultant" data-consultant-id="{{_id}}">
+                                        <td><input class="editConsultantName form-control" type="text" value="{{name}}" name="brugernavn" placeholder="Brugernavn"/></td>
+                                        <td><button class="editConsultantPasswordBtn btn btn-info">skift kode</button></td>
+                                        <td><input class="editConsultantIsAdmin form-control" type="checkbox" name="er admin" checked="{{isAdmin}}"></td>
+                                        <td><button class="editConsultantSaveBtn btn btn-info">gem</button></td>
+                                        <td><button class="editConsultantDeleteBtn btn btn-info">slet</button></td>
                                     </tr>
                                 {{/if}}
                             {{/each}}

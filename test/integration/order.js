@@ -492,11 +492,76 @@ describe("order integration test", () => {
         expect(totalTaken).to.eq(6)
     })
 
-    it("should login")
+    it("should create consultant", async () => {
+        await page.evaluate(() => {
+            $("#navbarSupportedContent > ul > li:nth-child(2) > a").click()
 
-    it("should create consultant")
+            const modal = document.getElementById("adminModal")
 
-    it("should update consultant")
+            setTimeout(() => {
+                if (!modal.classList.contains("show")) {
+                    throw new Error("modal not shown")
+                }
+                
+                $("#inputCreateConsultant-consultant").val("CONSULTANT")
+                $("#inputCreateConsultant-isSuperUser").prop("checked", true)
+                $("#inputCreateConsultant-password").val("Pa55word")
+                $("#inputCreateConsultant-passwordRepeat").val("Pa55word")
+
+                $("#createConsultantForm button[type=submit]").click()
+            }, 300)
+        })
+
+        await sleep(500)
+
+        const consultant = (await Consultant.find())[1]
+
+        expect(consultant.name).to.eq("CONSULTANT")
+        expect(consultant.isAdmin).to.be.true
+        expect(consultant.dummy).to.be.false
+    })
+
+    it("should update consultant", async () => {
+        const consultant = new Consultant({
+            name: "CONSULTANT",
+            password: "PASS",
+            isAdmin: true,
+            dummy: false
+        })
+        await consultant.save()
+
+        await page.reload()
+
+        await page.evaluate(() => {
+            $("#navbarSupportedContent > ul > li:nth-child(2) > a").click()
+            
+            setTimeout(() => {
+                const modal = document.getElementById("adminModal")
+
+                if (!modal.classList.contains("show")) {
+                    throw new Error("modal not shown")
+                }
+
+                const consultants = document.querySelectorAll("#adminModal .consultant")
+                const consultant = consultants[1]
+
+                consultant.querySelector(".editConsultantName").value = "NEW_CONSULTANT_NAME"
+                consultant.querySelector(".editConsultantIsAdmin").checked = false
+                consultant.querySelector(".editConsultantPasswordBtn").click()
+                consultant.querySelector(".editConsultantPassword").value= "NEW_Pa55"
+
+                consultant.querySelector(".editConsultantSaveBtn").click()
+            }, 300)
+        })
+
+        await sleep(500)
+
+        const newConsultant = await Consultant.findById(consultant._id)
+
+        expect(newConsultant.name).to.eq("NEW_CONSULTANT_NAME")
+        expect(newConsultant.isAdmin).to.be.false
+        expect(newConsultant.password).to.not.eq(consultant.password)
+    })
 
     it("should set season")
 
