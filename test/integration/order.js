@@ -379,7 +379,59 @@ describe("order integration test", () => {
         await page.goto("http://localhost:1025/");
     })
 
-    it("should sort orders")
+    it("should sort orders", async () => {
+        const consultant = new Consultant({
+            name: "CONSULTANT",
+            password: "PASS",
+            isAdmin: false
+        })
+        await consultant.save()
+        const order = new Order({
+            season: mongoose.Types.ObjectId(),
+            consultant: consultant._id,
+            signedDate: new Date("2017-01-02"),
+            name: "B",
+            farmName: "FARM_NAME",
+            address: {
+                city: "CITY",
+                street: "STREET",
+                zip: 9999
+            }
+        })
+        const order1 = new Order({
+            season: mongoose.Types.ObjectId(),
+            consultant: consultant._id,
+            signedDate: new Date("2017-01-01"),
+            name: "A",
+            farmName: "FARM_NAME",
+            address: {
+                city: "CITY",
+                street: "STREET",
+                zip: 9999
+            }
+        })
+        await order.save()
+        await order1.save()
+
+        await page.reload()
+
+        await page.evaluate(() => {
+            $("#name").click()
+        })
+
+        await sleep(1000)
+
+        const orderIds = await page.evaluate(() =>
+            Array.from(document.querySelectorAll("tr.order"))
+                .map(o => o.getAttribute("data-order-id")));
+
+        expect(orderIds).to.deep.eq([
+            order1._id.toHexString(),
+            order._id.toHexString()
+        ]);
+
+        await page.goto("http://localhost:1025/");
+    })
 
     it("should display statistics")
 
