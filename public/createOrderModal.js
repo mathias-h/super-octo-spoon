@@ -88,6 +88,17 @@ window.addEventListener('load', function() {
 
         if (form.checkValidity() === true) {
             const data = convertFormToObject(form);
+
+            data.address = {
+                street: data.street,
+                city: data.city,
+                zip: data.zip
+            };
+    
+            delete data.street;
+            delete data.city;
+            delete data.zip;
+
             $.ajax({
                 url: "/order",
                 method: "POST",

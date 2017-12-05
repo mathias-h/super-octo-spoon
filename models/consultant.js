@@ -144,21 +144,22 @@ Consultant.statics.matchPasswords = async function (name, password) {
                 return response;
             }
             else{
-                // TODO: skal denne skrive om at benytte et callback?
-                response.status = bcrypt.compareSync(password, consultant.password);
+                return bcrypt.compare(password, consultant.password).then(function (res) {
 
-                if(response.status){
-                    response.message = "OK Credentials";
-                    response.consultant = {
-                        id: consultant._id,
-                        name: consultant.name,
-                        isAdmin: consultant.isAdmin
+                    if(res){
+                        response.status = res;
+                        response.message = "OK Credentials";
+                        response.consultant = {
+                            id: consultant._id,
+                            name: consultant.name,
+                            isAdmin: consultant.isAdmin
+                        }
                     }
-                }
-
-                return response;
+                    return response;
+                });
             }
         }).catch(function (error) {
+            console.log(error);
             return {
                     status: false,
                     error: error
@@ -201,24 +202,10 @@ Consultant.statics.updateConsultant = function (consultantId, consultantData) {
  * @returns {Promise|Promise.<T>|*} - a promise with a status and a message or error related to that status.
  */
 Consultant.statics.createConsultant = function (consultantData) {
-    const consultant = new this();
-
-    // TODO Check lige op på følgende checks. De holder vidst ikke helt i praksis - ndlarsen
-    if(consultantData.name && typeof consultantData.name === 'string'){
-        consultant.name = consultantData.name;
-    }
-    if(consultantData.password && typeof consultantData.password === 'string'){
-        consultant.password = consultantData.password;
-    }
-    if(consultantData.isAdmin !== undefined && typeof consultantData.isAdmin === 'boolean'){
-        consultant.isAdmin = consultantData.isAdmin;
-    }
-    if(consultantData.dummy !== undefined && typeof consultantData.dummy === 'boolean'){
-        consultant.dummy = consultantData.dummy;
-    }
+    const consultant = new this(consultantData);
 
     return consultant.save()
-        .then(function (response) {
+        .then(function () {
             return {status: "OK", message: "Consultant created."};
         }).catch(function (error) {
             console.error(error);
@@ -226,15 +213,12 @@ Consultant.statics.createConsultant = function (consultantData) {
         });
 };
 
-//TODO - måske burde dette være med id i stedet for navn?
-//TODO - der skal lige laves kode review af deleteConsultant()
-
 /**
  * Deletes a consultant.
- * @param consultantName - the name of the consultant to delete.
+ * @param consultantId - the id of the consultant to delete.
  * @returns {Promise|Promise.<T>}
  */
-Consultant.statics.deleteConsultant = function (consultantName) {
+Consultant.statics.deleteConsultant = function (consultantId) {
     /*
     implement delete functionality. Deleting a user should replace all references to that user with a dummy user
     "tidligereAnsat" and then delete user.
@@ -248,7 +232,7 @@ Consultant.statics.deleteConsultant = function (consultantName) {
             }
 
             const condition = {
-                dummyId: result._id
+                _id: consultantId
             };
             const update = {
                 $set: {
@@ -257,11 +241,10 @@ Consultant.statics.deleteConsultant = function (consultantName) {
             };
 
             Order.updateMany(condition, update)
-                .then(function (result) {
-                    console.log(result);
+                .then(function () {
 
-                    this.findOneAndRemove({name: consultantName})
-                        .then(function (result) {
+                    this.findOneAndRemove({_id: consultantId})
+                        .then(function () {
                             return {
                                 status: 'OK',
                                 message: 'Deletion successfully completed.'
@@ -278,22 +261,6 @@ Consultant.statics.deleteConsultant = function (consultantName) {
             };
         });
 
-    //this.findAndModify().then().catch();
-
-    //this.findOne({dummy: true})
-
-    //const consultant = this.findOneAndRemove
-
 };
-
-/*
-    TODO
-    - rename user model to consultant - DONE
-    - remove isDisabled - DONE
-    - add property to indicate user is a the dummy user for former employees - DONE (added dummy property)
-    - implement delete functionality. Deleting a user should replace all references to that user with a dummy user
-      and then delete user - DONE
-    - update edit/delete consultant GUI to reflect above changes
- */
 
 module.exports.Consultant = Consultant;

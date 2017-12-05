@@ -32,7 +32,7 @@ describe("order integration test", () => {
 
         db = childProcess.spawn("mongod", ["--port", "27018", "--dbpath", dataPath])
         
-        await sleep(500)
+        await sleep(1000)
 
         mongoose.Promise = global.Promise;
         const connection = await mongoose.createConnection("mongodb://localhost:27018/super-octo-spoon-test");
@@ -50,7 +50,7 @@ describe("order integration test", () => {
             session
         }).listen(1025);
 
-        browser = await puppeteer.launch({ headless: false, devtools: true })
+        browser = await puppeteer.launch()
 
         page = await browser.newPage()
         await page.goto("http://localhost:1025/")
@@ -70,11 +70,13 @@ describe("order integration test", () => {
             document.getElementById("inputPassword").value = "pass"
             document.querySelector("button[type=submit]").click()
         })
+
+        await sleep(100);
     })
 
     after(async () => {
         await mongoose.disconnect()
-        //await browser.close()
+        await browser.close()
         server.close()
         db.kill()
     })
@@ -172,10 +174,8 @@ describe("order integration test", () => {
 
         await sleep(500)
 
-        const orders = await Order.find().lean().exec()
+        const orders = await Order.find()
         const order = orders[0]
-
-        console.log(order.season)
 
         expect(order.season.toHexString()).to.eq(season._id.toHexString())
         expect(order.consultant.toHexString()).to.eq(consultant._id.toHexString())
@@ -288,12 +288,8 @@ describe("order integration test", () => {
                 modal.querySelector("#inputFromLabDate").value = "1970-01-02"
                 modal.querySelector("#inputMO").value = "1970-01-02"
                 modal.querySelector("#inputReceptApproved").value = "1970-01-02"
-
-                //TODO should test fase 3
-
-                //TODO should show log
-
-                //TODO should show dynamic
+                
+                // TODO should test fase 3
 
                 modal.querySelector("#orderEditSave").click()
             }, 200)
@@ -332,7 +328,7 @@ describe("order integration test", () => {
 
     it("should search")
 
-    it("should order")
+    it("should sort orders")
 
     it("should display statistics")
 
@@ -346,5 +342,13 @@ describe("order integration test", () => {
 
     it("should create season")
 
+    it("should edit season")
+
     it("should select season")
+
+    it("should show order")
+
+    it("should create dynamic")
+
+    it("should delete dynamic")
 })
