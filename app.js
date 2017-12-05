@@ -158,7 +158,7 @@ module.exports.createApp = function createApp({
     
     app.post("/order", async (req, res) => {
         try {
-            const user = await User.findOne({ _id: req.session.userId });
+            const user = await Consultant.findOne({ _id: req.session.consultantId });
             await Order.createOrder(req.body, user._id)
             res.send("OK");
         } catch (error) {
