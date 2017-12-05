@@ -18,7 +18,7 @@ describe("order", () => {
     let Order = null
     let Consultant
     let Season
-    let Dynamic = null
+    let Dynamic
 
     async function createOrder(data = {}) {
         const d = {
@@ -390,9 +390,11 @@ describe("order", () => {
             phoneNumber: "55667788",
             name: 'NAME',
             farmName: 'FARMNAME',
-            street: "STREET",
-            city: "CITY",
-            zip: 8888,
+            address: {
+                street: "STREET",
+                city: "CITY",
+                zip: 8888
+            },
             comment: 'COMMENT'
         }
         await Order.createOrder(orderData);
@@ -406,15 +408,17 @@ describe("order", () => {
         expect(newOrder.phoneNumber).to.eq(orderData.phoneNumber);
         expect(newOrder.name).to.eq(orderData.name);
         expect(newOrder.farmName).to.eq(orderData.farmName);
-        expect(newOrder.address.street).to.eq(orderData.street);
-        expect(newOrder.address.city).to.eq(orderData.city);
-        expect(newOrder.address.zip).to.eq(orderData.zip);
+        expect(newOrder.address.street).to.eq(orderData.address.street);
+        expect(newOrder.address.city).to.eq(orderData.address.city);
+        expect(newOrder.address.zip).to.eq(orderData.address.zip);
         expect(newOrder.comment).to.eq(orderData.comment);
         expect(newOrder.dynamics).to.deep.eq({
             "1": {
                 "NAME": null
             }
         })
+
+        it("should create log")
     })
 
     it("sample totals", async () => {

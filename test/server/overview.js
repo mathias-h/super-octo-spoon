@@ -18,10 +18,10 @@ describe("overview view", () => {
             find: () => Promise.resolve({})
         }
         const SeasonMock = {
-            find: () => Promise.resolve({})
+            find: () => Promise.resolve([])
         }
         const DynamicMock = {
-            find: () => Promise.resolve({})
+            find: () => Promise.resolve([])
         }
         const app = createApp({
             Order: OrderMock,
