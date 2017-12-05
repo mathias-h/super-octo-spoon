@@ -89,35 +89,42 @@
 
     <script>
         onload = () => {
-//                $("#season").val(location.search.substring(8,13))
-//                $("#season").on("change", function (){
-//                    location.search = "season=" + $("#season").val()
-//                })
+            let urlParams = new URL(location.href).searchParams;
+
+            $("#season").change(function () {
+            var season = this[$("#season").prop("selectedIndex")].innerHTML.substring(6);
+            if (!urlParams.has("season")){
+                    urlParams.append("season", season)
+            } else {
+                urlParams.set("season", season)
+            }
+            location.search = urlParams
+            });
 
             $(".sortable").click(function () {
                 var id = $(this).attr("id");
-                var ls = location.search;
-                var order = (ls.indexOf("order=asc") !== -1) ? "&order=desc" : "&order=asc";
-                if (ls.length === 0 || (ls.indexOf("sortBy") !== -1 && ls.indexOf("query") === -1)) {
-                    location.search = "sortBy=" + id + order;
+                var order = (urlParams.get("order") === "asc") ? "desc" : "asc";
+                if (!urlParams.has("sortBy")){
+                    urlParams.append("sortBy", id)
+                    urlParams.append("order", order)
+                }else {
+                    urlParams.set("sortBy", id)
+                    urlParams.set("order", order)
                 }
-                else if (ls.indexOf("query") !== -1 && ls.indexOf("sortBy") === -1) {
-                    location.search += "&sortBy=" + id + order;
-                } else {
-                    location.search = location.search.substring(0, location.search.indexOf("&")) + "&sortBy=" + id + order;
+
+                location.search = urlParams;
+
+            });
+                if (urlParams.has("sortBy")){
+                    if (urlParams.get("order") == "asc") {
+                        $("#" + urlParams.get("sortBy")).append("<div class='arrow-asc'></div>")
+                    } else {
+                        $("#" + urlParams.get("sortBy")).append("<div class='arrow-desc'></div>")
+                    }
+                }else {
+                    $("#date").append("<div class='arrow-desc'></div>")
                 }
-            })
-            if (location.search.indexOf("sortBy") !== -1) {
-                $("#date")[0].removeChild($("#date")[0].children[0])
-                var url = new URL(location.href)
-                var sortBy = url.searchParams.get("sortBy").toString()
-                var orderBy = url.searchParams.get("order").toString()
-                if (orderBy == "asc") {
-                    $("#" + sortBy).append("<div class='arrow-asc'></div>")
-                } else {
-                    $("#" + sortBy).append("<div class='arrow-desc'></div>")
-                }
-            }
+
         }
     </script>
 </head>
@@ -142,7 +149,7 @@
                 <select id="season" class="btn btn-sm mt-1">
                     <!-- TODO check implementation -->
                     {{#each seasons}}
-                        <option value="{{this.id}}">Sæson {{this.season}}</option>
+                        <option value="{{this.id}}" {{#equals ../selectedSeason this.season}}selected{{/equals}}>Sæson {{this.season}}</option>
                     {{/each}}
                 </select>
             </li>
@@ -174,7 +181,6 @@
                 Kon.
             </th>
             <th class="sortable" id="date" data-toggle="tooltip" title="Dato for oprettelse">Opr.d.
-                <div class="arrow-desc"></div>
             </th>
             <th class="sortable" id="landline" data-toggle="tooltip" title="Kundens fastnet nummer">Fasnet</th>
             <th class="sortable" id="mobile" data-toggle="tooltip" title="Kundens mobiltelefon nummer">Mobil</th>
