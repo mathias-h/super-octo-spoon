@@ -67,6 +67,8 @@ describe("order", () => {
     beforeEach(async () => {
         await Order.remove({})
         await Consultant.remove({})
+        await Dynamic.remove({})
+        await Season.remove({})
     })
 
     describe("edit order", () => {

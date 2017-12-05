@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test/*.js test/*/*.js --timeout=5000",
+    "test": "mocha test/*.js test/*/*.js --timeout=50000",
     "start": "node index",
-    "testw": "mocha test/*.js test/*/*.js --timeout=5000 -w"
+    "testw": "mocha test/*.js test/*/*.js --timeout=50000 -w"
   },
   "keywords": [],
   "author": "MNMNM",

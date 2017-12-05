@@ -51,13 +51,12 @@ describe("Order server tests", () => {
                 _id: orderId
             }
             const OrderMock = { 
-                findOne() {
-                    return this
-                },
-                populate: () => ({
+                findOne: () => ({
                     populate: () => ({
-                        populate() { return Promise.resolve(null) }
-                    })
+                        populate: () => ({
+                            populate: () => Promise.resolve(null)
+                        })
+                    })  
                 })
             }
 

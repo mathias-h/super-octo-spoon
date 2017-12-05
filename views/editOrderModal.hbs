@@ -52,7 +52,7 @@
                                     <label for="editInputConsultant">Konsulent</label>
                                     <select name="consultant" id="editInputConsultant" class="form-control" required>
                                         {{#each consultants}}
-                                            <option value="{{this._id}}">{{this.username}}</option>
+                                            <option value="{{this._id}}">{{this.name}}</option>
                                         {{/each}}
                                     </select>
                                 </div>
@@ -61,7 +61,6 @@
                                     <input name="signedDate" type="date" id="editInputSignedDate" class="form-control"
                                            required>
                                 </div>
-                                <!-- TODO check implementation NK -->
                                 <div class="col form-group">
                                     <label for="editOrderSeason">Sæson</label>
                                     <select name="season" id="editOrderSeason" class="form-control" required>

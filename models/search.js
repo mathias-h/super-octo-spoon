@@ -20,10 +20,10 @@ module.exports.search = function search(orders, query) {
                 if (order.address.street.match(reg)) {
                     matches += 1
                 }
-                if (order.landlineNumber.match(reg)) {
+                if (order.landlineNumber && order.landlineNumber.match(reg)) {
                     matches += 1
                 }
-                if (order.phoneNumber.match(reg)) {
+                if (order.phoneNumber && order.phoneNumber.match(reg)) {
                     matches += 1
                 }
                 if (order.name.match(reg)) {
