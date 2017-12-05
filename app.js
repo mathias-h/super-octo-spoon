@@ -209,17 +209,12 @@ module.exports.createApp = function createApp({
     });
 
     app.delete('/consultant/:consultantId', function (req, res) {
-        //TODO - finish implementation
         Consultant.deleteConsultant(req.params.consultantId)
             .then(function (result) {
-                //console.log("DEBUG: route then()");
-                //console.log(response);
                 console.log(result);
                 res.json({status: "OK", message: "Consultant deleted."});
             })
             .catch(function (error) {
-                //console.log("DEBUG: route catch()");
-                //console.log(error);
                 console.log(error);
                 res.status(500).end("ERROR");
             });
@@ -237,15 +232,11 @@ module.exports.createApp = function createApp({
 
                 if(result.status){
                     const sess = req.session;
-                    // TODO Start session her
-                    //console.log("Starting session.");
 
                     sess.isLoggedIn = true;
                     sess.name = result.consultant.name;
                     sess.consultantId = result.consultant.id;
                     sess.isAdmin = result.consultant.isAdmin;
-
-                    //console.log(sess);
 
                     res.json({status: "OK"});
                 }
