@@ -10,7 +10,7 @@
             }
         }
         html, body {
-            min-width: 1190px;
+            min-width: 1300px;
         }
         .sortable {
             cursor: pointer;
@@ -221,8 +221,8 @@
                         var current = $('script').last();
                         var c = '{{comment}}';
 
-                        if(c.length > 70){
-                            c = c.substring(0, 70).trim() + "...";
+                        if(c.length > 50){
+                            c = c.substring(0, 50).trim() + "...";
                         }
 
                         current.parent().append(c);
