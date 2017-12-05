@@ -31,7 +31,13 @@ module.exports.createApp = function createApp({
             }
             console.log(out)
             return out
-        })
+        });
+        hbs.registerHelper("equals", function (a, b, options) {
+           if (a === b){
+               return options.fn()
+           }
+        });
+
         next()
     });
 
@@ -83,6 +89,7 @@ module.exports.createApp = function createApp({
                 totalSamples,
                 totalTaken,
                 query: req.query.query,
+                selectedSeason: req.query.season,
                 consultants,
                 seasons,
                 dynamics
@@ -175,16 +182,6 @@ module.exports.createApp = function createApp({
             console.error(err);
             res.status(500).end("ERROR");
         });
-    });
-
-    app.get('/consultant', function (req, res) {
-        Consultant.getAllConsultants()
-            .then(function (result) {
-                res.json(result);
-            })
-            .catch(function (error) {
-                res.status(500).end("ERROR");
-            });
     });
 
     app.post("/consultant", function (req, res) {
