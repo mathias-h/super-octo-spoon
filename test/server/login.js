@@ -4,6 +4,11 @@ const request = require('supertest');
 const testSession = require("supertest-session");
 const { expect } = require("chai");
 const { createApp } = require("../../app");
+const { Consultant: ConsultantSchema } = require("../../models/consultant.js");
+const mongoose = require("mongoose");
+const childProcess = require("child_process");
+const rimraf = require("rimraf");
+const fs = require("fs");
 
 describe('Login/session testing', function () {
 
@@ -44,7 +49,7 @@ describe('Login/session testing', function () {
                     session: sessionMock()
                 });
 
-                const mongoose = require('mongoose');
+                //const mongoose = require('mongoose');
                 const orderId = mongoose.Types.ObjectId();
 
                 return request(app)
@@ -276,7 +281,6 @@ describe('Login/session testing', function () {
         })
     });
 
-    //TODO
     describe('Testing POST endpoints response when not logged in', function () {
 
         function sessionMock(consultantId) {
@@ -315,34 +319,94 @@ describe('Login/session testing', function () {
         });
 
         describe('POST /login', function () {
-            it('should check login and respond with OK status if correct username and password is supplied', function () {
-                // TODO NOT DONE
+
+            it('should respond with OK status if correct credentials is supplied', function () {
 
                 const consultant = {
                     name: "testConsultant",
                     password: "testPassword"
                 };
 
+                function sessionMock(consultantId) {
+                    return () => (req,res,next) => {
+                        req.session = {
+                            isLoggedIn: false
+                        };
+
+                        next();
+                    }
+                }
+
+                const ConsultantMock = {
+                    matchPasswords(name, password) {
+                        return Promise.resolve({
+                            status: true,
+                            message: "OK credentials",
+                            consultant : {
+                            name: consultant.name,
+                            isAdmin: false
+                            }
+                        });
+                    }
+                };
+
                 const app = createApp({
-                    session: sessionMock()
+                    session: sessionMock(),
+                    Consultant: ConsultantMock,
                 });
 
                 return request(app)
-                    .post('/consultant')
+                    .post('/login')
                     .send(consultant)
-                    .expect(302)
-                    .expect('Found. Redirecting to /login')
-                    .then(function (res) {
-                        expect(res.header.location).to.eq('/login');
-                    })
-            });
-
-            it('should check login and redirect to / if valid username and password is supplied', function () {
+                    .expect(200)
+                    .expect({status: 'OK'});
 
             });
+
+            it('should respond with ERROR status if incorrect credentials is supplied', function () {
+                const consultant = {
+                    name: "testConsultant",
+                    password: "testPassword"
+                };
+
+                function sessionMock(consultantId) {
+                    return () => (req,res,next) => {
+                        req.session = {
+                            isLoggedIn: false
+                        };
+
+                        next();
+                    }
+                }
+
+                const ConsultantMock = {
+                    matchPasswords(name, password) {
+                        return Promise
+                            .resolve({
+                                status: 'INCORRECT_CREDENTIALS',
+                                message: "Forkert brugernavn eller kodeord."
+                            });
+                    }
+                };
+
+                const app = createApp({
+                    session: sessionMock(),
+                    Consultant: ConsultantMock,
+                });
+
+                return request(app)
+                    .post('/login')
+                    .send(consultant)
+                    .expect(200)
+                    .expect({status: 'INCORRECT_CREDENTIALS'});
+
+            });
+
         });
 
     });
+
+    //TODO - der mangler test af PUT/DELETE
 
     describe('Testing PUT endpoints when not logged in', function () {
 
@@ -387,5 +451,5 @@ describe('Login/session testing', function () {
     TODO
     login
     delete Order
-    admin check ved crud af konsulent - faktisk hele admin menuen
+    admin check ved crud af konsulent - faktisk hele admin menuen - måske done ss
  */
