@@ -82,42 +82,55 @@
     <script src="https://momentjs.com/downloads/moment.min.js"></script>
     <script src="/createOrderModal.js"></script>
     <script src="/editOrderModal.js"></script>
-    <script src="/createUser.js"></script>
+    <script src="/createConsultant.js"></script>
     <script src="/createSeason.js"></script>
-    <script src="/editUser.js"></script>
+    <script src="/editConsultant.js"></script>
     <script src="/dynamic.js"></script>
 
     <script>
         onload = () => {
-//                $("#season").val(location.search.substring(8,13))
-//                $("#season").on("change", function (){
-//                    location.search = "season=" + $("#season").val()
-//                })
+//                 $("#season").prop("selectedIndex", 1)
+//                $("#season").on("change", function () {
+//                    var season = this[$("#season").prop("selectedIndex")].innerHTML.substring(6);
+//                    console.log($(this).prop("selectedIndex"))
+//                    console.log(this[$(this).prop("selectedIndex")].innerHTML.substring(6)) //this one
+//                });
+
+            let urlParams = new URL(location.href).searchParams;
+
+            $("#season").change(function () {
+            var season = decodeURIComponent(this[$("#season").prop("selectedIndex")].innerHTML.substring(6));
+            if (!urlParams.has("season")){
+                    urlParams.append("season", season)
+            } else {
+                urlParams.set("season", season)
+            }
+            location.search = urlParams
+            });
 
             $(".sortable").click(function () {
                 var id = $(this).attr("id");
-                var ls = location.search;
-                var order = (ls.indexOf("order=asc") !== -1) ? "&order=desc" : "&order=asc";
-                if (ls.length === 0 || (ls.indexOf("sortBy") !== -1 && ls.indexOf("query") === -1)) {
-                    location.search = "sortBy=" + id + order;
+                var order = (urlParams.get("order") === "asc") ? "desc" : "asc";
+                if (!urlParams.has("sortBy")){
+                    urlParams.append("sortBy", id)
+                    urlParams.append("order", order)
+                }else {
+                    urlParams.set("sortBy", id)
+                    urlParams.set("order", order)
                 }
-                else if (ls.indexOf("query") !== -1 && ls.indexOf("sortBy") === -1) {
-                    location.search += "&sortBy=" + id + order;
-                } else {
-                    location.search = location.search.substring(0, location.search.indexOf("&")) + "&sortBy=" + id + order;
+
+                location.search = urlParams;
+
+            });
+                if (urlParams.has("sortBy")){
+                    $("#date")[0].removeChild($("#date")[0].children[0])
+                    if (urlParams.get("order") == "asc") {
+                        $("#" + urlParams.get("sortBy")).append("<div class='arrow-asc'></div>")
+                    } else {
+                        $("#" + urlParams.get("sortBy")).append("<div class='arrow-desc'></div>")
+                    }
                 }
-            })
-            if (location.search.indexOf("sortBy") !== -1) {
-                $("#date")[0].removeChild($("#date")[0].children[0])
-                var url = new URL(location.href)
-                var sortBy = url.searchParams.get("sortBy").toString()
-                var orderBy = url.searchParams.get("order").toString()
-                if (orderBy == "asc") {
-                    $("#" + sortBy).append("<div class='arrow-asc'></div>")
-                } else {
-                    $("#" + sortBy).append("<div class='arrow-desc'></div>")
-                }
-            }
+
         }
     </script>
 </head>
