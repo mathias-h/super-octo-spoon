@@ -159,26 +159,8 @@ Order.statics.createOrder = async function createOrder(orderData) {
     });
 
     if(orderData.landlineNumber || orderData.phoneNumber) {
-        const order = new this({
-            consultant: orderData.consultant,
-            signedDate: orderData.signedDate,
-            season: orderData.season,
-            landlineNumber: orderData.landlineNumber,
-            phoneNumber: orderData.phoneNumber,
-            name: orderData.name,
-            farmName: orderData.farmName,
-            address: {
-                street: orderData.street,
-                city: orderData.city,
-                zip: orderData.zip
-            },
-            comment: orderData.comment,
-            sampleDensity: orderData.sampleDensity,
-            area: orderData.area,
-            samePlanAsLast: orderData.samePlanAsLast,
-            takeOwnSamples: orderData.takeOwnSamples,
-            dynamics
-        });
+        orderData.dynamics = dynamics;
+        const order = new this(orderData);
         await order.save();
     } else {
         return Promise.reject(new Error("no landline or phone number"));

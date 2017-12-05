@@ -169,10 +169,8 @@ describe("order integration test", () => {
 
         await sleep(500)
 
-        const orders = await Order.find().lean().exec()
+        const orders = await Order.find()
         const order = orders[0]
-
-        console.log(order.season)
 
         expect(order.season.toHexString()).to.eq(season._id.toHexString())
         expect(order.consultant.toHexString()).to.eq(user._id.toHexString())

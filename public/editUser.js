@@ -3,13 +3,13 @@ window.addEventListener("load", () => {
         const row = btn.parentElement.parentElement
         const userId = row.getAttribute("data-user-id")
 
-        const username = row.querySelector(".editUserUsername").value
+        const name = row.querySelector(".editUserUsername").value
         const isAdmin = row.querySelector(".editUserIsAdmin").checked
         const passwordInput = row.querySelector(".editUserPassword")
         const password = passwordInput ? passwordInput.value : undefined
 
         const user = {
-            username,
+            name,
             isAdmin,
             password
         }
@@ -39,11 +39,10 @@ window.addEventListener("load", () => {
 
         await $.ajax({
             url: "/user/" + userId,
-            method: "PUT",
-            data: JSON.stringify({ isDisabled: true }),
+            method: "DELETE",
             contentType: "application/json"
         })
-
+        
         row.parentElement.removeChild(row)
     }
 
