@@ -76,15 +76,19 @@ describe("order integration test", () => {
 
     after(async () => {
         await mongoose.disconnect()
-        await browser.close()
+        //await browser.close()
         server.close()
         db.kill()
     })
 
     beforeEach(async () => {
+        await Dynamic.remove({})
+        await Season.remove({})
         await Order.remove({})
         await Consultant.remove({ name: { $not: /^admin$/ }})
     })
+
+    
 
     it("should show orders in overview", async () => {
         const order = new Order({
@@ -192,6 +196,17 @@ describe("order integration test", () => {
         expect(order.area).to.eq(2)
         expect(order.samePlanAsLast).to.be.true
         expect(order.takeOwnSamples).to.be.true
+    })
+
+    it("should show order", () => {
+        // TODO show fase 1
+        // TODO show fase 2
+        // TODO show fase 3
+        // TODO show log
+    })
+
+    it("should delete order", () => {
+        
     })
 
     it("should edit order", async () => {
@@ -571,9 +586,31 @@ describe("order integration test", () => {
 
     it("should select season")
 
-    it("should show order")
+    it("should create dynamic", async () => {
+        await page.evaluate(() => {
+            $("#navbarSupportedContent > ul > li:nth-child(2) > a").click()
+            
+            setTimeout(() => {
+                const modal = document.getElementById("adminModal")
 
-    it("should create dynamic")
+                if (!modal.classList.contains("show")) {
+                    throw new Error("modal not shown")
+                }
+
+                const consultants = document.querySelectorAll("#adminModal .consultant")
+                const consultant = consultants[0]
+
+                consultant.querySelector(".editConsultantName").value = "NEW_CONSULTANT_NAME"
+                consultant.querySelector(".editConsultantIsAdmin").checked = false
+                consultant.querySelector(".editConsultantPasswordBtn").click()
+                consultant.querySelector(".editConsultantPassword").value= "NEW_Pa55"
+
+                user.querySelector(".editConsultantSaveBtn").click()
+            }, 300)
+        })
+
+        await sleep(500)
+    })
 
     it("should delete dynamic")
 })
