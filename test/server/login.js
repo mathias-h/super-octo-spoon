@@ -4,6 +4,11 @@ const request = require('supertest');
 const testSession = require("supertest-session");
 const { expect } = require("chai");
 const { createApp } = require("../../app");
+const { Consultant: ConsultantSchema } = require("../../models/consultant.js");
+const mongoose = require("mongoose");
+const childProcess = require("child_process");
+const rimraf = require("rimraf");
+const fs = require("fs");
 
 describe('Login/session testing', function () {
 
@@ -44,7 +49,7 @@ describe('Login/session testing', function () {
                     session: sessionMock()
                 });
 
-                const mongoose = require('mongoose');
+                //const mongoose = require('mongoose');
                 const orderId = mongoose.Types.ObjectId();
 
                 return request(app)
@@ -75,6 +80,7 @@ describe('Login/session testing', function () {
             });
         });
 
+        // TODO - denne skal vel fjernes?
         describe('GET /logout', function () {
             it('should redirect to /login', function () {
 
@@ -147,7 +153,7 @@ describe('Login/session testing', function () {
                         expect(res.statusCode).to.eq(200);
                         expect("Content-Type", /text\/html/);
                         expect(res.text).not.contain('<form id="login-form">');
-                        expect(res.text).contain('Opret\n                    Jordprøvebestilling');
+                        expect(/jordprøvebestilling/i);
                     });
 
             });
@@ -193,58 +199,118 @@ describe('Login/session testing', function () {
             });
         });
 
-        describe('GET /login', function () {
-            it('should redirect to overview at /', function () {
+    });
 
-                const order = { name: "ORDER_NAME" };
-                const OrderMock = {
-                    getAll(queryParams) {
-                        return Promise.resolve([order])
-                    },
-                    sampleTotals() {
-                        return Promise.resolve({ totalSamples: 0, totalTaken: 0 })
-                    }
+    describe('Testing POST endpoints response when not logged in', function () {
+
+        function sessionMock(consultantId) {
+            return () => (req,res,next) => {
+                req.session = {
+                    isLoggedIn: false,
+                    consultantId: consultantId
                 };
-                const ConsultantMock = {
-                    find: () => Promise.resolve({})
+
+                next();
+            }
+        }
+
+        describe('POST /consultant', function () {
+            it('should respond with http status 401', function () {
+
+                const consultant = {
+                    name: "testConsultant",
+                    password: "testPassword"
                 };
-                const SeasonMock = {
-                    find: () => Promise.resolve([])
-                };
-                const DynamicMock = {
-                    find: () => Promise.resolve([])
-                };
+
                 const app = createApp({
-                    Order: OrderMock,
-                    Consultant: ConsultantMock,
-                    Season: SeasonMock,
-                    Dynamic: DynamicMock,
-                    session: function sessionMock(req,res,next) {
-                        return (req,res,next) => {
-                            req.session = {
-                                isLoggedIn: true
-                            };
-
-                            next()
-                        }
-                    }
+                    session: sessionMock()
                 });
 
                 return request(app)
-                    .get('/')
-                    .then(function (res) {
-                        //expect(res.statusCode).to.eq(200);
-                        expect(302);
-                        expect("Content-Type", /text\/html/);
-                        expect(res.text).not.contain('<form id="login-form">');
-                        expect(res.text).contain('Opret\n                    Jordprøvebestilling');
-                    });
+                    .post('/consultant')
+                    .send(consultant)
+                    .expect(401);
 
             });
         });
 
-        describe('GET /logout', function () {
-            it('should logout and redirect to login', function () {
+        describe('POST /login', function () {
+
+            function sessionMock(consultantId) {
+                return () => (req,res,next) => {
+                    req.session = {
+                        isLoggedIn: false
+                    };
+
+                    next();
+                }
+            }
+
+            const consultant = {
+                name: "testConsultant",
+                password: "testPassword"
+            };
+
+            const ConsultantMock = {
+                matchPasswords(name, password) {
+
+                    const validPassword = 'testPassword';
+
+                    if(password === validPassword){
+
+                        return Promise.resolve({
+                            status: true,
+                            message: "OK Credentials",
+                            consultant: {
+                                name: consultant.name,
+                                isAdmin: consultant.isAdmin
+                            }
+                        });
+                    }
+                    else{
+                        return Promise.resolve({
+                            status: false,
+                            message: "Incorrect credentials"
+                        });
+                    }
+                }
+            };
+
+            it('should respond with http status 200 if correct credentials is supplied', function () {
+
+                const app = createApp({
+                    session: sessionMock(),
+                    Consultant: ConsultantMock,
+                });
+
+                return request(app)
+                    .post('/login')
+                    .send(consultant)
+                    .expect(200)
+                    .expect('Successfully logged in.')
+
+            });
+
+            it('should respond with http status 401 if incorrect credentials is supplied', function () {
+
+                consultant.password = 'incorrecttestPassword';
+
+                const app = createApp({
+                    session: sessionMock(),
+                    Consultant: ConsultantMock,
+                });
+
+                return request(app)
+                    .post('/login')
+                    .send(consultant)
+                    .expect(401)
+                    .expect('Could not login.');
+            });
+
+        });
+
+        describe('POST /logout', function () {
+            it('should respond with http status 200 if ok logout', function () {
 
                 let destroyCalled = false;
 
@@ -266,18 +332,53 @@ describe('Login/session testing', function () {
                 });
 
                 return request(app)
-                    .get('/logout')
-                    .expect(302)
+                    .post('/logout')
+                    .expect(200)
                     .then(function (res) {
                         expect(destroyCalled).to.eq(true);
                     })
 
             });
-        })
+
+            it('should respond with http status 500 if not ok logout', function () {
+
+                let destroyCalled = false;
+
+                function sessionMock(consultantId) {
+                    return () => (req,res,next) => {
+                        req.session = {
+                            isLoggedIn: false,
+                            consultantId: consultantId,
+                            destroy: () => {
+                                destroyCalled = false;
+                            }
+                        };
+
+                        next();
+                    }
+                }
+                const app = createApp({
+                    session: sessionMock()
+                });
+
+                return request(app)
+                    .post('/logout')
+                    .expect(500)
+                    .then(function (res) {
+                        expect(destroyCalled).to.eq(false);
+                    })
+
+            });
+
+        });
+
     });
 
-    //TODO
-    describe('Testing POST endpoints response when not logged in', function () {
+
+
+    //TODO - der mangler test af PUT/DELETE
+
+    describe('Testing PUT endpoints when not logged in', function () {
 
         function sessionMock(consultantId) {
             return () => (req,res,next) => {
@@ -290,9 +391,8 @@ describe('Login/session testing', function () {
             }
         }
 
-        describe('POST /consultant', function () {
-            it('should redirect to /login', function () {
-                // TODO
+        describe('PUT /consultant/:consultantId', function () {
+            it('should return http 401', function () {
 
                 const consultant = {
                     name: "testConsultant",
@@ -303,30 +403,16 @@ describe('Login/session testing', function () {
                     session: sessionMock()
                 });
 
+                const consultantId = "testId";
+
                 return request(app)
-                    .post('/consultant')
+                    .put('/consultant/' + consultantId)
                     .send(consultant)
-                    .expect(302)
-                    .expect('Found. Redirecting to /login')
-                    .then(function (res) {
-                        expect(res.header.location).to.eq('/login');
-                    })
+                    .expect(401)
+                    .expect('Not authorized.');
 
             });
         });
-
-        describe('PUT /consultant', function () {
-            it('should ', function () {
-                // TODO
-            });
-        });
-
-        describe('', function () {
-            it('POST /login', function () {
-                // TODO
-            })
-        });
-
     });
 
 });
@@ -335,5 +421,6 @@ describe('Login/session testing', function () {
     TODO
     login
     delete Order
-    admin check ved crud af konsulent - faktisk hele admin menuen
+    resten af login test
+    test af om admin kan slette sig selv
  */

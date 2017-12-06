@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const express = require("express");
 const session = require('express-session');
 const hbs = require("hbs");
+const { MongoError } = require("mongodb")
 
 module.exports.createApp = function createApp({
     Order,
@@ -68,16 +69,26 @@ module.exports.createApp = function createApp({
     // Default session check for all requests to this app
     app.use(function (req, res, next) {
         const sess = req.session;
+        const method = req.method;
         const url = req.url;
+        const isLoggedIn = req.session.isLoggedIn || false;
 
-        if(sess.isLoggedIn && url === '/login'){
-            res.redirect('/');
+        if(method === 'GET'){
+            if(isLoggedIn && url === '/login'){
+                res.redirect('/');
+            }
+            else if((isLoggedIn && url !== '/login') || (!isLoggedIn && url === '/login')){
+                next();
+            }
+            else{
+                res.redirect('/login');
+            }
         }
-        else if((sess.isLoggedIn && url !== '/login') || (!sess.isLoggedIn && url === '/login')){
+        else if ((!isLoggedIn && method === 'POST' && (url === '/login' || url === "/logout")) || isLoggedIn) {
             next();
         }
         else{
-            res.redirect('/login');
+            res.status(401).end('Not authorized.');
         }
     });
 
@@ -158,7 +169,7 @@ module.exports.createApp = function createApp({
             console.error(error);
             res.status(500).end("ERROR");
         }
-    })
+    });
 
     app.post("/season", function (req, res) {
         Season.createSeason(req.body.consultantData)
@@ -166,9 +177,19 @@ module.exports.createApp = function createApp({
                 res.send("season created")
             })
             .catch(function (err) {
-                res.status(500).end("seasonal error")
+                res.status(400).end("seasonal error")
             })
     });
+
+    app.put("/season/:seasonID", (req, res) => {
+        Season.updateSeason(req.params.seasonID, req.body)
+            .then(function (response) {
+                res.json({status: "OK", message: "Season updated."});
+            })
+            .catch(function (error) {
+                res.status(500).end("ERROR");
+            });
+    })
 
     app.post("/dynamic", (req,res) => {
         const { name, fase } = req.body;
@@ -192,38 +213,75 @@ module.exports.createApp = function createApp({
     });
 
     app.post("/consultant", function (req, res) {
-        Consultant.createConsultant(req.body)
-            .then(function (response) {
-                //console.log(response);
-                res.json({status: "OK", message: "Consultant created."});
-            })
-            .catch(function (error) {
-                //console.log(error);
-                res.json({status: "ERROR", message: "Could not create consultant."});
-            });
+
+        const sess = req.session;
+
+        if(!sess.isAdmin){
+            res.status(403).send('Must be admin to create consultants.');
+        }
+        else {
+            Consultant.createConsultant(req.body)
+                .then(function (response) {
+                    console.log(response);
+                    res.status(200).end("Consultant created.");
+                })
+                .catch(function (error) {
+
+                    console.log(error);
+
+                    if (error instanceof MongoError && error.code === 11000){
+                        res.status(409).end('Username already in use.');
+                    }
+                    else {
+                        res.status(500).end('Unknown error.');
+                    }
+                });
+        }
 
     });
 
     app.put('/consultant/:consultantId', function (req, res) {
-        Consultant.updateConsultant(req.params.consultantId, req.body)
-            .then(function (response) {
-                res.json({status: "OK", message: "Consultant updated."});
-            })
-            .catch(function (error) {
-                res.status(500).end("ERROR");
-            });
+
+        const sess = req.session;
+
+        if(!sess.isAdmin){
+            res.status(403).send('Must be admin to edit consultants.');
+        }
+        else if(req.params.consultantId === sess.id && req.body.isAdmin === false){
+            res.status(403).end('Cannot remove admin privileges from yourself.');
+        }
+        else{
+            Consultant.updateConsultant(req.params.consultantId, req.body)
+                .then(function (response) {
+                    res.status(200).end("Consultant updated.");
+                })
+                .catch(function (error) {
+                    res.status(500).end("Unknown error.");
+                });
+        }
     });
 
     app.delete('/consultant/:consultantId', function (req, res) {
-        Consultant.deleteConsultant(req.params.consultantId)
-            .then(function (result) {
-                console.log(result);
-                res.json({status: "OK", message: "Consultant deleted."});
-            })
-            .catch(function (error) {
-                console.log(error);
-                res.status(500).end("ERROR");
-            });
+
+        const sess = req.session;
+
+        if(!sess.isAdmin){
+            res.status(403).send('Must be admin to delete consultants.');
+        }
+        else if(req.params.consultantId === sess.id){
+            res.status(403).end('Cannot delete yourself.');
+        }
+        else{
+            Consultant.deleteConsultant(req.params.consultantId)
+                .then(function () {
+                    res.json({status: "OK", message: "Consultant deleted."});
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    res.status(500).end("Unknown error.");
+                });
+        }
+
     });
 
     app.get('/login', (req, res) =>{
@@ -231,10 +289,16 @@ module.exports.createApp = function createApp({
     });
 
     app.post('/login', function (req, res) {
+
+        const MSG_LOGIN_OK = 'Successfully logged in.';
+        const MSG_LOGIN_ERROR = 'Could not login.';
+
+        if(req.session.isLoggedIn){
+            res.status(200).end(MSG_LOGIN_OK);
+        }
+
         Consultant.matchPasswords(req.body.name, req.body.password)
             .then(function (result) {
-                //console.log("DEBUG: route then()");
-                //console.log(result);
 
                 if(result.status){
                     const sess = req.session;
@@ -244,26 +308,32 @@ module.exports.createApp = function createApp({
                     sess.consultantId = result.consultant.id;
                     sess.isAdmin = result.consultant.isAdmin;
 
-                    res.json({status: "OK"});
+                    res.status(200).end(MSG_LOGIN_OK);
                 }
                 else{
-                    res.json({status: "INCORRECT_CREDENTIALS", message: "Forkert brugernavn eller kodeord."});
+                    res.status(401).end(MSG_LOGIN_ERROR);
                 }
             })
             .catch(function (error) {
-                res.status(500).end({status: "ERROR", message: "Unknown error"});
+                console.log(error);
+                res.status(500).end('Unknown error.');
             });
     });
 
-    app.get('/logout', function (req, res) {
+    app.post('/logout', function (req, res) {
         const sess = req.session;
 
         if(sess.isLoggedIn){
             sess.destroy();
+            res.status(200).end('Logged out successfully.');
         }
-        res.redirect('/login');
+        else{
+            res.status(500).end('Could not logout.');
+        }
 
     });
+
+
 
     return app;
 };

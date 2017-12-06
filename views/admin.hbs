@@ -1,28 +1,35 @@
-<div class="modal fade" id="adminModal" tabindex="-1" role="dialog" aria-labelledby="adminModalLabel" aria-hidden="true">
+<div class="modal fade" id="adminModal" tabindex="-1" role="dialog" aria-labelledby="adminModalLabel"
+     aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="adminModalLabel">System administration</h5>
-                <button type="button" class="close" id="adminClose" data-dismiss="modal" aria-label="Close" style="cursor: pointer;">
+                <button type="button" class="close" id="adminClose" data-dismiss="modal" aria-label="Close"
+                        style="cursor: pointer;">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
 
             <ul class="nav nav-tabs pt-2 bg-light" id="myTab" role="tablist">
                 <li class="nav-item ml-3">
-                    <a class="nav-link active" id="createUser-tab" data-toggle="tab" href="#createUser" role="tab" aria-controls="createUser" aria-selected="true">Opret bruger</a>
+                    <a class="nav-link active" id="createUser-tab" data-toggle="tab" href="#createUser" role="tab"
+                       aria-controls="createUser" aria-selected="true">Opret bruger</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="editUser-tab" data-toggle="tab" href="#editUser" role="tab" aria-controls="editUser" aria-selected="false">Rediger bruger</a>
+                    <a class="nav-link" id="editUser-tab" data-toggle="tab" href="#editUser" role="tab"
+                       aria-controls="editUser" aria-selected="false">Rediger bruger</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="createSeason-tab" data-toggle="tab" href="#createSeason" role="tab" aria-controls="createSeason" aria-selected="false">Opret sæson</a>
+                    <a class="nav-link" id="createSeason-tab" data-toggle="tab" href="#createSeason" role="tab"
+                       aria-controls="createSeason" aria-selected="false">Opret sæson</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="editSeason-tab" data-toggle="tab" href="#editSeason" role="tab" aria-controls="editSeason" aria-selected="false">Rediger sæson</a>
+                    <a class="nav-link" id="editSeason-tab" data-toggle="tab" href="#editSeason" role="tab"
+                       aria-controls="editSeason" aria-selected="false">Rediger sæson</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="dynamicColumn-tab" data-toggle="tab" href="#dynamicColumn" role="tab" aria-controls="dynamicColumn" aria-selected="false">Dynamiske kolonner</a>
+                    <a class="nav-link" id="dynamicColumn-tab" data-toggle="tab" href="#dynamicColumn" role="tab"
+                       aria-controls="dynamicColumn" aria-selected="false">Dynamiske kolonner</a>
                 </li>
             </ul>
             <div class="tab-content" id="myTabContent">
@@ -33,23 +40,32 @@
                 <div class="tab-pane" id="editUser" role="tabpanel" aria-labelledby="editUser-tab">
                     <table class="table table-striped">
                         <thead>
-                            <th>Brugernavn</th>
-                            <th>Kode</th>
-                            <th>Admin</th>
+                        <th>Brugernavn</th>
+                        <th>Kode</th>
+                        <th class="text-center">Superbruger</th>
                         </thead>
                         <tbody>
-                            {{#each consultants}}
-                                {{#if isDisabled}}
-                                {{else}}
-                                    <tr class="consultant" data-consultant-id="{{_id}}">
-                                        <td><input class="editConsultantName form-control" type="text" value="{{name}}" name="brugernavn" placeholder="Brugernavn"/></td>
-                                        <td><button class="editConsultantPasswordBtn btn btn-info">skift kode</button></td>
-                                        <td><input class="editConsultantIsAdmin form-control" type="checkbox" name="er admin" checked="{{isAdmin}}"></td>
-                                        <td><button class="editConsultantSaveBtn btn btn-info">gem</button></td>
-                                        <td><button class="editConsultantDeleteBtn btn btn-info">slet</button></td>
-                                    </tr>
-                                {{/if}}
-                            {{/each}}
+                        {{#each consultants}}
+                            {{#if isDisabled}}
+                            {{else}}
+                                <tr class="consultant" data-consultant-id="{{_id}}">
+                                    <td><input class="editConsultantName form-control" type="text" value="{{name}}"
+                                               name="brugernavn" placeholder="Brugernavn"/></td>
+                                    <td>
+                                        <button class="editConsultantPasswordBtn btn btn-info">Skift kodeord</button>
+                                    </td>
+                                    <td class="align-middle"><input class="editConsultantIsAdmin form-control"
+                                                                    type="checkbox" name="er admin"
+                                                                    checked="{{isAdmin}}"></td>
+                                    <td>
+                                        <button class="editConsultantSaveBtn btn btn-info">Gem</button>
+                                    </td>
+                                    <td>
+                                        <button class="editConsultantDeleteBtn btn btn-info">Slet</button>
+                                    </td>
+                                </tr>
+                            {{/if}}
+                        {{/each}}
                         </tbody>
                     </table>
                 </div>
@@ -59,32 +75,64 @@
                 </div>
 
                 <div class="tab-pane" id="editSeason" role="tabpanel" aria-labelledby="editSeason-tab">
-
+                    <table class="table table-striped">
+                        <thead>
+                        <th>Sæson</th>
+                        <th>Gem</th>
+                        <th>Gør Standard</th>
+                        </thead>
+                        <tbody> <!-- TODO implementer ordentligt -->
+                        {{#each seasons}}
+                                <tr class="season" data-season-id="{{_id}}">
+                                    <td><input class="form-control editSeasonInput" type="text" value="{{season}}" name="season" placeholder="Sæson"/></td>
+                                    <td><button class="btn btn-info editSeasonSaveBtn">gem</button></td>
+                                    <td><button class="btn btn-info editSeasonDefaultBtn">kør</button></td>
+                                </tr>
+                        {{/each}}
+                        </tbody>
+                    </table>
                 </div>
 
                 <div class="tab-pane" id="dynamicColumn" role="tabpanel" aria-labelledby="dynamicColumn-tab">
-                    <table>
+                    <table class="table table-striped">
                         <thead>
-                            <th>Navn</th>
-                            <th>Fase</th>
-                            <th></th>
+                        <th scope="col">Navn</th>
+                        <th scope="col">Fase</th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
                         </thead>
                         <tbody>
-                            {{#each dynamics}}
-                                <tr data-id="{{id}}">
-                                    <td>{{name}}</td>
-                                    <td>{{fase}}</td>
-                                    <td><button class="sletDynamicColumn">slet</button></td>
-                                </tr>
-                            {{/each}}
+                        {{#each dynamics}}
+                            <tr data-id="{{id}}">
+                                <td>{{name}}</td>
+                                <td>{{fase}}</td>
+                                <td>
+                                    <button class="sletDynamicColumn">slet</button>
+                                </td>
+                                <td></td>
+                            </tr>
+                        {{/each}}
                         </tbody>
                     </table>
-                    <div>
-                        <label for="addDynamicColumn">Tilføj dynamisk kolonne</label>
-                        <input id="dynamicColumnName" type="text" name="dynamicName" placeholder="Navn"/>
-                        <input id="dynamicColumnFase" type="number" min="1" max="3" name="dyanmicFase" placeholder="Fase"/>
-                        <button id="dynamicColumnBtn">Tilføj</button>
-                    </div>
+                    <form class="form">
+                        <div class="form-group ml-2">
+                            <div class="align-middle row">
+                                <div class="col-3">
+                                    <label for="addDynamicColumn">Tilføj dynamisk kolonne</label>
+                                </div>
+                                <div class="col">
+                                    <input class="form-control" id="dynamicColumnName" type="text" name="dynamicName"
+                                           placeholder="Navn"/>
+                                </div>
+                                <div class="col">
+                                    <input class="form-control" id="dynamicColumnFase" type="number" min="1" max="3" name="dyanmicFase" placeholder="Fase"/>
+                                </div>
+                                <div class="col">
+                                    <button class="btn btn-info" id="dynamicColumnBtn" type="submit">Tilføj</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
