@@ -625,8 +625,8 @@ describe("order integration test", () => {
         expect(orderIds).to.deep.eq([order1._id.toHexString()])
     });
 
-    //TODO: Finish test create season
-    it.only("should create season", async () => {
+    //TODO: Larsen: Kan ikke teste, da jeg stadig får fejl i before-hook.
+    it("should create season", async () => {
         await page.evaluate(() => {
             $("#navbarSupportedContent > ul > li:nth-child(2) > a").click();
 
@@ -634,21 +634,45 @@ describe("order integration test", () => {
                 const modal = document.getElementById("adminModal");
 
                 if(!modal.classList.contains("show")){
-                    throw new Error("modal, for seasons, isn't showing properly")
+                    throw new Error("modal, for seasons, isn't shown")
                 }
+                const seasons = document.querySelectorAll("#season");
+                const season = seasons[0];
 
                 $("#seasonInput").val("19/20");
                 $("#createSeasonSubmit").click();
-            }, 300)
-            const seasons = document.querySelectorAll("#season");
-            const season = seasons[0];
-            console.log(season)
+            }, 300);
         })
     });
 
-    it("should edit season");
-
-    it("should select season");
+    //TODO: Mangler edit season test
+    it("should edit season", async () => {
+        const season1718 = new Season({
+            season: "Sæson 17/18"
+        });
+        await season1718.save();
+        await page.reload();
+        await page.evaluate(() => {
+            //Adminstration --> check Modal' eksistens--> Ændre Sæson --> String af **/** --> Submit
+            //Check om sæson er ændret
+        })
+    });
+    //TODO: Mangler select season test
+    it("should select season", async () => {
+        const season1718 = new Season({
+            season: "Sæson 17/18"
+        });
+        await season1718.save();
+        const season1819 = new Season({
+            season: "Sæson 18/19"
+        });
+        await season1819.save();
+        await page.reload();
+        await page.evaluate(() => {
+            //Vælg sæson #2
+            //Check om sæson er ændret
+        })
+    });
 
     it("should create dynamic", async () => {
         await page.evaluate(() => {
