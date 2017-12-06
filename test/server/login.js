@@ -320,35 +320,55 @@ describe('Login/session testing', function () {
 
         describe('POST /login', function () {
 
-            it('should respond with OK status if correct credentials is supplied', function () {
+            function sessionMock(consultantId) {
+                return () => (req,res,next) => {
+                    req.session = {
+                        isLoggedIn: false
+                    };
 
-                const consultant = {
-                    name: "testConsultant",
-                    password: "testPassword"
-                };
-
-                function sessionMock(consultantId) {
-                    return () => (req,res,next) => {
-                        req.session = {
-                            isLoggedIn: false
-                        };
-
-                        next();
-                    }
+                    next();
                 }
+            }
 
-                const ConsultantMock = {
-                    matchPasswords(name, password) {
-                        return Promise.resolve({
-                            status: true,
-                            message: "OK credentials",
-                            consultant : {
+            const consultant = {
+                name: "testConsultant",
+                password: "testPassword"
+            };
+
+            const ConsultantMock = {
+                matchPasswords(name, password) {
+
+                    const validPassword = 'testPassword';
+
+                    /*return Promise.resolve({
+                        status: 'OK',
+                        consultant : {
                             name: consultant.name,
                             isAdmin: false
+                        }
+                    });*/
+
+                    if(password === validPassword){
+
+                        return Promise.resolve({
+                            status: true,
+                            message: "OK Credentials",
+                            consultant: {
+                                name: consultant.name,
+                                isAdmin: consultant.isAdmin
                             }
                         });
                     }
-                };
+                    else{
+                        return Promise.resolve({
+                            status: false,
+                            message: "Incorrect credentials"
+                        });
+                    }
+                }
+            };
+
+            it('should respond with OK status if correct credentials is supplied', function () {
 
                 const app = createApp({
                     session: sessionMock(),
@@ -363,31 +383,9 @@ describe('Login/session testing', function () {
 
             });
 
-            it('should respond with ERROR status if incorrect credentials is supplied', function () {
-                const consultant = {
-                    name: "testConsultant",
-                    password: "testPassword"
-                };
+            it('should respond with INCORRECT_CREDENTIALS status if incorrect credentials is supplied', function () {
 
-                function sessionMock(consultantId) {
-                    return () => (req,res,next) => {
-                        req.session = {
-                            isLoggedIn: false
-                        };
-
-                        next();
-                    }
-                }
-
-                const ConsultantMock = {
-                    matchPasswords(name, password) {
-                        return Promise
-                            .resolve({
-                                status: 'INCORRECT_CREDENTIALS',
-                                message: "Forkert brugernavn eller kodeord."
-                            });
-                    }
-                };
+                consultant.password = 'incorrecttestPassword';
 
                 const app = createApp({
                     session: sessionMock(),
@@ -398,13 +396,14 @@ describe('Login/session testing', function () {
                     .post('/login')
                     .send(consultant)
                     .expect(200)
-                    .expect({status: 'INCORRECT_CREDENTIALS'});
-
+                    .expect({status: "INCORRECT_CREDENTIALS", message: "Forkert brugernavn eller kodeord."});
             });
 
         });
 
     });
+
+
 
     //TODO - der mangler test af PUT/DELETE
 
@@ -440,7 +439,7 @@ describe('Login/session testing', function () {
                     .expect('Found. Redirecting to /login')
                     .then(function (res) {
                         expect(res.header.location).to.eq('/login');
-                    })
+                    });
             });
         });
     });
@@ -451,5 +450,5 @@ describe('Login/session testing', function () {
     TODO
     login
     delete Order
-    admin check ved crud af konsulent - faktisk hele admin menuen - måske done ss
+    admin check ved crud af konsulent - faktisk hele admin menuen - sal måske gøre serverside
  */
