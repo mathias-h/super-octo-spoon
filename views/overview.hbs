@@ -139,18 +139,19 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-                <a class="nav-link" href="#" data-toggle="modal" data-target="#createOrderModal">Opret
-                    jordprøvebestilling</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#" data-toggle="modal" data-target="#adminModal">Administration</a>
-            </li>
-            <li class="nav-item">
-                <select id="season" class="btn btn-sm mt-1">
+                <select id="season" class="btn btn-sm mt-1 mr-3">
                     {{#each seasons}}
                         <option value="{{this.id}}" {{#equals ../selectedSeason this.season}}selected{{/equals}}>Sæson {{this.season}}</option>
                     {{/each}}
                 </select>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link mr-3" href="#" data-toggle="modal" data-target="#createOrderModal">Opret
+                    Jordprøvebestilling</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" data-toggle="modal" data-target="#adminModal">Administration</a>
             </li>
             <li>
                 <span id="navbar-statistics" style="position: absolute; left: 50%; transform: translateX(-50%);"
@@ -217,16 +218,7 @@
                     {{#if farmName}}{{farmName}},{{/if}} {{address.street}}, {{address.zip}} {{address.city}}
                 </td>
                 <td>
-                    <script>
-                        var current = $('script').last();
-                        var c = '{{comment}}';
-
-                        if(c.length > 50){
-                            c = c.substring(0, 50).trim() + "...";
-                        }
-
-                        current.parent().append(c);
-                    </script>
+                    {{#trunkText comment}}{{/trunkText}}
                 </td>
                 <td>
                     {{#if sampleDensity}}
