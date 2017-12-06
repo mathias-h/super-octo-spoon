@@ -87,7 +87,7 @@ module.exports.createApp = function createApp({
             const consultants = await Consultant.find({});
             const seasons = await Season.find({});
             const dynamics = await Dynamic.find({});
-            
+
             const data = {
                 orders,
                 totalSamples,
@@ -208,12 +208,10 @@ module.exports.createApp = function createApp({
         else {
             Consultant.createConsultant(req.body)
                 .then(function (response) {
-                    console.log(response);
                     res.status(200).end("Consultant created.");
                 })
                 .catch(function (error) {
-
-                    console.log(error);
+                    console.error(error);
 
                     if (error instanceof MongoError && error.code === 11000){
                         res.status(409).end('Username already in use.');
@@ -260,7 +258,7 @@ module.exports.createApp = function createApp({
                     res.json({status: "OK", message: "Consultant deleted."});
                 })
                 .catch(function (error) {
-                    console.log(error);
+                    console.error(error);
                     res.status(500).end("Unknown error.");
                 });
         }
@@ -285,7 +283,6 @@ module.exports.createApp = function createApp({
                     const sess = req.session;
 
                     sess.isLoggedIn = true;
-                    sess.id = result.id;
                     sess.name = result.consultant.name;
                     sess.consultantId = result.consultant.id;
                     sess.isAdmin = result.consultant.isAdmin;

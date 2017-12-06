@@ -24,8 +24,10 @@ describe("order", () => {
         let season
 
         if (!data.season) {
+            const id = mongoose.Types.ObjectId()
             season = new Season({
-                name: "SEASON",
+                _id: id,
+                season: "SEASON-" + id,
                 default: true
             })
             await season.save()
@@ -519,7 +521,7 @@ describe("order", () => {
   
         it("should sort asc", async () => {
             const season = new Season({
-                name: "SEASON",
+                season: "SEASON",
                 default: true
             })
             await season.save()
@@ -549,7 +551,7 @@ describe("order", () => {
         })
         it("should sort desc", async () => {
             const season = new Season({
-                name: "SEASON",
+                season: "SEASON",
                 default: true
             })
             await season.save()
@@ -579,7 +581,7 @@ describe("order", () => {
         })
         it("should sort by signed date by default", async () => {
             const season = new Season({
-                name: "SEASON",
+                season: "SEASON",
                 default: true
             })
             await season.save()

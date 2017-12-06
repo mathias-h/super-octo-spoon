@@ -50,7 +50,7 @@ describe("order integration test", () => {
             session
         }).listen(1025);
 
-        browser = await puppeteer.launch({ headless: false, slowMo: true })
+        browser = await puppeteer.launch()
 
         page = await browser.newPage()
         await page.goto("http://localhost:1025/")
@@ -76,7 +76,7 @@ describe("order integration test", () => {
 
     after(async () => {
         await mongoose.disconnect()
-        //await browser.close()
+        await browser.close()
         server.close()
         db.kill()
     })
@@ -90,7 +90,7 @@ describe("order integration test", () => {
 
     it("should show orders in overview", async () => {
         const season = new Season({
-            name: "SEASON",
+            season: "SEASON",
             default: true
         })
         await season.save()
@@ -372,7 +372,7 @@ describe("order integration test", () => {
 
     it("should search", async () => {
         const season = new Season({
-            name: "SEASON",
+            season: "SEASON",
             default: true
         })
         await season.save()
@@ -430,7 +430,7 @@ describe("order integration test", () => {
 
     it("should sort orders", async () => {
         const season = new Season({
-            name: "SEASON",
+            season: "SEASON",
             default: true
         })
         await season.save()
@@ -538,7 +538,11 @@ describe("order integration test", () => {
         await sleep(1000)
 
         const { totalSamples, totalTaken } = await page.evaluate(() => {
-            const [_,totalSamples,totalTaken] = $("#navbar-statistics").text().match(/Prøver Udtaget: (\d+)\s*\/\s*(\d+)/).map(Number)
+            const totalMatch = $("#navbar-statistics").text().match(/Prøver udtaget: (\d+)\s*\/\s*(\d+)/)
+
+            if (!totalMatch) throw new Error("no match")
+
+            const [_,totalSamples,totalTaken] = totalMatch.map(Number)
             return { totalSamples, totalTaken }
         });
 
@@ -620,13 +624,15 @@ describe("order integration test", () => {
         expect(newConsultant.password).to.not.eq(consultant.password)
     })
 
-    it("should set season", async () => {
+    it.only("should set season", async () => {
         const season1718 = new Season({
-            season: "Sæson 17/18"
+            season: "Sæson 17/18",
+            default: false
         });
         await season1718.save();
         const season1819 = new Season({
-            season: "Sæson 18/19"
+            season: "Sæson 18/19",
+            default: false
         });
         await season1819.save();
         const order = new Order({
@@ -656,9 +662,8 @@ describe("order integration test", () => {
         });
         await order1.save();
         await page.reload();
-        await page.evaluate((seasonId) => {
-            $("#season").val(seasonId);
-        }, season1819._id);
+        await page.evaluate((seasonId) =>
+            $("#season").val(seasonId), season1819._id);
 
         await sleep(500);
 

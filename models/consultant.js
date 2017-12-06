@@ -224,7 +224,6 @@ Consultant.statics.deleteConsultant = function (consultantId) {
 
             this.model("Order").updateMany(condition, update)
                 .then(function () {
-
                     this.findOneAndRemove({_id: consultantId})
                         .then(function () {
                             return {
@@ -236,7 +235,7 @@ Consultant.statics.deleteConsultant = function (consultantId) {
 
         })
         .catch(function (error) {
-            console.log(error);
+            console.error(error);
             return {
                 status: 'ERROR',
                 message: error
