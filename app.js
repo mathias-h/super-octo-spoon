@@ -267,7 +267,7 @@ module.exports.createApp = function createApp({
         else{
             Consultant.deleteConsultant(req.params.consultantId)
                 .then(function () {
-                    res.json({status: "OK", message: "Consultant deleted."});
+                    res.status(200).end("Consultant deleted.");
                 })
                 .catch(function (error) {
                     console.log(error);
