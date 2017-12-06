@@ -16,23 +16,22 @@ window.addEventListener('load', function() {
 
         const data = convertFormToObject(form);
         $.ajax({
+            statusCode: {
+                401: () => {
+                    if ($(".alert").length === 0) {
+                        $('#alert-box').append('<div class="alert alert-danger alert-dismissible" id="errorMessage" role="alert">Fatal fejl, kontakt system administrator<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+                    }
+                }
+            },
             url: "/login",
             method: "POST",
             data: JSON.stringify(data),
             headers: {
                 "content-type": "application/json"
-            }
-        }).done((data) => {
-            if(data.status === "OK"){
+            },
+
+            success: () => {
                 location.replace('/');
-            }else{
-                if($(".alert").length === 0){
-                    $('#alert-box').append('<div class="alert alert-danger alert-dismissible" id="errorMessage" role="alert">Forkert brugernavn eller adgangskode<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
-                }
-            }
-        }).catch(() => {
-            if($(".alert").length === 0){
-                $('#alert-box').append('<div class="alert alert-danger alert-dismissible" id="errorMessage" role="alert">Fatal fejl, kontakt system administrator<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
             }
         });
     }, false);
