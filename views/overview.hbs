@@ -140,7 +140,7 @@
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
                 <a class="nav-link" href="#" data-toggle="modal" data-target="#createOrderModal">Opret
-                    Jordprøvebestilling</a>
+                    jordprøvebestilling</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="#" data-toggle="modal" data-target="#adminModal">Administration</a>
@@ -154,7 +154,7 @@
             </li>
             <li>
                 <span id="navbar-statistics" style="position: absolute; left: 50%; transform: translateX(-50%);"
-                      class="navbar-text justify-content-center">Prøver Udtaget: {{totalTaken}}
+                      class="navbar-text justify-content-center">Prøver udtaget: {{totalTaken}}
                     / {{totalSamples}}</span>
             </li>
         </ul>
@@ -220,6 +220,8 @@
                     <script>
                         var current = $('script').last();
                         var c = '{{comment}}';
+
+                        console.log(c)
 
                         if(c.length > 50){
                             c = c.substring(0, 50).trim() + "...";
