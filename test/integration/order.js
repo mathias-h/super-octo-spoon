@@ -50,7 +50,7 @@ describe("order integration test", () => {
             session
         }).listen(1025);
 
-        browser = await puppeteer.launch()
+        browser = await puppeteer.launch({ headless: false, slowMo: true })
 
         page = await browser.newPage()
         await page.goto("http://localhost:1025/")
@@ -76,7 +76,7 @@ describe("order integration test", () => {
 
     after(async () => {
         await mongoose.disconnect()
-        await browser.close()
+        //await browser.close()
         server.close()
         db.kill()
     })
@@ -89,8 +89,13 @@ describe("order integration test", () => {
     })
 
     it("should show orders in overview", async () => {
+        const season = new Season({
+            name: "SEASON",
+            default: true
+        })
+        await season.save()
         const order = new Order({
-            season: mongoose.Types.ObjectId(),
+            season: season._id,
             consultant: mongoose.Types.ObjectId(),
             signedDate: new Date("2017-01-02"),
             name: "NAME",
@@ -102,7 +107,7 @@ describe("order integration test", () => {
             }
         })
         const order1 = new Order({
-            season: mongoose.Types.ObjectId(),
+            season: season._id,
             consultant: mongoose.Types.ObjectId(),
             signedDate: new Date("2017-01-01"),
             name: "NAME",
@@ -134,10 +139,12 @@ describe("order integration test", () => {
         })
         await consultant.save()
         await new Season({
-            season: "SEASON1"
+            season: "SEASON1",
+            default: true
         }).save()
         const season = new Season({
-            season: "SEASON"
+            season: "SEASON",
+            default: false
         })
         await season.save()
 
@@ -167,8 +174,6 @@ describe("order integration test", () => {
                 modal.querySelector("#inputArea").value = 2
                 modal.querySelector("#inputSamePlanAsLast").checked = true
                 modal.querySelector("#inputTakeOwnSamples").checked = true
-
-                console.log(modal.querySelector("button[type=submit]"))
 
                 modal.querySelector("button[type=submit]").click()
             }, 300)
@@ -221,20 +226,20 @@ describe("order integration test", () => {
             dummy: false
         })
         const season = new Season({
-            season: "SEASON"
+            season: "SEASON",
+            default: true
         })
         await season.save()
         const season1 = new Season({
-            season: "SEASON1"
+            season: "SEASON1",
+            default: false
         })
         await season1.save()
 
         await consultant.save()
         await consultant1.save()
 
-        const orderId = mongoose.Types.ObjectId()
-        await new Order({
-            _id: orderId,
+        const order = new Order({
             season: season._id,
             consultant: consultant._id,
             signedDate: new Date("2017-01-01"),
@@ -262,10 +267,20 @@ describe("order integration test", () => {
             labDate: new Date("1970-01-01"),
             fromLabDate: new Date("1970-01-01"),
             mO: new Date("1970-01-01"),
-            receptApproved: new Date("1970-01-01")
-        }).save()
+            receptApproved: new Date("1970-01-01"),
+            sendToFarmer: new Date("1970-01-01"),
+            sendBy: consultant._id,
+            contactFarmer: true,
+            wantsMap: true,
+            appointments: "APPOINTMENTS",
+            mapSendToFarmer: new Date("1970-01-01"),
+            mapSendToMachineStation: new Date("1970-01-01"),
+            fields: 1,
+            areaMap: 1
+        })
+        await order.save();
 
-        await page.reload()
+        await page.reload();
 
         await page.evaluate((newConsultantId, newSeasonId) => {
             document.querySelector(".order").click()
@@ -301,45 +316,66 @@ describe("order integration test", () => {
                 modal.querySelector("#inputFromLabDate").value = "1970-01-02"
                 modal.querySelector("#inputMO").value = "1970-01-02"
                 modal.querySelector("#inputReceptApproved").value = "1970-01-02"
-                
-                // TODO should test fase 3
+                modal.querySelector("#inputSendToFarmer").value = "1970-01-02"
+                modal.querySelector("#inputSendBy").value = newConsultantId
+                modal.querySelector("#inputContactFarmer").checked = false
+                modal.querySelector("#inputWantsMap").checked = false
+                modal.querySelector("#inputAppointments").value = "NEW_APPOINTMENTS"
+                modal.querySelector("#inputMapSendToFarmer").value = "1970-01-02"
+                modal.querySelector("#inputSendToMachineStation").value = "1970-01-02"
+                modal.querySelector("#inputFields").value = 2
+                modal.querySelector("#inputAreaMap").value = 2
 
                 modal.querySelector("#orderEditSave").click()
             }, 200)
         }, consultant1._id, season1._id)
 
-        await sleep(500)
+        await sleep(1000)
 
-        const order = await Order.findOne({ _id: orderId })
+        const newOrder = await Order.findOne({ _id: order._id })
 
-        expect(order.season.toHexString()).to.eq(season1._id.toHexString())
-        expect(order.consultant.toHexString()).to.eq(consultant1._id.toHexString())
-        expect(order.name).to.eq("NEW_NAME")
-        expect(order.farmName).to.eq("NEW_FARM_NAME")
-        expect(order.address.street).to.eq("NEW_STREET")
-        expect(order.address.zip).to.eq(8888)
-        expect(order.address.city).to.eq("NEW_CITY")
-        expect(order.landlineNumber).to.eq("77777777")
-        expect(order.phoneNumber).to.eq("66666666")
-        expect(order.comment).to.eq("NEW_COMMENT")
-        expect(order.sampleDensity).to.eq(2)
-        expect(order.area).to.eq(3)
-        expect(order.samePlanAsLast).to.eq(false)
-        expect(order.takeOwnSamples).to.eq(false)
-        expect(order.mapDate).to.deep.eq(new Date("1970-01-02"))
-        expect(order.sampleDate).to.deep.eq(new Date("1970-01-02"))
-        expect(order.sampleTime).to.eq(2)
-        expect(order.mgSamples).to.eq(2)
-        expect(order.cutSamples).to.eq(2)
-        expect(order.otherSamples).to.eq(2)
-        expect(order.samplesTaken).to.eq(2)
-        expect(order.labDate).to.deep.eq(new Date("1970-01-02"))
-        expect(order.fromLabDate).to.deep.eq(new Date("1970-01-02"))
-        expect(order.mO).to.deep.eq(new Date("1970-01-02"))
-        expect(order.receptApproved).to.deep.eq(new Date("1970-01-02"))
+        expect(newOrder.season.toHexString()).to.eq(season1._id.toHexString())
+        expect(newOrder.consultant.toHexString()).to.eq(consultant1._id.toHexString())
+        expect(newOrder.name).to.eq("NEW_NAME")
+        expect(newOrder.farmName).to.eq("NEW_FARM_NAME")
+        expect(newOrder.address.street).to.eq("NEW_STREET")
+        expect(newOrder.address.zip).to.eq(8888)
+        expect(newOrder.address.city).to.eq("NEW_CITY")
+        expect(newOrder.landlineNumber).to.eq("77777777")
+        expect(newOrder.phoneNumber).to.eq("66666666")
+        expect(newOrder.comment).to.eq("NEW_COMMENT")
+        expect(newOrder.sampleDensity).to.eq(2)
+        expect(newOrder.area).to.eq(3)
+        expect(newOrder.samePlanAsLast).to.eq(false)
+        expect(newOrder.takeOwnSamples).to.eq(false)
+        expect(newOrder.mapDate.getTime()).to.eq(new Date("1970-01-02").getTime())
+        expect(newOrder.sampleDate.getTime()).to.eq(new Date("1970-01-02").getTime())
+        expect(newOrder.sampleTime).to.eq(2)
+        expect(newOrder.mgSamples).to.eq(2)
+        expect(newOrder.cutSamples).to.eq(2)
+        expect(newOrder.otherSamples).to.eq(2)
+        expect(newOrder.samplesTaken).to.eq(2)
+        expect(newOrder.labDate.getTime()).to.eq(new Date("1970-01-02").getTime())
+        expect(newOrder.fromLabDate.getTime()).to.eq(new Date("1970-01-02").getTime())
+        expect(newOrder.mO.getTime()).to.eq(new Date("1970-01-02").getTime())
+        expect(newOrder.receptApproved.getTime()).to.eq(new Date("1970-01-02").getTime())
+        expect(newOrder.sendToFarmer.getTime()).to.eq(new Date("1970-01-02").getTime())
+        expect(newOrder.sendBy.toHexString()).to.eq(consultant1._id.toHexString())
+        expect(newOrder.contactFarmer).to.eq(false)
+        expect(newOrder.wantsMap).to.eq(false)
+        expect(newOrder.appointments).to.eq("NEW_APPOINTMENTS")
+        expect(newOrder.mapSendToFarmer.getTime()).to.eq(new Date("1970-01-02").getTime())
+        expect(newOrder.mapSendToMachineStation.getTime()).to.eq(new Date("1970-01-02").getTime())
+        expect(newOrder.fields).to.eq(2)
+        expect(newOrder.areaMap).to.eq(2)
     })
 
     it("should search", async () => {
+        const season = new Season({
+            name: "SEASON",
+            default: true
+        })
+        await season.save()
         const consultant = new Consultant({
             name: "CONSULTANT",
             password: "PASS",
@@ -347,7 +383,7 @@ describe("order integration test", () => {
         })
         await consultant.save()
         const order = new Order({
-            season: mongoose.Types.ObjectId(),
+            season: season._id,
             consultant: consultant._id,
             signedDate: new Date("2017-01-02"),
             name: "X",
@@ -359,7 +395,7 @@ describe("order integration test", () => {
             }
         })
         const order1 = new Order({
-            season: mongoose.Types.ObjectId(),
+            season: season._id,
             consultant: consultant._id,
             signedDate: new Date("2017-01-01"),
             name: "Y",
@@ -393,6 +429,11 @@ describe("order integration test", () => {
     })
 
     it("should sort orders", async () => {
+        const season = new Season({
+            name: "SEASON",
+            default: true
+        })
+        await season.save()
         const consultant = new Consultant({
             name: "CONSULTANT",
             password: "PASS",
@@ -400,7 +441,7 @@ describe("order integration test", () => {
         })
         await consultant.save()
         const order = new Order({
-            season: mongoose.Types.ObjectId(),
+            season: season._id,
             consultant: consultant._id,
             signedDate: new Date("2017-01-02"),
             name: "B",
@@ -412,7 +453,7 @@ describe("order integration test", () => {
             }
         })
         const order1 = new Order({
-            season: mongoose.Types.ObjectId(),
+            season: season._id,
             consultant: consultant._id,
             signedDate: new Date("2017-01-01"),
             name: "A",
@@ -506,11 +547,13 @@ describe("order integration test", () => {
     })
 
     it("should create consultant", async () => {
+        await page.reload()
+
         await page.evaluate(() => {
             $("#navbarSupportedContent > ul > li:nth-child(2) > a").click()
 
             const modal = document.getElementById("adminModal")
-
+            
             setTimeout(() => {
                 if (!modal.classList.contains("show")) {
                     throw new Error("modal not shown")
@@ -527,7 +570,8 @@ describe("order integration test", () => {
 
         await sleep(500)
 
-        const consultant = (await Consultant.find())[1]
+        const consultants = await Consultant.find()
+        const consultant = consultants[1]
 
         expect(consultant.name).to.eq("CONSULTANT")
         expect(consultant.isAdmin).to.be.true
@@ -585,6 +629,7 @@ describe("order integration test", () => {
     it("should select season")
 
     it("should create dynamic", async () => {
+        await page.reload()
         await page.evaluate(() => {
             $("#navbarSupportedContent > ul > li:nth-child(2) > a").click()
             

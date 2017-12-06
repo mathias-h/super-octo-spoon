@@ -24,14 +24,6 @@ module.exports.createApp = function createApp({
         hbs.registerPartial("createConsultant", require("fs").readFileSync(__dirname + "/views/admin/createConsultant.hbs").toString());
         hbs.registerPartial("createSeason", require("fs").readFileSync(__dirname + "/views/admin/createSeason.hbs").toString());
 
-        hbs.registerHelper("objectIter", function(obj, options) {
-            let out = ""
-            for (const [key, val] of Object.entries(obj)) {
-                out += options.fn({ key, val })
-            }
-            console.log(out)
-            return out
-        });
         hbs.registerHelper("equals", function (a, b, options) {
            if (a === b){
                return options.fn()
@@ -240,27 +232,26 @@ module.exports.createApp = function createApp({
     });
 
     app.post("/consultant", function (req, res) {
-
-        if(!session.isAdmin){
+        if(!req.session.isAdmin){
             res.status(403).send('Must be admin to create consultants');
+            return;
         }
 
         Consultant.createConsultant(req.body)
             .then(function (response) {
-                //console.log(response);
                 res.json({status: "OK", message: "Consultant created."});
             })
             .catch(function (error) {
-                //console.log(error);
+                console.error(error);
                 res.json({status: "ERROR", message: "Could not create consultant."});
             });
 
     });
 
     app.put('/consultant/:consultantId', function (req, res) {
-
-        if(!session.isAdmin){
+        if(!req.session.isAdmin){
             res.status(403).send('Must be admin to edit consultants');
+            return;
         }
 
         Consultant.updateConsultant(req.params.consultantId, req.body)
@@ -273,18 +264,17 @@ module.exports.createApp = function createApp({
     });
 
     app.delete('/consultant/:consultantId', function (req, res) {
-
-        if(!session.isAdmin){
+        if(!req.session.isAdmin){
             res.status(403).send('Must be admin to delete consultants');
+            return;
         }
 
         Consultant.deleteConsultant(req.params.consultantId)
             .then(function (result) {
-                console.log(result);
                 res.json({status: "OK", message: "Consultant deleted."});
             })
             .catch(function (error) {
-                console.log(error);
+                console.error(error);
                 res.status(500).end("ERROR");
             });
     });
@@ -300,9 +290,6 @@ module.exports.createApp = function createApp({
 
         Consultant.matchPasswords(req.body.name, req.body.password)
             .then(function (result) {
-                //console.log("DEBUG: route then()");
-                //console.log(result);
-
                 if(result.status){
                     const sess = req.session;
 

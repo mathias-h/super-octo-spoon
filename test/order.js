@@ -21,8 +21,18 @@ describe("order", () => {
     let Dynamic
 
     async function createOrder(data = {}) {
-        const d = {
-            season: mongoose.Types.ObjectId(),
+        let season
+
+        if (!data.season) {
+            season = new Season({
+                name: "SEASON",
+                default: true
+            })
+            await season.save()
+            season = season._id
+        }
+            const d = {
+            season: season,
             consultant: mongoose.Types.ObjectId(),
             signedDate: new Date("1970-01-01"),
             name: "NAME",
@@ -175,8 +185,6 @@ describe("order", () => {
 
             const newOrder = await Order.findById(order._id)
 
-            console.log(newOrder.log)
-
             expect(newOrder.log.length).to.eq(0)
         })
 
@@ -253,16 +261,19 @@ describe("order", () => {
             const newOrder = await Order.findById(order._id)
             const log = newOrder.log[0]
 
+            expect(newOrder.consultant.toHexString()).to.eq(consultant1._id.toHexString())
             expect(log.changes.consultant).to.eq(consultant1.name)
         })
 
         it("should handle log season", async () => {
             const season = new Season({
-                season: "SEASON"
+                season: "SEASON",
+                default: false
             })
             await season.save()
             const season1 = new Season({
-                season: "SEASON1"
+                season: "SEASON1",
+                default: false
             })
             await season1.save()
             
@@ -285,7 +296,47 @@ describe("order", () => {
             const newOrder = await Order.findById(order._id)
             const log = newOrder.log[0]
 
+            expect(newOrder.season.toHexString()).to.eq(season1._id.toHexString())
             expect(log.changes.season).to.eq(season1.season)
+        })
+
+        it("should handle log sendBy", async () => {
+            const consultant = new Consultant({
+                name: "CONSULTANT",
+                password: "PASS",
+                isAdmin: false,
+                dummy: false
+            })
+            await consultant.save()
+            const consultant1 = new Consultant({
+                name: "CONSULTANT1",
+                password: "PASS",
+                isAdmin: false,
+                dummy: false
+            })
+            await consultant1.save()
+            const order = await createOrder({ sendBy: consultant._id })
+
+            await Order.editOrder({
+                _id: order._id,
+                season: order.season,
+                consultant: order.consultant,
+                signedDate: new Date("1970-01-01"),
+                name: "NAME",
+                farmName: "FARM_NAME",
+                address: {
+                    city: "CITY",
+                    zip: 9999,
+                    street: "STREET"
+                },
+                sendBy: consultant1._id
+            });
+
+            const newOrder = await Order.findById(order._id)
+            const log = newOrder.log[0]
+
+            expect(newOrder.sendBy.toHexString()).to.eq(consultant1._id.toHexString())
+            expect(log.changes.sendBy).to.eq(consultant1.name)
         })
 
         it("should not log null values", async () => {
@@ -467,6 +518,11 @@ describe("order", () => {
         })
   
         it("should sort asc", async () => {
+            const season = new Season({
+                name: "SEASON",
+                default: true
+            })
+            await season.save()
             const consultant = new Consultant({
                 name: "CONSULTANT",
                 password: "PASS",
@@ -476,19 +532,27 @@ describe("order", () => {
             await consultant.save()
             const order = await createOrder({
                 name: "B",
-                consultant: consultant._id
+                consultant: consultant._id,
+                season: season._id
             })
             const order1 = await createOrder({
                 name: "A",
-                consultant: consultant._id
+                consultant: consultant._id,
+                season: season._id
             })
 
             const results = await Order.getAll({ sortBy: "name", order: "asc" })
 
+            expect(results.length).to.eq(2)
             expect(results[1]._id.toHexString()).to.eq(order._id.toHexString())
             expect(results[0]._id.toHexString()).to.eq(order1._id.toHexString())
         })
-        it("should sort asc", async () => {
+        it("should sort desc", async () => {
+            const season = new Season({
+                name: "SEASON",
+                default: true
+            })
+            await season.save()
             const consultant = new Consultant({
                 name: "CONSULTANT",
                 password: "PASS",
@@ -498,19 +562,27 @@ describe("order", () => {
             await consultant.save()
             const order = await createOrder({
                 name: "A",
-                consultant: consultant._id
+                consultant: consultant._id,
+                season: season._id
             })
             const order1 = await createOrder({
                 name: "B",
-                consultant: consultant._id
+                consultant: consultant._id,
+                season: season._id
             })
 
             const results = await Order.getAll({ sortBy: "name", order: "desc" })
 
+            expect(results.length).to.eq(2)
             expect(results[1]._id.toHexString()).to.eq(order._id.toHexString())
             expect(results[0]._id.toHexString()).to.eq(order1._id.toHexString())
         })
         it("should sort by signed date by default", async () => {
+            const season = new Season({
+                name: "SEASON",
+                default: true
+            })
+            await season.save()
             const consultant = new Consultant({
                 name: "CONSULTANT",
                 password: "PASS",
@@ -520,11 +592,13 @@ describe("order", () => {
             await consultant.save()
             const order = await createOrder({
                 signedDate: new Date("1970-01-01"),
-                consultant: consultant._id
+                consultant: consultant._id,
+                season: season._id
             })
             const order1 = await createOrder({
                 signedDate: new Date("1970-01-02"),
-                consultant: consultant._id
+                consultant: consultant._id,
+                season: season._id
             })
 
             const results = await Order.getAll({})

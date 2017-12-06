@@ -79,14 +79,35 @@ const Order = new Schema({
             ref: "Consultant"
         }
     }],
-    dynamics: Object
+    dynamics: Object,
+    sendToFarmer: Date,
+    sendBy: {
+        type: Schema.Types.ObjectId,
+        ref: "Consultant"
+    },
+    contactFarmer: Boolean,
+    wantsMap: Boolean,
+    appointments: String,
+    mapSendToFarmer: Date,
+    mapSendToMachineStation: Date,
+    fields: Number,
+    areaMap: Number
 }, { strict: true });
 
 Order.statics.editOrder = async function updateOrder(order, consultantId) {
-    order = (await new this(order).populate("consultant", "name").populate("season", "season").execPopulate())._doc
-    const oldOrder = (await this.findOne({ _id: order._id }).populate("consultant", "name").populate("season", "season").exec())._doc
+    order = (await new this(order)
+        .populate("consultant", "name")
+        .populate("season", "season")
+        .populate("sendBy", "name")
+        .execPopulate())._doc
+    const oldOrder = (await this.findOne({ _id: order._id })
+        .populate("consultant", "name")
+        .populate("season", "season")
+        .populate("sendBy", "name")
+        .exec())._doc
     let consultantIdChange
     let seasonId
+    let sendById
 
     delete oldOrder.__v
     delete oldOrder.log
@@ -102,6 +123,11 @@ Order.statics.editOrder = async function updateOrder(order, consultantId) {
     if (changes.season) {
         seasonId = order.season._doc._id.toHexString()
         changes.season = order.season._doc.season
+    }
+
+    if (changes.sendBy) {
+        sendById = order.sendBy._doc._id.toHexString()
+        changes.sendBy = order.sendBy._doc.name
     }
 
     delete changes._id
@@ -147,6 +173,9 @@ Order.statics.editOrder = async function updateOrder(order, consultantId) {
     if (changes.season) {
         changes.season = seasonId
     }
+    if (changes.sendBy) {
+        changes.sendBy = sendById
+    }
 
     return this.findOneAndUpdate({ _id: order._id }, update)
 }
@@ -189,30 +218,36 @@ Order.statics.sampleTotals = async function sampleTotals() {
 }
 
 Order.statics.getAll = async function getAll({query, sortBy="date", order, season}) {
-    var seasonID = (await this.model("Season").findOne({season: season||"17/18"}))
-    let orders = await this.find({season: seasonID}).lean()
+    const seasonQuery = {}
+    if (season) {
+        seasonQuery.season = season
+    } else {
+        seasonQuery.default = true
+    }
+    var season = (await this.model("Season").findOne(seasonQuery))
+    let orders = await this.find({ season: season ? season._id : null }).lean()
         .populate('consultant', "name")
         .populate('season', "season")
-        .exec()
+        .exec();
 
-    if (!query & !order){
+    if (!query && !order){
         order = "desc";
     }
 
     orders = search(orders, query).map(o => {
-        let fase = 1
+        let fase = 1;
 
-        if (o.mapDate) fase = 2
+        if (o.mapDate) fase = 2;
 
-        o.fase = fase
+        o.fase = fase;
 
-        return o
-    })
+        return o;
+    });
 
     return sort(orders, sortBy, order).map(o => {
-        o.signedDate = moment(o.signedDate).format("DD-MM-YYYY")
-        return o
-    })
+        o.signedDate = moment(o.signedDate).format("DD-MM-YYYY");
+        return o;
+    });
 }
 
 module.exports.Order = Order

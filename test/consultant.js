@@ -32,7 +32,7 @@ describe("consultant tests", () => {
     }
 
     before(async () => {
-        const dataPath = __dirname + '/test-data-consultant';
+        const dataPath = __dirname + '/test-data';
         rimraf.sync(dataPath);
         fs.mkdirSync(dataPath);
 
@@ -49,9 +49,8 @@ describe("consultant tests", () => {
     after(async () => {
         await mongoose.disconnect();
         await db.kill();
-        const dataPath = __dirname + '/test-data-consultant';
+        const dataPath = __dirname + '/test-data';
         rimraf.sync(dataPath);
-
     });
 
     beforeEach(async () => {

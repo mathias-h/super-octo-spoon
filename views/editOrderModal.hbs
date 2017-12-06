@@ -237,12 +237,12 @@
                         <div class="tab-pane" id="fase3" role="tabpanel" aria-labelledby="Fase3Tab">
                             <div class="form-row">
                                 <div class="col-4 form-group">
-                                    <label for="editInputSentToFarmDate">Udsendt til landmand dato</label>
-                                    <input name="sentToFarmDate" type="date" id="editInputSentToFarmDate" class="form-control">
+                                    <label for="inputSendToFarmer">Udsendt til landmand dato</label>
+                                    <input name="sendToFarmer" type="date" id="inputSendToFarmer" class="form-control">
                                 </div>
                                 <div class="col-4 form-group">
-                                    <label for="editInputSentBy">Udsendt af:</label>
-                                    <select name="sentBy" id="editInputSentBy" class="form-control">
+                                    <label for="inputSendBy">Udsendt af:</label>
+                                    <select name="sendBy" id="inputSendBy" class="form-control">
                                         {{#each consultants}}
                                             <option value="{{this._id}}">{{this.name}}</option>
                                         {{/each}}
@@ -250,37 +250,37 @@
                                 </div>
                                 <div class="col-4 form-group">
                                     <div class="ml-3" style="line-height: 0; margin-bottom: 0; margin-top: 32px;">
-                                        <label for="editInputContactFarmer">
-                                            <input name="contactFarmer" type="checkbox" id="editInputContactFarmer">
+                                        <label for="inputContactFarmer">
+                                            <input name="contactFarmer" type="checkbox" id="inputContactFarmer">
                                             Landmand kontaktes</label>
-                                        <label for="inputApplicationMap">
-                                            <input name="applicationMap" type="checkbox" id="inputApplicationMap">
+                                        <label for="inputWantsMap">
+                                            <input name="wantsMap" type="checkbox" id="inputWantsMap">
                                             Ønkes tildelingskort?</label>
                                     </div>
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="col-4 form-group">
-                                    <label for="editInputRemarksAndComments">Bemærkninger & aftaler</label>
-                                    <textarea name="remarksAndComments" id="editInputRemarksAndComments" class="form-control" rows="4" style="min-height: 74px"></textarea>
+                                    <label for="inputAppointments">Bemærkninger &amp; aftaler</label>
+                                    <textarea name="appointments" id="inputAppointments" class="form-control" rows="4" style="min-height: 74px"></textarea>
                                 </div>
                                 <div class="col-4 form-group">
-                                    <label for="editInputSentToFarm">Sendt til landmand</label>
-                                    <input name="sentToFarm" type="date" id="editInputSentToFarm" class="form-control">
-                                    <label for="editInputSentToPit">Sendt til maskinstation</label>
-                                    <input name="sentToPit" type="date" id="editInputSentToPit" class="form-control">
+                                    <label for="inputMapSendToFarmer">Sendt til landmand</label>
+                                    <input name="mapSendToFarmer" type="date" id="inputMapSendToFarmer" class="form-control">
+                                    <label for="inputSendToMachineStation">Sendt til maskinstation</label>
+                                    <input name="mapSendToMachineStation" type="date" id="inputSendToMachineStation" class="form-control">
                                 </div>
                                 <div class="col-4 form-group">
-                                    <label for="editInputAssignedFields">Tildelte marker på kort</label>
-                                    <div class="input-group" id="editInputAssignedFields">
-                                        <input name="assignedFields" type="number" min="0" id="editInputAssignedFields"
+                                    <label for="inputFields">Tildelte marker på kort</label>
+                                    <div class="input-group">
+                                        <input name="fields" type="number" min="0" id="inputFields"
                                                class="form-control" placeholder="Antal marker">
                                         <span class="input-group-addon">marker</span>
                                     </div>
-                                    <label for="editInputAssignedHectare">Antal ha</label>
-                                    <div class="input-group" id="editInputAssignedHectare">
-                                        <input name="AssignedHectare" type="number" min="0"
-                                               id="editInputAssignedHectare"
+                                    <label for="inputAreaMap">Antal ha</label>
+                                    <div class="input-group">
+                                        <input name="areaMap" type="number" min="0"
+                                               id="inputAreaMap"
                                                class="form-control" placeholder="Antal ha">
                                         <span class="input-group-addon">ha</span>
                                     </div>
@@ -288,8 +288,6 @@
                                 <div class="col-4 form-group">
                                     <div class="form group ml-3"
                                          style="line-height: 0; margin-bottom: 0; margin-top: 32px;"></div>
-                                    <!--TODO samme som linie 271??? label for="editInputSentToPit">Sendt til Maskinstation</label>
-                                    <input name="sentToPit" type="date" id="editInputSentToPit" class="form-control"-->
                                 </div>
                             </div>
                             <div class="dynamic fase-3"></div>

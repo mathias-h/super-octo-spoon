@@ -83,7 +83,7 @@ window.addEventListener('load', function() {
                 headers: {
                     "content-type": "application/json"
                 }
-            }).then(location.reload());
+            }).then(() => location.reload());
         }
 
         form.classList.add('was-validated');

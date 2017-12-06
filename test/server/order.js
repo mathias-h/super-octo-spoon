@@ -83,7 +83,6 @@ describe("Order server tests", () => {
             editOrder(o, uid) {
                 expect(o).to.deep.eq(order)
                 expect(uid).to.eq(consultantId)
-                console.log()
                 return Promise.resolve()
             }
         };
@@ -129,9 +128,15 @@ describe("Order server tests", () => {
                     return Promise.resolve();
                 }
             };
+            const ConsultantMock = {
+                findOne(q) {
+                    return Promise.resolve({ _id: "USER_ID" })
+                }
+            }
 
             const app = createApp({
                 Order: OrderMock,
+                Consultant: ConsultantMock,
                 session: sessionMock()
             });
 
@@ -153,9 +158,15 @@ describe("Order server tests", () => {
                     return Promise.reject();
                 }
             };
+            const ConsultantMock = {
+                findOne(q) {
+                    return Promise.resolve({ _id: "USER_ID" })
+                }
+            }
 
             const app = createApp({
                 Order: OrderMock,
+                Consultant: ConsultantMock,
                 session: sessionMock()
             });
 
@@ -176,9 +187,15 @@ describe("Order server tests", () => {
                     return Promise.reject();
                 }
             };
+            const ConsultantMock = {
+                findOne(q) {
+                    return Promise.resolve({ _id: "USER_ID" })
+                }
+            }
 
             const app = createApp({
                 Order: OrderMock,
+                Consultant: ConsultantMock,
                 session: sessionMock()
             });
 

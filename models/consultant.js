@@ -158,11 +158,8 @@ Consultant.statics.matchPasswords = async function (name, password) {
                 });
             }
         }).catch(function (error) {
-            console.log(error);
-            return {
-                    status: false,
-                    error: error
-                    };
+            console.error(error);
+            return { status: false, error: error };
         });
 
 };
