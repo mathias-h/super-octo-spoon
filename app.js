@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const express = require("express");
 const session = require('express-session');
 const hbs = require("hbs");
+const { MongoError } = require("mongodb")
 
 module.exports.createApp = function createApp({
     Order,
@@ -53,14 +54,11 @@ module.exports.createApp = function createApp({
         resave: false,
         saveUninitialized: false,
         isLoggedIn: false,
+        id: null,
         name: null,
         consultantId: null,
         isAdmin: false
     }));
-
-    app.use(function(req) {
-        console.log(req.method);
-    })
 
     // Default session check for all requests to this app
     app.use(function (req, res, next) {
@@ -80,16 +78,11 @@ module.exports.createApp = function createApp({
                 res.redirect('/login');
             }
         }
-        if(method === 'POST' && isLoggedIn && url === '/login'){
-            // respond with successful login or already logged in?
-            res.status(200).send('Successfully logged in');
-        }
-        else if (isLoggedIn) {
+        else if ((!isLoggedIn && method === 'POST' && url === '/login') || isLoggedIn) {
             next();
         }
         else{
-            // respond with not authorized?
-            res.status(401).send('Not autorized.');
+            res.status(401).end('Not autorized.');
         }
     });
 
@@ -205,52 +198,74 @@ module.exports.createApp = function createApp({
 
     app.post("/consultant", function (req, res) {
 
-        if(!session.isAdmin){
-            res.status(403).send('Must be admin to create consultants');
-        }
+        const sess = req.session;
 
-        Consultant.createConsultant(req.body)
-            .then(function (response) {
-                //console.log(response);
-                res.json({status: "OK", message: "Consultant created."});
-            })
-            .catch(function (error) {
-                //console.log(error);
-                res.json({status: "ERROR", message: "Could not create consultant."});
-            });
+        if(!sess.isAdmin){
+            res.status(403).send('Must be admin to create consultants.');
+        }
+        else {
+            Consultant.createConsultant(req.body)
+                .then(function (response) {
+                    console.log(response);
+                    res.status(200).end("Consultant created.");
+                })
+                .catch(function (error) {
+
+                    console.log(error);
+
+                    if (error instanceof MongoError && error.code === 11000){
+                        res.status(409).end('Username already in use.');
+                    }
+                    else {
+                        res.status(500).end('Unknown error.');
+                    }
+                });
+        }
 
     });
 
     app.put('/consultant/:consultantId', function (req, res) {
 
-        if(!session.isAdmin){
-            res.status(403).send('Must be admin to edit consultants');
-        }
+        const sess = req.session;
 
-        Consultant.updateConsultant(req.params.consultantId, req.body)
-            .then(function (response) {
-                res.json({status: "OK", message: "Consultant updated."});
-            })
-            .catch(function (error) {
-                res.status(500).end("ERROR");
-            });
+        if(!sess.isAdmin){
+            res.status(403).send('Must be admin to edit consultants.');
+        }
+        else if(req.params.consultantId === sess.id && req.body.isAdmin === false){
+            res.status(403).end('Cannot remove admin privileges from yourself.');
+        }
+        else{
+            Consultant.updateConsultant(req.params.consultantId, req.body)
+                .then(function (response) {
+                    res.status(200).end("Consultant updated.");
+                })
+                .catch(function (error) {
+                    res.status(500).end("Unknown error.");
+                });
+        }
     });
 
     app.delete('/consultant/:consultantId', function (req, res) {
 
-        if(!session.isAdmin){
-            res.status(403).send('Must be admin to delete consultants');
+        const sess = req.session;
+
+        if(!sess.isAdmin){
+            res.status(403).send('Must be admin to delete consultants.');
+        }
+        else if(req.params.consultantId === sess.id){
+            res.status(403).end('Cannot delete yourself.');
+        }
+        else{
+            Consultant.deleteConsultant(req.params.consultantId)
+                .then(function () {
+                    res.json({status: "OK", message: "Consultant deleted."});
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    res.status(500).end("Unknown error.");
+                });
         }
 
-        Consultant.deleteConsultant(req.params.consultantId)
-            .then(function (result) {
-                console.log(result);
-                res.json({status: "OK", message: "Consultant deleted."});
-            })
-            .catch(function (error) {
-                console.log(error);
-                res.status(500).end("ERROR");
-            });
     });
 
     app.get('/login', (req, res) =>{
@@ -259,8 +274,8 @@ module.exports.createApp = function createApp({
 
     app.post('/login', function (req, res) {
 
-        const MSG_LOGIN_OK = 'Successfully logged in';
-        const MSG_LOGIN_ERROR = 'Could not login';
+        const MSG_LOGIN_OK = 'Successfully logged in.';
+        const MSG_LOGIN_ERROR = 'Could not login.';
 
         if(req.session.isLoggedIn){
             res.status(200).end(MSG_LOGIN_OK);
@@ -268,13 +283,12 @@ module.exports.createApp = function createApp({
 
         Consultant.matchPasswords(req.body.name, req.body.password)
             .then(function (result) {
-                //console.log("DEBUG: route then()");
-                //console.log(result);
 
                 if(result.status){
                     const sess = req.session;
 
                     sess.isLoggedIn = true;
+                    sess.id = result.id;
                     sess.name = result.consultant.name;
                     sess.consultantId = result.consultant.id;
                     sess.isAdmin = result.consultant.isAdmin;
@@ -286,7 +300,7 @@ module.exports.createApp = function createApp({
                 }
             })
             .catch(function (error) {
-                res.status(500).end('Unknown error');
+                res.status(500).end('Unknown error.');
             });
     });
 
