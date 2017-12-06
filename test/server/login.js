@@ -295,7 +295,7 @@ describe('Login/session testing', function () {
         }
 
         describe('POST /consultant', function () {
-            it('should redirect to /login', function () {
+            it('should respond with http status 401', function () {
 
                 const consultant = {
                     name: "testConsultant",
@@ -309,11 +309,7 @@ describe('Login/session testing', function () {
                 return request(app)
                     .post('/consultant')
                     .send(consultant)
-                    .expect(302)
-                    .expect('Found. Redirecting to /login')
-                    .then(function (res) {
-                        expect(res.header.location).to.eq('/login');
-                    })
+                    .expect(401);
 
             });
         });
@@ -340,14 +336,6 @@ describe('Login/session testing', function () {
 
                     const validPassword = 'testPassword';
 
-                    /*return Promise.resolve({
-                        status: 'OK',
-                        consultant : {
-                            name: consultant.name,
-                            isAdmin: false
-                        }
-                    });*/
-
                     if(password === validPassword){
 
                         return Promise.resolve({
@@ -368,7 +356,7 @@ describe('Login/session testing', function () {
                 }
             };
 
-            it('should respond with OK status if correct credentials is supplied', function () {
+            it('should respond with http status 200 if correct credentials is supplied', function () {
 
                 const app = createApp({
                     session: sessionMock(),
@@ -379,11 +367,11 @@ describe('Login/session testing', function () {
                     .post('/login')
                     .send(consultant)
                     .expect(200)
-                    .expect({status: 'OK'});
+                    .expect('Successfully logged in')
 
             });
 
-            it('should respond with INCORRECT_CREDENTIALS status if incorrect credentials is supplied', function () {
+            it('should respond with http status 401 if incorrect credentials is supplied', function () {
 
                 consultant.password = 'incorrecttestPassword';
 
@@ -395,8 +383,8 @@ describe('Login/session testing', function () {
                 return request(app)
                     .post('/login')
                     .send(consultant)
-                    .expect(200)
-                    .expect({status: "INCORRECT_CREDENTIALS", message: "Forkert brugernavn eller kodeord."});
+                    .expect(401)
+                    .expect('Could not login');
             });
 
         });
@@ -420,7 +408,7 @@ describe('Login/session testing', function () {
             }
         }
 
-        describe('PUT /consultant', function () {
+        describe('PUT /consultant/:consultantId', function () {
             it('should redirect to /login', function () {
 
                 const consultant = {
@@ -432,14 +420,14 @@ describe('Login/session testing', function () {
                     session: sessionMock()
                 });
 
+                const consultantId = "testId";
+
                 return request(app)
-                    .post('/consultant')
+                    .put('/consultant/' + consultantId)
                     .send(consultant)
-                    .expect(302)
-                    .expect('Found. Redirecting to /login')
-                    .then(function (res) {
-                        expect(res.header.location).to.eq('/login');
-                    });
+                    .expect(401)
+                    .expect('Not autorized.');
+
             });
         });
     });
@@ -450,5 +438,5 @@ describe('Login/session testing', function () {
     TODO
     login
     delete Order
-    admin check ved crud af konsulent - faktisk hele admin menuen - sal måske gøre serverside
+    admin check ved crud af konsulent - faktisk hele admin menuen - skal måske gøre serverside
  */
