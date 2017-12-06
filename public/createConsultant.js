@@ -17,6 +17,9 @@ function convertFormToObject(form) {
 }
 
 window.addEventListener('load', function() {
+    const form = document.getElementById('createConsultantForm');
+    if (!form) return
+
     $("#createConsultantCancel").click(() => {
         clearCreateConsultant();
     });
@@ -66,7 +69,6 @@ window.addEventListener('load', function() {
         matchPasswords();
     });
 
-    const form = document.getElementById('createConsultantForm');
     form.addEventListener('submit', function(event) {
         event.preventDefault();
         event.stopPropagation();
@@ -88,5 +90,4 @@ window.addEventListener('load', function() {
 
         form.classList.add('was-validated');
     }, false);
-
 });

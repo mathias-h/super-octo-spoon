@@ -2,11 +2,14 @@
 
 window.addEventListener('load', function () {
 
+    
+    const form = document.getElementById('createSeasonForm')
+    if (!form) return
+
     $("#createSeasonCancel").click(() => {
         $("#seasonInput").val("");
     });
 
-    const form = document.getElementById('createSeasonForm')
     form.addEventListener('submit', function (event) {
         event.preventDefault();
         event.stopPropagation();

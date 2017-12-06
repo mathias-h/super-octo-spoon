@@ -83,6 +83,7 @@ module.exports.createApp = function createApp({
     app.get("/", async (req,res) => {
         try {
             const { totalSamples, totalTaken } = await Order.sampleTotals();
+            const consultant = await Consultant.findById(req.session.consultantId);
             const orders = await Order.getAll(req.query);
             const consultants = await Consultant.find({});
             const seasons = await Season.find({});
@@ -96,7 +97,8 @@ module.exports.createApp = function createApp({
                 selectedSeason: req.query.season,
                 consultants,
                 seasons,
-                dynamics
+                dynamics,
+                consultant
             };
             res.render("overview", data);
         } catch(err) {
@@ -163,6 +165,7 @@ module.exports.createApp = function createApp({
                 res.send("season created")
             })
             .catch(function (err) {
+                console.error(err);
                 res.status(400).end("seasonal error")
             })
     });
