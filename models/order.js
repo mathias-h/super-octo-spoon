@@ -1,4 +1,5 @@
 const { Schema, Types } = require("mongoose");
+const mongoose = require("mongoose");
 const { sort } = require("./sort");
 const { search } = require("./search");
 const moment = require("moment");
@@ -12,7 +13,7 @@ const Order = new Schema({
     },
     consultant: {
         type: Schema.Types.ObjectId,
-        ref: 'User',
+        ref: 'Consultant',
         required: true
     },
     signedDate: {
@@ -75,16 +76,16 @@ const Order = new Schema({
         changes: Object,
         consultant: {
             type: Schema.Types.ObjectId,
-            ref: "User"
+            ref: "Consultant"
         }
     }],
     dynamics: Object
 }, { strict: true });
 
-Order.statics.editOrder = async function updateOrder(order, userId) {
-    order = (await new this(order).populate("consultant", "username").populate("season", "season").execPopulate())._doc
-    const oldOrder = (await this.findOne({ _id: order._id }).populate("consultant", "username").populate("season", "season").exec())._doc
-    let consultantId
+Order.statics.editOrder = async function updateOrder(order, consultantId) {
+    order = (await new this(order).populate("consultant", "name").populate("season", "season").execPopulate())._doc
+    const oldOrder = (await this.findOne({ _id: order._id }).populate("consultant", "name").populate("season", "season").exec())._doc
+    let consultantIdChange
     let seasonId
 
     delete oldOrder.__v
@@ -94,8 +95,8 @@ Order.statics.editOrder = async function updateOrder(order, userId) {
     const changes = diff(oldOrder, order)
 
     if (changes.consultant) {
-        consultantId = order.consultant._doc._id.toHexString()
-        changes.consultant = order.consultant._doc.username
+        consultantIdChange = order.consultant._doc._id.toHexString()
+        changes.consultant = order.consultant._doc.name
     }
 
     if (changes.season) {
@@ -133,7 +134,7 @@ Order.statics.editOrder = async function updateOrder(order, userId) {
     if (Object.keys(logChanges).length > 0) {
         const newLog = {
             time: moment(new Date()).startOf("minute").toDate(),
-            consultant: userId,
+            consultant: consultantId,
             changes: logChanges
         }
 
@@ -141,7 +142,7 @@ Order.statics.editOrder = async function updateOrder(order, userId) {
     }
 
     if (changes.consultant) {
-        changes.consultant = consultantId
+        changes.consultant = consultantIdChange
     }
     if (changes.season) {
         changes.season = seasonId
@@ -149,28 +150,24 @@ Order.statics.editOrder = async function updateOrder(order, userId) {
 
     return this.findOneAndUpdate({ _id: order._id }, update)
 }
-Order.statics.createOrder = function createOrder(orderData) {
+Order.statics.createOrder = async function createOrder(orderData, userId) {
+    const dynamics = {};
+    
+    (await this.model("Dynamic").find()).forEach(({ fase, name }) => {
+        if (!dynamics.hasOwnProperty(fase)) dynamics[fase] = {};
+        dynamics[fase][name] = null;
+    });
+
     if(orderData.landlineNumber || orderData.phoneNumber) {
-        const order = new this({
-            consultant: orderData.consultant,
-            signedDate: orderData.signedDate,
-            season: orderData.season,
-            landlineNumber: orderData.landlineNumber,
-            phoneNumber: orderData.phoneNumber,
-            name: orderData.name,
-            farmName: orderData.farmName,
-            address: {
-                street: orderData.street,
-                city: orderData.city,
-                zip: orderData.zip
-            },
-            comment: orderData.comment,
-            sampleDensity: orderData.sampleDensity,
-            area: orderData.area,
-            samePlanAsLast: orderData.samePlanAsLast,
-            takeOwnSamples: orderData.takeOwnSamples
-        });
-        return order.save();
+        const log = {
+            time: moment(new Date()).startOf("minute").toDate(),
+            consultant: userId,
+            changes: JSON.parse(JSON.stringify(orderData))
+        }
+        orderData.dynamics = dynamics
+        orderData.log = [log]
+        const order = new this(orderData);
+        await order.save();
     } else {
         return Promise.reject(new Error("no landline or phone number"));
     }
@@ -191,9 +188,10 @@ Order.statics.sampleTotals = async function sampleTotals() {
     ]).exec())[0] || {}
 }
 
-Order.statics.getAll = async function getAll({query, sortBy="date", order}) {
-    let orders = await this.find().lean()
-        .populate('consultant', "username")
+Order.statics.getAll = async function getAll({query, sortBy="date", order, season}) {
+    var seasonID = (await this.model("Season").findOne({season: season||"17/18"}))
+    let orders = await this.find({season: seasonID}).lean()
+        .populate('consultant', "name")
         .populate('season', "season")
         .exec()
 

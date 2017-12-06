@@ -14,7 +14,7 @@
                             <label for="inputConsultant">Konsulent</label>
                             <select name="consultant" id="inputConsultant" class="form-control" required>
                                 {{#each consultants}}
-                                    <option value="{{this._id}}">{{this.username}}</option>
+                                    <option value="{{this._id}}">{{this.name}}</option>
                                 {{/each}}
                             </select>
                         </div>
@@ -25,7 +25,6 @@
                         <div class="col form-group">
                             <label for="orderSeason">Sæson</label>
                             <select name="season" id="orderSeason" class="form-control" required>
-                                <!-- TODO check implementation -->
                                 {{#each seasons}}
                                     <option value="{{this._id}}">Sæson {{this.season}}</option>
                                 {{/each}}

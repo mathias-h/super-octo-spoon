@@ -52,7 +52,7 @@
                                     <label for="editInputConsultant">Konsulent</label>
                                     <select name="consultant" id="editInputConsultant" class="form-control" required>
                                         {{#each consultants}}
-                                            <option value="{{this._id}}">{{this.username}}</option>
+                                            <option value="{{this._id}}">{{this.name}}</option>
                                         {{/each}}
                                     </select>
                                 </div>
@@ -61,7 +61,6 @@
                                     <input name="signedDate" type="date" id="editInputSignedDate" class="form-control"
                                            required>
                                 </div>
-                                <!-- TODO check implementation NK -->
                                 <div class="col form-group">
                                     <label for="editOrderSeason">Sæson</label>
                                     <select name="season" id="editOrderSeason" class="form-control" required>
@@ -245,7 +244,7 @@
                                     <label for="editInputSentBy">Udsendt af:</label>
                                     <select name="sentBy" id="editInputSentBy" class="form-control">
                                         {{#each consultants}}
-                                            <option value="{{this._id}}">{{this.username}}</option>
+                                            <option value="{{this._id}}">{{this.name}}</option>
                                         {{/each}}
                                     </select>
                                 </div>
@@ -289,8 +288,8 @@
                                 <div class="col-4 form-group">
                                     <div class="form group ml-3"
                                          style="line-height: 0; margin-bottom: 0; margin-top: 32px;"></div>
-                                    <label for="editInputSentToPit">Sendt til Maskinstation</label>
-                                    <input name="sentToPit" type="date" id="editInputSentToPit" class="form-control">
+                                    <!--TODO samme som linie 271??? label for="editInputSentToPit">Sendt til Maskinstation</label>
+                                    <input name="sentToPit" type="date" id="editInputSentToPit" class="form-control"-->
                                 </div>
                             </div>
                             <div class="dynamic fase-3"></div>

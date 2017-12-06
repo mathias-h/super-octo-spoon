@@ -7,9 +7,10 @@ const rimraf = require("rimraf")
 const moment = require("moment")
 const session = require("express-session")
 
-const { Order : OrderSchema } = require("../../models/order")
-const { User : UserSchema } = require("../../models/user")
+const { Order: OrderSchema } = require("../../models/order")
+const { Consultant : ConsultantSchema } = require("../../models/consultant")
 const { Season : SeasonSchema } = require("../../models/season")
+const { Dynamic: DynamicSchema } = require("../../models/dynamic")
 const { createApp } = require("../../app")
 
 const sleep = time => new Promise(resolve => setTimeout(resolve, time))
@@ -19,8 +20,10 @@ describe("order integration test", () => {
     let db
     let browser
     let page
-    let OrderModel
-    let UserModel
+    let Order
+    let Consultant
+    let Dynamic
+    let Season
     
     before(async () => {
         const dataPath = __dirname + "/../test-data"
@@ -29,41 +32,46 @@ describe("order integration test", () => {
 
         db = childProcess.spawn("mongod", ["--port", "27018", "--dbpath", dataPath])
         
-        await sleep(500)
+        await sleep(1000)
 
         mongoose.Promise = global.Promise;
         const connection = await mongoose.createConnection("mongodb://localhost:27018/super-octo-spoon-test");
 
-        OrderModel = connection.models.Order || connection.model("Order", OrderSchema)
-        UserModel = connection.models.User || connection.model("User", UserSchema)
-        SeasonModel = connection.models.Season || connection.model("Season", SeasonSchema)
+        Order = connection.models.Order || connection.model("Order", OrderSchema)
+        Consultant = connection.models.Consultant || connection.model("Consultant", ConsultantSchema)
+        Season = connection.models.Season || connection.model("Season", SeasonSchema)
+        Dynamic = connection.models.Dynamic || connection.model("Dynamic", DynamicSchema)
 
         server = createApp({
-            Order: OrderModel,
-            User: UserModel,
-            Season: SeasonModel,
+            Order,
+            Consultant,
+            Season,
+            Dynamic,
             session
-        }).listen(1025)
+        }).listen(1025);
+
         browser = await puppeteer.launch()
 
         page = await browser.newPage()
         await page.goto("http://localhost:1025/")
 
-        await UserModel.remove({})
+        await Consultant.remove({})
 
-        const u = new UserModel({
-            username: "admin",
+        const u = new Consultant({
+            name: "admin",
             password: "pass",
             isAdmin: true,
-            isDisabled: false
+            dummy: false
         })
         await u.save()
 
         await page.evaluate(() => {
-            document.getElementById("inputUsername").value = "admin"
+            document.getElementById("inputConsultantname").value = "admin"
             document.getElementById("inputPassword").value = "pass"
             document.querySelector("button[type=submit]").click()
         })
+
+        await sleep(100);
     })
 
     after(async () => {
@@ -74,12 +82,14 @@ describe("order integration test", () => {
     })
 
     beforeEach(async () => {
-        await OrderModel.remove({})
-        await UserModel.remove({ username: { $not: /^admin$/ }})
+        await Dynamic.remove({})
+        await Season.remove({})
+        await Order.remove({})
+        await Consultant.remove({ name: { $not: /^admin$/ }})
     })
 
     it("should show orders in overview", async () => {
-        const order = new OrderModel({
+        const order = new Order({
             season: mongoose.Types.ObjectId(),
             consultant: mongoose.Types.ObjectId(),
             signedDate: new Date("2017-01-02"),
@@ -91,7 +101,7 @@ describe("order integration test", () => {
                 zip: 9999
             }
         })
-        const order1 = new OrderModel({
+        const order1 = new Order({
             season: mongoose.Types.ObjectId(),
             consultant: mongoose.Types.ObjectId(),
             signedDate: new Date("2017-01-01"),
@@ -116,24 +126,24 @@ describe("order integration test", () => {
     })
 
     it("should create order", async () => {
-        const user = new UserModel({
-            username: "USERNAME",
+        const consultant = new Consultant({
+            name: "CONSULTANTNAME",
             password: "PASSWORD",
             isAdmin: true,
-            isDisabled: false
+            dummy: false
         })
-        await user.save()
-        await new SeasonModel({
+        await consultant.save()
+        await new Season({
             season: "SEASON1"
         }).save()
-        const season = new SeasonModel({
+        const season = new Season({
             season: "SEASON"
         })
         await season.save()
 
         await page.reload()
 
-        await page.evaluate((userId, seasonId) => {
+        await page.evaluate((consultantId, seasonId) => {
             document.querySelector("#navbarSupportedContent > ul > li:nth-child(1) > a").click()
 
             const modal = document.querySelector("#createOrderModal")
@@ -144,7 +154,7 @@ describe("order integration test", () => {
                 }
 
                 modal.querySelector("#orderSeason").value = seasonId
-                modal.querySelector("#inputConsultant").value = userId
+                modal.querySelector("#inputConsultant").value = consultantId
                 modal.querySelector("#inputName").value = "NAME"
                 modal.querySelector("#inputFarmName").value = "FARM_NAME"
                 modal.querySelector("#inputStreet").value = "STREET"
@@ -158,17 +168,19 @@ describe("order integration test", () => {
                 modal.querySelector("#inputSamePlanAsLast").checked = true
                 modal.querySelector("#inputTakeOwnSamples").checked = true
 
+                console.log(modal.querySelector("button[type=submit]"))
+
                 modal.querySelector("button[type=submit]").click()
             }, 300)
-        }, user._id, season._id)
+        }, consultant._id, season._id)
 
         await sleep(500)
 
-        const orders = await OrderModel.find().lean().exec()
+        const orders = await Order.find()
         const order = orders[0]
 
         expect(order.season.toHexString()).to.eq(season._id.toHexString())
-        expect(order.consultant.toHexString()).to.eq(user._id.toHexString())
+        expect(order.consultant.toHexString()).to.eq(consultant._id.toHexString())
         expect(moment(order.signedDate).format("YYYY-MM-DD")).to.eq(moment(new Date()).format("YYYY-MM-DD"))
         expect(order.name).to.eq("NAME")
         expect(order.farmName).to.eq("FARM_NAME")
@@ -184,24 +196,35 @@ describe("order integration test", () => {
         expect(order.takeOwnSamples).to.be.true
     })
 
+    it("should show order", () => {
+        // TODO show fase 1
+        // TODO show fase 2
+        // TODO show fase 3
+        // TODO show log
+    })
+
+    it("should delete order", () => {
+        
+    })
+
     it("should edit order", async () => {
-        const consultant = new UserModel({
-            username: "CONSULTANT",
+        const consultant = new Consultant({
+            name: "CONSULTANT",
             password: "PASSWORD",
             isAdmin: false,
-            isDisabled: false
+            dummy: false
         })
-        const consultant1 = new UserModel({
-            username: "CONSULTANT1",
+        const consultant1 = new Consultant({
+            name: "CONSULTANT1",
             password: "PASSWORD",
             isAdmin: false,
-            isDisabled: false
+            dummy: false
         })
-        const season = new SeasonModel({
+        const season = new Season({
             season: "SEASON"
         })
         await season.save()
-        const season1 = new SeasonModel({
+        const season1 = new Season({
             season: "SEASON1"
         })
         await season1.save()
@@ -210,7 +233,7 @@ describe("order integration test", () => {
         await consultant1.save()
 
         const orderId = mongoose.Types.ObjectId()
-        await new OrderModel({
+        await new Order({
             _id: orderId,
             season: season._id,
             consultant: consultant._id,
@@ -278,12 +301,8 @@ describe("order integration test", () => {
                 modal.querySelector("#inputFromLabDate").value = "1970-01-02"
                 modal.querySelector("#inputMO").value = "1970-01-02"
                 modal.querySelector("#inputReceptApproved").value = "1970-01-02"
-
-                //TODO should test fase 3
-
-                //TODO should show log
-
-                //TODO should show dynamic
+                
+                // TODO should test fase 3
 
                 modal.querySelector("#orderEditSave").click()
             }, 200)
@@ -291,7 +310,7 @@ describe("order integration test", () => {
 
         await sleep(500)
 
-        const order = await OrderModel.findOne({ _id: orderId })
+        const order = await Order.findOne({ _id: orderId })
 
         expect(order.season.toHexString()).to.eq(season1._id.toHexString())
         expect(order.consultant.toHexString()).to.eq(consultant1._id.toHexString())
@@ -320,21 +339,276 @@ describe("order integration test", () => {
         expect(order.receptApproved).to.deep.eq(new Date("1970-01-02"))
     })
 
-    it("should search")
+    it("should search", async () => {
+        const consultant = new Consultant({
+            name: "CONSULTANT",
+            password: "PASS",
+            isAdmin: false
+        })
+        await consultant.save()
+        const order = new Order({
+            season: mongoose.Types.ObjectId(),
+            consultant: consultant._id,
+            signedDate: new Date("2017-01-02"),
+            name: "X",
+            farmName: "FARM_NAME",
+            address: {
+                city: "CITY",
+                street: "STREET",
+                zip: 9999
+            }
+        })
+        const order1 = new Order({
+            season: mongoose.Types.ObjectId(),
+            consultant: consultant._id,
+            signedDate: new Date("2017-01-01"),
+            name: "Y",
+            farmName: "FARM_NAME",
+            address: {
+                city: "CITY",
+                street: "STREET",
+                zip: 9999
+            }
+        })
+        await order.save();
+        await order1.save();
 
-    it("should order")
+        await page.reload();
 
-    it("should display statistics")
+        await page.evaluate(() => {
+            $("#search input").val("X")
 
-    it("should login")
+            $("#search").submit()
+        });
 
-    it("should create user")
+        await sleep(1000);
 
-    it("should update user")
+        const orderIds = await page.evaluate(() =>
+        Array.from(document.querySelectorAll("tr.order"))
+            .map(o => o.getAttribute("data-order-id")));
+
+        expect(orderIds).to.deep.eq([order._id.toHexString()]);
+
+        await page.goto("http://localhost:1025/");
+    })
+
+    it("should sort orders", async () => {
+        const consultant = new Consultant({
+            name: "CONSULTANT",
+            password: "PASS",
+            isAdmin: false
+        })
+        await consultant.save()
+        const order = new Order({
+            season: mongoose.Types.ObjectId(),
+            consultant: consultant._id,
+            signedDate: new Date("2017-01-02"),
+            name: "B",
+            farmName: "FARM_NAME",
+            address: {
+                city: "CITY",
+                street: "STREET",
+                zip: 9999
+            }
+        })
+        const order1 = new Order({
+            season: mongoose.Types.ObjectId(),
+            consultant: consultant._id,
+            signedDate: new Date("2017-01-01"),
+            name: "A",
+            farmName: "FARM_NAME",
+            address: {
+                city: "CITY",
+                street: "STREET",
+                zip: 9999
+            }
+        })
+        await order.save()
+        await order1.save()
+
+        await page.reload()
+
+        await page.evaluate(() => {
+            $("#name").click()
+        })
+
+        await sleep(1000)
+
+        const orderIds = await page.evaluate(() =>
+            Array.from(document.querySelectorAll("tr.order"))
+                .map(o => o.getAttribute("data-order-id")));
+
+        expect(orderIds).to.deep.eq([
+            order1._id.toHexString(),
+            order._id.toHexString()
+        ]);
+
+        await page.goto("http://localhost:1025/");
+    })
+
+    it("should display statistics", async () => {
+        const consultant = new Consultant({
+            name: "CONSULTANT",
+            password: "PASS",
+            isAdmin: false
+        })
+        await consultant.save()
+        const order = new Order({
+            season: mongoose.Types.ObjectId(),
+            consultant: consultant._id,
+            signedDate: new Date("2017-01-02"),
+            name: "NAME",
+            farmName: "FARM_NAME",
+            address: {
+                city: "CITY",
+                street: "STREET",
+                zip: 9999
+            },
+            cutSamples: 1,
+            mgSamples: 1,
+            otherSamples: 1,
+            area: 3
+        })
+        const order1 = new Order({
+            season: mongoose.Types.ObjectId(),
+            consultant: consultant._id,
+            signedDate: new Date("2017-01-01"),
+            name: "NAME",
+            farmName: "FARM_NAME",
+            address: {
+                city: "CITY",
+                street: "STREET",
+                zip: 9999
+            },
+            cutSamples: 1,
+            mgSamples: 1,
+            otherSamples: 1,
+            area: 3
+        })
+        await order.save()
+        await order1.save()
+
+        await page.reload()
+
+        await page.evaluate(() => {
+            $("#name").click()
+        })
+
+        await sleep(1000)
+
+        const { totalSamples, totalTaken } = await page.evaluate(() => {
+            const [_,totalSamples,totalTaken] = $("#navbar-statistics").text().match(/Prøver Udtaget: (\d+)\s*\/\s*(\d+)/).map(Number)
+            return { totalSamples, totalTaken }
+        });
+
+        expect(totalSamples).to.eq(6)
+        expect(totalTaken).to.eq(6)
+    })
+
+    it("should create consultant", async () => {
+        await page.evaluate(() => {
+            $("#navbarSupportedContent > ul > li:nth-child(2) > a").click()
+
+            const modal = document.getElementById("adminModal")
+
+            setTimeout(() => {
+                if (!modal.classList.contains("show")) {
+                    throw new Error("modal not shown")
+                }
+                
+                $("#inputCreateConsultant-consultant").val("CONSULTANT")
+                $("#inputCreateConsultant-isSuperUser").prop("checked", true)
+                $("#inputCreateConsultant-password").val("Pa55word")
+                $("#inputCreateConsultant-passwordRepeat").val("Pa55word")
+
+                $("#createConsultantForm button[type=submit]").click()
+            }, 300)
+        })
+
+        await sleep(500)
+
+        const consultant = (await Consultant.find())[1]
+
+        expect(consultant.name).to.eq("CONSULTANT")
+        expect(consultant.isAdmin).to.be.true
+        expect(consultant.dummy).to.be.false
+    })
+
+    it("should update consultant", async () => {
+        const consultant = new Consultant({
+            name: "CONSULTANT",
+            password: "PASS",
+            isAdmin: true,
+            dummy: false
+        })
+        await consultant.save()
+
+        await page.reload()
+
+        await page.evaluate(() => {
+            $("#navbarSupportedContent > ul > li:nth-child(2) > a").click()
+            
+            setTimeout(() => {
+                const modal = document.getElementById("adminModal")
+
+                if (!modal.classList.contains("show")) {
+                    throw new Error("modal not shown")
+                }
+
+                const consultants = document.querySelectorAll("#adminModal .consultant")
+                const consultant = consultants[1]
+
+                consultant.querySelector(".editConsultantName").value = "NEW_CONSULTANT_NAME"
+                consultant.querySelector(".editConsultantIsAdmin").checked = false
+                consultant.querySelector(".editConsultantPasswordBtn").click()
+                consultant.querySelector(".editConsultantPassword").value= "NEW_Pa55"
+
+                consultant.querySelector(".editConsultantSaveBtn").click()
+            }, 300)
+        })
+
+        await sleep(500)
+
+        const newConsultant = await Consultant.findById(consultant._id)
+
+        expect(newConsultant.name).to.eq("NEW_CONSULTANT_NAME")
+        expect(newConsultant.isAdmin).to.be.false
+        expect(newConsultant.password).to.not.eq(consultant.password)
+    })
 
     it("should set season")
 
     it("should create season")
 
+    it("should edit season")
+
     it("should select season")
+
+    it("should create dynamic", async () => {
+        await page.evaluate(() => {
+            $("#navbarSupportedContent > ul > li:nth-child(2) > a").click()
+            
+            setTimeout(() => {
+                const modal = document.getElementById("adminModal")
+
+                if (!modal.classList.contains("show")) {
+                    throw new Error("modal not shown")
+                }
+
+                const consultants = document.querySelectorAll("#adminModal .consultant")
+                const consultant = consultants[0]
+
+                consultant.querySelector(".editConsultantName").value = "NEW_CONSULTANT_NAME"
+                consultant.querySelector(".editConsultantIsAdmin").checked = false
+                consultant.querySelector(".editConsultantPasswordBtn").click()
+                consultant.querySelector(".editConsultantPassword").value= "NEW_Pa55"
+
+                user.querySelector(".editConsultantSaveBtn").click()
+            }, 300)
+        })
+
+        await sleep(500)
+    })
+
+    it("should delete dynamic")
 })

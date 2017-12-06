@@ -17,5 +17,5 @@ Season.statics.createSeason = function (season) {
     }
 }
 
-
 module.exports.Season = Season
+

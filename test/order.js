@@ -5,8 +5,9 @@ const childProcess = require("child_process")
 const rimraf = require("rimraf")
 const fs = require("fs")
 const { Order: OrderSchema } = require("../models/order")
-const { User: UserSchema } = require("../models/user")
+const { Consultant: ConsultantSchema } = require("../models/consultant")
 const { Season: SeasonSchema } = require("../models/season")
+const { Dynamic: DynamicSchema } = require("../models/dynamic")
 
 mongoose.Promise = global.Promise;
 
@@ -14,9 +15,10 @@ const sleep = time => new Promise(resolve => setTimeout(resolve, time))
 
 describe("order", () => {
     let db
-    let Order
-    let User
+    let Order = null
+    let Consultant
     let Season
+    let Dynamic
 
     async function createOrder(data = {}) {
         const d = {
@@ -51,9 +53,10 @@ describe("order", () => {
         mongoose.Promise = global.Promise;
         const connection = await mongoose.createConnection("mongodb://localhost:27018/super-octo-spoon");
 
-        Order = connection.models.Order || connection.model("Order", OrderSchema)
-        User = connection.models.User || connection.model("User", UserSchema)
-        Season = connection.models.Season || connection.model("Season", SeasonSchema)
+        Dynamic = connection.models.Dynamic || connection.model("Dynamic", DynamicSchema);
+        Order = connection.models.Order || connection.model("Order", OrderSchema);
+        Consultant = connection.models.Consultant || connection.model("Consultant", ConsultantSchema);
+        Season = connection.models.Season || connection.model("Season", SeasonSchema);
     })
 
     after(async () => {
@@ -63,7 +66,9 @@ describe("order", () => {
 
     beforeEach(async () => {
         await Order.remove({})
-        await User.remove({})
+        await Consultant.remove({})
+        await Dynamic.remove({})
+        await Season.remove({})
     })
 
     describe("edit order", () => {
@@ -215,18 +220,18 @@ describe("order", () => {
         })
 
         it("should handle log consultant", async () => {
-            const consultant = new User({
-                username: "CONSULTANT",
+            const consultant = new Consultant({
+                name: "CONSULTANT",
                 password: "PASS",
                 isAdmin: false,
-                isDisabled: false
+                dummy: false
             })
             await consultant.save()
-            const consultant1 = new User({
-                username: "CONSULTANT1",
+            const consultant1 = new Consultant({
+                name: "CONSULTANT1",
                 password: "PASS",
                 isAdmin: false,
-                isDisabled: false
+                dummy: false
             })
             await consultant1.save()
             const order = await createOrder({ consultant: consultant._id })
@@ -248,7 +253,7 @@ describe("order", () => {
             const newOrder = await Order.findById(order._id)
             const log = newOrder.log[0]
 
-            expect(log.consultant).to.eq(consultant1.name)
+            expect(log.changes.consultant).to.eq(consultant1.name)
         })
 
         it("should handle log season", async () => {
@@ -374,6 +379,11 @@ describe("order", () => {
     });
    
     it("should create order", async () => {
+        await new Dynamic({
+            name: "NAME",
+            fase: 1
+        }).save()
+
         const orderData = {
             season: mongoose.Types.ObjectId(),
             consultant: mongoose.Types.ObjectId(),
@@ -382,9 +392,11 @@ describe("order", () => {
             phoneNumber: "55667788",
             name: 'NAME',
             farmName: 'FARMNAME',
-            street: "STREET",
-            city: "CITY",
-            zip: 8888,
+            address: {
+                street: "STREET",
+                city: "CITY",
+                zip: 8888
+            },
             comment: 'COMMENT'
         }
         await Order.createOrder(orderData);
@@ -398,10 +410,17 @@ describe("order", () => {
         expect(newOrder.phoneNumber).to.eq(orderData.phoneNumber);
         expect(newOrder.name).to.eq(orderData.name);
         expect(newOrder.farmName).to.eq(orderData.farmName);
-        expect(newOrder.address.street).to.eq(orderData.street);
-        expect(newOrder.address.city).to.eq(orderData.city);
-        expect(newOrder.address.zip).to.eq(orderData.zip);
+        expect(newOrder.address.street).to.eq(orderData.address.street);
+        expect(newOrder.address.city).to.eq(orderData.address.city);
+        expect(newOrder.address.zip).to.eq(orderData.address.zip);
         expect(newOrder.comment).to.eq(orderData.comment);
+        expect(newOrder.dynamics).to.deep.eq({
+            "1": {
+                "NAME": null
+            }
+        })
+
+        it("should create log")
     })
 
     it("sample totals", async () => {
@@ -431,11 +450,11 @@ describe("order", () => {
 
     describe("get all", () => {
         it("should search", async () => {
-            const consultant = new User({
-                username: "CONSULTANT",
+            const consultant = new Consultant({
+                name: "CONSULTANT",
                 password: "PASS",
                 isAdmin: false,
-                isDisabled: false
+                dummy: false
             })
             await consultant.save()
             const order = await createOrder({ name: "X", consultant: consultant._id })
@@ -448,11 +467,11 @@ describe("order", () => {
         })
   
         it("should sort asc", async () => {
-            const consultant = new User({
-                username: "CONSULTANT",
+            const consultant = new Consultant({
+                name: "CONSULTANT",
                 password: "PASS",
                 isAdmin: false,
-                isDisabled: false
+                dummy: false
             })
             await consultant.save()
             const order = await createOrder({
@@ -470,11 +489,11 @@ describe("order", () => {
             expect(results[0]._id.toHexString()).to.eq(order1._id.toHexString())
         })
         it("should sort asc", async () => {
-            const consultant = new User({
-                username: "CONSULTANT",
+            const consultant = new Consultant({
+                name: "CONSULTANT",
                 password: "PASS",
                 isAdmin: false,
-                isDisabled: false
+                dummy: false
             })
             await consultant.save()
             const order = await createOrder({
@@ -492,11 +511,11 @@ describe("order", () => {
             expect(results[0]._id.toHexString()).to.eq(order1._id.toHexString())
         })
         it("should sort by signed date by default", async () => {
-            const consultant = new User({
-                username: "CONSULTANT",
+            const consultant = new Consultant({
+                name: "CONSULTANT",
                 password: "PASS",
                 isAdmin: false,
-                isDisabled: false
+                dummy: false
             })
             await consultant.save()
             const order = await createOrder({
@@ -515,11 +534,11 @@ describe("order", () => {
         })
 
         it("should format signed date", async () => {
-            const consultant = new User({
-                username: "CONSULTANT",
+            const consultant = new Consultant({
+                name: "CONSULTANT",
                 password: "PASS",
                 isAdmin: false,
-                isDisabled: false
+                dummy: false
             })
             await consultant.save()
             await createOrder({
@@ -532,11 +551,11 @@ describe("order", () => {
             expect(result.signedDate).to.eq("01-02-1970")
         })
         it("should set fase 1", async () => {
-            const consultant = new User({
-                username: "CONSULTANT",
+            const consultant = new Consultant({
+                name: "CONSULTANT",
                 password: "PASS",
                 isAdmin: false,
-                isDisabled: false
+                dummy: false
             })
             await consultant.save()
             await createOrder({
@@ -548,11 +567,11 @@ describe("order", () => {
             expect(result.fase).to.eq(1)
         })
         it("should set fase 2", async () => {
-            const consultant = new User({
-                username: "CONSULTANT",
+            const consultant = new Consultant({
+                name: "CONSULTANT",
                 password: "PASS",
                 isAdmin: false,
-                isDisabled: false
+                dummy: false
             })
             await consultant.save()
             await createOrder({

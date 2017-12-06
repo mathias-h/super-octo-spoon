@@ -53,6 +53,7 @@
 
     function f1() { console.log("function this", this) }
     const f2 = () => console.log("arrow this", this)
+    const f2 = () => ({ a: 1 })
     f1.apply({ test: 1 })
     f2.apply({ test: 1 })
 }).apply({ test: 2 });

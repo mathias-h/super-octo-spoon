@@ -5,7 +5,13 @@ const express = require("express");
 const session = require('express-session');
 const hbs = require("hbs");
 
-module.exports.createApp = function createApp({Order, User, session, Season}) {
+module.exports.createApp = function createApp({
+    Order,
+    Consultant,
+    session,
+    Season,
+    Dynamic
+}) {
     const app = express();
     app.set('view engine', 'hbs');
     
@@ -15,7 +21,7 @@ module.exports.createApp = function createApp({Order, User, session, Season}) {
         hbs.registerPartial("editOrderModal", require("fs").readFileSync(__dirname + "/views/editOrderModal.hbs").toString());
 
         hbs.registerPartial("adminModal", require("fs").readFileSync(__dirname + "/views/admin.hbs").toString());
-        hbs.registerPartial("createUser", require("fs").readFileSync(__dirname + "/views/admin/createUser.hbs").toString());
+        hbs.registerPartial("createConsultant", require("fs").readFileSync(__dirname + "/views/admin/createConsultant.hbs").toString());
         hbs.registerPartial("createSeason", require("fs").readFileSync(__dirname + "/views/admin/createSeason.hbs").toString());
 
         hbs.registerHelper("objectIter", function(obj, options) {
@@ -25,7 +31,13 @@ module.exports.createApp = function createApp({Order, User, session, Season}) {
             }
             console.log(out)
             return out
-        })
+        });
+        hbs.registerHelper("equals", function (a, b, options) {
+           if (a === b){
+               return options.fn()
+           }
+        });
+
         next()
     });
 
@@ -41,16 +53,70 @@ module.exports.createApp = function createApp({Order, User, session, Season}) {
         resave: false,
         saveUninitialized: false,
         isLoggedIn: false,
-        username: null,
-        userId: null,
+        name: null,
+        consultantId: null,
         isAdmin: false
     }));
 
     // Default session check for all requests to this app
     app.use(function (req, res, next) {
         const sess = req.session;
+        const method = req.method;
         const url = req.url;
 
+        // TODO - Skal lige bruge review/respons på nedenstående som er kommenteret ud.
+        // TODO - Burde nok blive hevet ud en en separat fil/funktion af hensyn til overskuelighed og læsbarhed.
+        /*
+        const isLoggedIn = req.session.isLoggedIn || false;
+
+        if(method === 'GET'){
+            if(isLoggedIn && url === '/login'){
+                res.redirect('/');
+            }
+            else if((isLoggedIn && url !== '/login') || (!isLoggedIn && url === '/login')){
+                next();
+            }
+            else{
+                res.redirect('/login');
+            }
+        }
+        else if(method === 'POST'){
+            if(isLoggedIn && url === '/login'){
+                // respond with successful login or already logged in?
+                res.status(200).send('Successfully logged in');
+            }
+            else if((isLoggedIn && url !== '/login') || (!isLoggedIn && url === '/login')){
+                next();
+            }
+            else{
+                // respond with not authorized?
+                res.status(401).send('Not autorized.');
+            }
+        }
+        else if(method === 'PUT'){
+            if(!isLoggedIn){
+                // respond with not authorized?
+                res.status(401).send('Not autorized.');
+            }
+            else{
+                next();
+            }
+        }
+        else if(method === 'DELETE'){
+            if(!isLoggedIn){
+                // respond with not authorized?
+                res.status(401).send('Not autorized.');
+            }
+            else{
+                next();
+            }
+        }
+        else{
+            // TODO - hvad skal der være her?
+            // respond with method not allowed?
+            res.status(405).send('Method not supported.');
+        }
+        */
         if(sess.isLoggedIn && url === '/login'){
             res.redirect('/');
         }
@@ -60,47 +126,52 @@ module.exports.createApp = function createApp({Order, User, session, Season}) {
         else{
             res.redirect('/login');
         }
+
     });
 
     // Session related stuff ends //
 
-    app.get("/", (req,res) => {
-        Order.sampleTotals().then(({ totalSamples, totalTaken }) => {
-            return Order.getAll(req.query).then(orders => {
-                return User.find({}).then(consultants => {
-                    return Season.find({}).then(seasons => {
-                        const data = {
-                            orders,
-                            totalSamples,
-                            totalTaken,
-                            query: req.query.query,
-                            consultants,
-                            seasons
-                        };
-                    res.render("overview", data);
-                    })
-                });
-            })
-        }).catch(err => {
-            console.error(err)
-            res.render("error")
-        })
+    app.get("/", async (req,res) => {
+        try {
+            const { totalSamples, totalTaken } = await Order.sampleTotals();
+            const orders = await Order.getAll(req.query);
+            const consultants = await Consultant.find({});
+            const seasons = await Season.find({});
+            const dynamics = await Dynamic.find({});
+            
+            const data = {
+                orders,
+                totalSamples,
+                totalTaken,
+                query: req.query.query,
+                selectedSeason: req.query.season,
+                consultants,
+                seasons,
+                dynamics
+            };
+            res.render("overview", data);
+        } catch(err) {
+            console.error(err);
+            res.render("error");
+        }
     });
     
-    app.post("/order", (req, res) => {
-        Order.createOrder(req.body).then(() => {
+    app.post("/order", async (req, res) => {
+        try {
+            const user = await Consultant.findOne({ _id: req.session.consultantId });
+            await Order.createOrder(req.body, user._id)
             res.send("OK");
-        }).catch(e => {
-            console.error(e)
+        } catch (error) {
+            console.error(error);
             res.status(500).end("ERROR");
-        })
+        }
     });
     
     app.get("/order/:orderId", async (req,res) => {
         const orderId = req.params.orderId;
         const order = await Order.findOne({ _id: orderId })
-            .populate("consultant", "username")
-            .populate("log.consultant", "username")
+            .populate("consultant", "name")
+            .populate("log.consultant", "name")
             .populate('season', "season")
 
         if (!order) {
@@ -116,8 +187,8 @@ module.exports.createApp = function createApp({Order, User, session, Season}) {
         const order = req.body;
 
         try {
-            const user = await User.findOne({ _id: req.session.userId });
-            await Order.editOrder(order, user._id)
+            const consultant = await Consultant.findOne({ _id: req.session.consultantId });
+            await Order.editOrder(order, consultant._id)
             res.end("OK")
         } catch (error) {
             console.error(error)
@@ -135,69 +206,110 @@ module.exports.createApp = function createApp({Order, User, session, Season}) {
             console.error(error);
             res.status(500).end("ERROR");
         }
-    })
+    });
 
     app.post("/season", function (req, res) {
-        Season.createSeason(req.body.userData)
+        Season.createSeason(req.body.consultantData)
             .then(function (response) {
-                res.json({status:"ok", message:"season created"})
+                res.send("season created")
             })
             .catch(function (err) {
-                res.json({status: "ERROR", message: "Could not create season."});
+                res.status(500).end("seasonal error")
             })
     });
 
-    app.post("/user", function (req, res) {
+    app.post("/dynamic", (req,res) => {
+        const { name, fase } = req.body;
 
-        User.createUser(req.body)
+        Dynamic.createDynamic(name, fase).then(() => {
+            res.end("OK");
+        }).catch(err => {
+            console.error(err);
+            res.status(500).end("ERROR");
+        });
+    });
+    app.delete("/dynamic/:id", (req,res) => {
+        const id = req.params.id
+
+        Dynamic.deleteDynamic(id).then(() => {
+            res.end("OK");
+        }).catch(err => {
+            console.error(err);
+            res.status(500).end("ERROR");
+        });
+    });
+
+    app.post("/consultant", function (req, res) {
+
+        if(!session.isAdmin){
+            res.status(403).send('Must be admin to create consultants');
+        }
+
+        Consultant.createConsultant(req.body)
             .then(function (response) {
                 //console.log(response);
-                res.json({status: "OK", message: "User created."});
+                res.json({status: "OK", message: "Consultant created."});
             })
             .catch(function (error) {
                 //console.log(error);
-                res.json({status: "ERROR", message: "Could not create user."});
+                res.json({status: "ERROR", message: "Could not create consultant."});
             });
 
     });
 
-    app.put('/user/:userId', function (req, res) {
+    app.put('/consultant/:consultantId', function (req, res) {
 
-        User.updateUser(req.params.userId, req.body)
+        if(!session.isAdmin){
+            res.status(403).send('Must be admin to edit consultants');
+        }
+
+        Consultant.updateConsultant(req.params.consultantId, req.body)
             .then(function (response) {
-                //console.log("DEBUG: route then()");
-                //console.log(response);
-                res.json({status: "OK", message: "User updated."});
+                res.json({status: "OK", message: "Consultant updated."});
             })
             .catch(function (error) {
-                //console.log("DEBUG: route catch()");
-                //console.log(error);
+                res.status(500).end("ERROR");
+            });
+    });
+
+    app.delete('/consultant/:consultantId', function (req, res) {
+
+        if(!session.isAdmin){
+            res.status(403).send('Must be admin to delete consultants');
+        }
+
+        Consultant.deleteConsultant(req.params.consultantId)
+            .then(function (result) {
+                console.log(result);
+                res.json({status: "OK", message: "Consultant deleted."});
+            })
+            .catch(function (error) {
+                console.log(error);
                 res.status(500).end("ERROR");
             });
     });
 
     app.get('/login', (req, res) =>{
-
         res.render('login');
     });
 
     app.post('/login', function (req, res) {
-        User.matchPasswords(req.body.username, req.body.password)
+
+        // TODO - Jeg burde måske nok sende http status koder tilbage i stedet for?
+        // 401 hvis login fejler og 200 hvis ok
+
+        Consultant.matchPasswords(req.body.name, req.body.password)
             .then(function (result) {
                 //console.log("DEBUG: route then()");
                 //console.log(result);
 
                 if(result.status){
                     const sess = req.session;
-                    // TODO Start session her
-                    //console.log("Starting session.");
 
                     sess.isLoggedIn = true;
-                    sess.username = result.user.username;
-                    sess.userId = result.user.id;
-                    sess.isAdmin = result.user.isAdmin;
-
-                    //console.log(sess);
+                    sess.name = result.consultant.name;
+                    sess.consultantId = result.consultant.id;
+                    sess.isAdmin = result.consultant.isAdmin;
 
                     res.json({status: "OK"});
                 }
