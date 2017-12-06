@@ -20,7 +20,8 @@ Season.statics.createSeason = function (season) {
         return Error("Seasonal Error")
     }else {
         return new this({
-            season: season
+            season: season,
+            default: false // TODO set default
         }).save()
     }
 }
