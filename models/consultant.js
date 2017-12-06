@@ -69,7 +69,7 @@ Consultant.pre('save', function (next) {
 });
 
 /**
- * Pre-findOnsAndUpdate hook to hash password before saving to database.
+ * Pre-findOneAndUpdate hook to hash password before saving to database.
  */
 Consultant.pre('findOneAndUpdate', function (next) {
 
@@ -169,7 +169,7 @@ Consultant.statics.matchPasswords = async function (name, password) {
  * NOTE: Properties not defined in this schema cannot be added.
  * @param consultantId - the id of the consultant to update.
  * @param consultantData - the update data.
- * @returns {Promise} - a promise containing a status and message related to that status.
+ * @returns {Query|*} - result from the query.
  */
 Consultant.statics.updateConsultant = function (consultantId, consultantData) {
 
@@ -181,32 +181,18 @@ Consultant.statics.updateConsultant = function (consultantId, consultantData) {
         $set: consultantData
     };
 
-    return this.findOneAndUpdate(condition, update, {runValidators: true})
-        .then(function (response) {
-            if(response){
-                return {status: "OK", message: "Consultant updated."};
-            } else{
-                throw new Error("Consultant not found.");
-            }
-        })
+    return this.findOneAndUpdate(condition, update, {runValidators: true});
 
 };
 
 /**
  * Creates a consultant.
  * @param consultantData - the information of the new consultant.
- * @returns {Promise|Promise.<T>|*} - a promise with a status and a message or error related to that status.
  */
 Consultant.statics.createConsultant = function (consultantData) {
     const consultant = new this(consultantData);
 
-    return consultant.save()
-        .then(function () {
-            return {status: "OK", message: "Consultant created."};
-        }).catch(function (error) {
-            console.error(error);
-            throw new Error("Could not create consultant.");
-        });
+    return consultant.save();
 };
 
 /**

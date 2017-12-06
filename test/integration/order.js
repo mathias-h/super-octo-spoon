@@ -620,7 +620,54 @@ describe("order integration test", () => {
         expect(newConsultant.password).to.not.eq(consultant.password)
     })
 
-    it("should set season")
+    it("should set season", async () => {
+        const season1718 = new Season({
+            season: "Sæson 17/18"
+        });
+        await season1718.save();
+        const season1819 = new Season({
+            season: "Sæson 18/19"
+        });
+        await season1819.save();
+        const order = new Order({
+            season: season1718._id,
+            consultant: mongoose.Types.ObjectId(),
+            signedDate: new Date("2017-01-02"),
+            name: "NAME",
+            farmName: "FARM_NAME",
+            address: {
+                city: "CITY",
+                street: "STREET",
+                zip: 9999
+            }
+        });
+        await order.save();
+        const order1 = new Order({
+            season: season1819._id,
+            consultant: mongoose.Types.ObjectId(),
+            signedDate: new Date("2017-01-01"),
+            name: "NAME",
+            farmName: "FARM_NAME",
+            address: {
+                city: "CITY",
+                street: "STREET",
+                zip: 9999
+            }
+        });
+        await order1.save();
+        await page.reload();
+        await page.evaluate((seasonId) => {
+            $("#season").val(seasonId);
+        }, season1819._id);
+
+        await sleep(500);
+
+        const orderIds = await page.evaluate(() =>
+            Array.from(document.querySelectorAll("tr.order"))
+                .map(o => o.getAttribute("data-order-id")));
+
+        expect(orderIds).to.deep.eq([order1._id.toHexString()])
+    });
 
     it("should create season")
 
