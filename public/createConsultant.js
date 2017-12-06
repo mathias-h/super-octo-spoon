@@ -1,12 +1,5 @@
 'use strict';
 
-function validatePassword(password) {
-    if (!password) return "Kodeord er ikke udfyldt."
-    if (password.length < 8) return "Kodeord er for kort."
-    if (!/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/.test(password)) return "Kode skal indeholde midst et tal, et stort og et lille bogstav."
-    return true
-}
-
 function convertFormToObject(form) {
     const data = {};
     const f = new FormData(form);
@@ -46,23 +39,64 @@ window.addEventListener('load', function() {
     var passwordRepeat = $('#inputCreateConsultant-passwordRepeat');
 
     function matchPasswords() {
-        console.log(password.val(), passwordRepeat.val())
         if (password.val() != passwordRepeat.val()) {
             passwordRepeat[0].setCustomValidity('Kodeord ikke ens');
+            passwordRepeat.addClass('is-invalid');
         } else {
             passwordRepeat[0].setCustomValidity('');
+            passwordRepeat.removeClass('is-invalid');
             const result = validatePassword(password.val());
 
-            if (result === true) password[0].setCustomValidity('');
+            console.log(result);
+            if (result === true) {
+                password[0].setCustomValidity('');
+                password.removeClass('is-invalid');
+            }
             else password[0].setCustomValidity(result);
         }
     }
 
-    $('#inputCreateConsultant-password').keyup(() => {
+    function validatePassword(passedPassword) {
+        if (!passedPassword){
+            password.addClass('is-invalid');
+            return "Kodeord er ikke udfyldt.";
+        }
+
+        if (passedPassword.length < 8) {
+            password.addClass('is-invalid');
+            return "Kodeord er for kort.";
+        }
+
+        if (!/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/.test(passedPassword)){
+            password.addClass('is-invalid');
+            return "Kode skal indeholde midst et tal, et stort og et lille bogstav.";
+        }
+
+        return true;
+    }
+
+    password.keyup(() => {
+        const result = validatePassword(password.val());
+
+        if(result !== true){
+            password[0].setCustomValidity(result);
+
+            if(password.parent().find('small').length == 1){
+                password.parent().find('small').text(result);
+            }else{
+                password.parent().append('<small class="text-danger">' + result + '</small>');
+            }
+
+        }else{
+            password[0].setCustomValidity(result);
+            password.removeClass('is-invalid');
+            password.parent().find('small').remove();
+        }
+
         matchPasswords();
     });
 
-    $('#inputCreateConsultant-passwordRepeat').keyup(() => {
+    passwordRepeat.keyup(() => {
         matchPasswords();
     });
 
@@ -83,7 +117,11 @@ window.addEventListener('load', function() {
                 headers: {
                     "content-type": "application/json"
                 }
-            }).then(location.reload());
+            })
+                .done(location.reload())
+                .catch(() => {
+                    // TODO: Error handling når server side validering fejler
+                });
         }
 
         form.classList.add('was-validated');
