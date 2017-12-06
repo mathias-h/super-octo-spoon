@@ -171,9 +171,19 @@ module.exports.createApp = function createApp({
                 res.send("season created")
             })
             .catch(function (err) {
-                res.status(500).end("seasonal error")
+                res.status(400).end("seasonal error")
             })
     });
+
+    app.put("/season/:seasonID", (req, res) => {
+        Season.updateSeason(req.params.seasonID, req.body)
+            .then(function (response) {
+                res.json({status: "OK", message: "Season updated."});
+            })
+            .catch(function (error) {
+                res.status(500).end("ERROR");
+            });
+    })
 
     app.post("/dynamic", (req,res) => {
         const { name, fase } = req.body;
