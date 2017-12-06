@@ -138,6 +138,16 @@ class EditOrderModal {
         setDate($("#inputFromLabDate"), order.fromLabDate)
         setDate($("#inputMO"), order.mO)
         setDate($("#inputReceptApproved"), order.receptApproved)
+        setDate($("#inputSendToFarmer"), order.sendToFarmer)
+        if (order.sendBy) $("#inputSendBy").val(order.sendBy._id)
+        $("#inputContactFarmer")[0].checked = order.contactFarmer
+        $("#inputWantsMap")[0].checked = order.wantsMap
+        $("#inputAppointments").val(order.appointments)
+        setDate($("#inputMapSendToFarmer"), order.mapSendToFarmer)
+        setDate($("#inputSendToMachineStation"), order.sendToMachineStation)
+        $("#inputFields").val(order.fields)
+        $("#inputAreaMap").val(order.areaMap)
+        $("#inputDone")[0].checked = order.done
     }
 
     setLog(order) {

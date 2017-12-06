@@ -659,5 +659,39 @@ describe("order", () => {
 
             expect(result.fase).to.eq(2)
         })
+        it("should set fase 3", async () => {
+            const consultant = new Consultant({
+                name: "CONSULTANT",
+                password: "PASS",
+                isAdmin: false,
+                dummy: false
+            })
+            await consultant.save()
+            await createOrder({
+                sendToFarmer: new Date("1970-01-01"),
+                consultant: consultant._id
+            })
+
+            const [result] = await Order.getAll({})
+
+            expect(result.fase).to.eq(3)
+        })
+        it("should set fase done", async () => {
+            const consultant = new Consultant({
+                name: "CONSULTANT",
+                password: "PASS",
+                isAdmin: false,
+                dummy: false
+            })
+            await consultant.save()
+            await createOrder({
+                done: true,
+                consultant: consultant._id
+            })
+
+            const [result] = await Order.getAll({})
+
+            expect(result.fase).to.eq(4)
+        })
     })
 });

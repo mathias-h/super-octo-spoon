@@ -91,7 +91,8 @@ const Order = new Schema({
     mapSendToFarmer: Date,
     mapSendToMachineStation: Date,
     fields: Number,
-    areaMap: Number
+    areaMap: Number,
+    done: Boolean
 }, { strict: true });
 
 Order.statics.editOrder = async function updateOrder(order, consultantId) {
@@ -235,9 +236,12 @@ Order.statics.getAll = async function getAll({query, sortBy="date", order, seaso
     }
 
     orders = search(orders, query).map(o => {
-        let fase = 1;
+        let fase;
 
-        if (o.mapDate) fase = 2;
+        if (o.done) fase = 4;
+        else if (o.sendToFarmer) fase = 3;
+        else if (o.mapDate) fase = 2;
+        else fase = 1;
 
         o.fase = fase;
 

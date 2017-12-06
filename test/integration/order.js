@@ -276,7 +276,8 @@ describe("order integration test", () => {
             mapSendToFarmer: new Date("1970-01-01"),
             mapSendToMachineStation: new Date("1970-01-01"),
             fields: 1,
-            areaMap: 1
+            areaMap: 1,
+            done: true
         })
         await order.save();
 
@@ -325,6 +326,7 @@ describe("order integration test", () => {
                 modal.querySelector("#inputSendToMachineStation").value = "1970-01-02"
                 modal.querySelector("#inputFields").value = 2
                 modal.querySelector("#inputAreaMap").value = 2
+                modal.querySelector("#inputDone").checked = false
 
                 modal.querySelector("#orderEditSave").click()
             }, 200)
@@ -368,6 +370,7 @@ describe("order integration test", () => {
         expect(newOrder.mapSendToMachineStation.getTime()).to.eq(new Date("1970-01-02").getTime())
         expect(newOrder.fields).to.eq(2)
         expect(newOrder.areaMap).to.eq(2)
+        expect(newOrder.done).to.eq(false)
     })
 
     it("should search", async () => {
@@ -624,10 +627,10 @@ describe("order integration test", () => {
         expect(newConsultant.password).to.not.eq(consultant.password)
     })
 
-    it.only("should set season", async () => {
+    it("should set season", async () => {
         const season1718 = new Season({
             season: "Sæson 17/18",
-            default: false
+            default: true
         });
         await season1718.save();
         const season1819 = new Season({
@@ -662,8 +665,10 @@ describe("order integration test", () => {
         });
         await order1.save();
         await page.reload();
-        await page.evaluate((seasonId) =>
-            $("#season").val(seasonId), season1819._id);
+        await page.evaluate((seasonId) => {
+            $("#season").val(seasonId)
+            $("#season")[0].dispatchEvent(new CustomEvent("change"))
+        }, season1819._id);
 
         await sleep(500);
 
