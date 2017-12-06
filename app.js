@@ -38,6 +38,12 @@ module.exports.createApp = function createApp({
                return options.fn()
            }
         });
+        hbs.registerHelper("trunkText", function(comment){
+            if(comment.length > 50){
+                comment = comment.substring(0, 50).trim() + "...";
+            }
+            return comment;
+        });
 
         next()
     });
