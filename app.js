@@ -54,7 +54,6 @@ module.exports.createApp = function createApp({
         resave: false,
         saveUninitialized: false,
         isLoggedIn: false,
-        id: null,
         name: null,
         consultantId: null,
         isAdmin: false
@@ -78,11 +77,11 @@ module.exports.createApp = function createApp({
                 res.redirect('/login');
             }
         }
-        else if ((!isLoggedIn && method === 'POST' && url === '/login') || isLoggedIn) {
+        else if ((!isLoggedIn && method === 'POST' && (url === '/login' || url === "/logout")) || isLoggedIn) {
             next();
         }
         else{
-            res.status(401).end('Not autorized.');
+            res.status(401).end('Not authorized.');
         }
     });
 
@@ -298,7 +297,6 @@ module.exports.createApp = function createApp({
                     const sess = req.session;
 
                     sess.isLoggedIn = true;
-                    sess.id = result.id;
                     sess.name = result.consultant.name;
                     sess.consultantId = result.consultant.id;
                     sess.isAdmin = result.consultant.isAdmin;
@@ -310,19 +308,25 @@ module.exports.createApp = function createApp({
                 }
             })
             .catch(function (error) {
+                console.log(error);
                 res.status(500).end('Unknown error.');
             });
     });
 
-    app.get('/logout', function (req, res) {
+    app.post('/logout', function (req, res) {
         const sess = req.session;
 
         if(sess.isLoggedIn){
             sess.destroy();
+            res.status(200).end('Logged out successfully.');
         }
-        res.redirect('/login');
+        else{
+            res.status(500).end('Could not logout.');
+        }
 
     });
+
+
 
     return app;
 };
