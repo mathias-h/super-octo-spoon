@@ -69,7 +69,7 @@ Consultant.pre('save', function (next) {
 });
 
 /**
- * Pre-findOnsAndUpdate hook to hash password before saving to database.
+ * Pre-findOneAndUpdate hook to hash password before saving to database.
  */
 Consultant.pre('findOneAndUpdate', function (next) {
 
