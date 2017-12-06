@@ -67,9 +67,6 @@ module.exports.createApp = function createApp({
         const sess = req.session;
         const method = req.method;
         const url = req.url;
-
-        // TODO - Skal lige bruge review/respons på nedenstående som er kommenteret ud.
-        // TODO - Burde nok blive hevet ud en en separat fil/funktion af hensyn til overskuelighed og læsbarhed.
         const isLoggedIn = req.session.isLoggedIn || false;
 
         if(method === 'GET'){
