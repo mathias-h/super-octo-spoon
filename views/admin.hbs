@@ -79,14 +79,14 @@
                         <thead>
                         <th>Sæson</th>
                         <th>Gem</th>
-                        <th>Default</th>
+                        <th>Gør Standard</th>
                         </thead>
                         <tbody> <!-- TODO implementer ordentligt -->
                         {{#each seasons}}
                                 <tr class="season" data-season-id="{{_id}}">
-                                    <td><input id="editSeasonInput" class="form-control" type="text" value="{{season}}" name="season" placeholder="Sæson"/></td>
-                                    <td><button id="editSeasonSaveBtn" class="btn btn-info">gem</button></td>
-                                    <td><button id="editSeasonDefaultBtn" class="btn btn-info">default</button></td>
+                                    <td><input class="form-control editSeasonInput" type="text" value="{{season}}" name="season" placeholder="Sæson"/></td>
+                                    <td><button class="btn btn-info editSeasonSaveBtn">gem</button></td>
+                                    <td><button class="btn btn-info editSeasonDefaultBtn">kør</button></td>
                                 </tr>
                         {{/each}}
                         </tbody>
