@@ -138,6 +138,7 @@ describe("consultant tests", () => {
 
         });
 
+        // TODO rewrite or remove
         it('should change activity status', async function () {
             const consultant = await Consultant.findOne();
 
@@ -183,5 +184,7 @@ describe("consultant tests", () => {
             expect(matchResult2).is.eq(true);
         });
     });
+
+    // todo - test for delete user
 
 });
