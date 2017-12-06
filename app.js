@@ -58,6 +58,10 @@ module.exports.createApp = function createApp({
         isAdmin: false
     }));
 
+    app.use(function(req) {
+        console.log(req.method);
+    })
+
     // Default session check for all requests to this app
     app.use(function (req, res, next) {
         const sess = req.session;
@@ -66,7 +70,6 @@ module.exports.createApp = function createApp({
 
         // TODO - Skal lige bruge review/respons på nedenstående som er kommenteret ud.
         // TODO - Burde nok blive hevet ud en en separat fil/funktion af hensyn til overskuelighed og læsbarhed.
-        /*
         const isLoggedIn = req.session.isLoggedIn || false;
 
         if(method === 'GET'){
@@ -80,53 +83,17 @@ module.exports.createApp = function createApp({
                 res.redirect('/login');
             }
         }
-        else if(method === 'POST'){
-            if(isLoggedIn && url === '/login'){
-                // respond with successful login or already logged in?
-                res.status(200).send('Successfully logged in');
-            }
-            else if((isLoggedIn && url !== '/login') || (!isLoggedIn && url === '/login')){
-                next();
-            }
-            else{
-                // respond with not authorized?
-                res.status(401).send('Not autorized.');
-            }
+        if(method === 'POST' && isLoggedIn && url === '/login'){
+            // respond with successful login or already logged in?
+            res.status(200).send('Successfully logged in');
         }
-        else if(method === 'PUT'){
-            if(!isLoggedIn){
-                // respond with not authorized?
-                res.status(401).send('Not autorized.');
-            }
-            else{
-                next();
-            }
-        }
-        else if(method === 'DELETE'){
-            if(!isLoggedIn){
-                // respond with not authorized?
-                res.status(401).send('Not autorized.');
-            }
-            else{
-                next();
-            }
-        }
-        else{
-            // TODO - hvad skal der være her?
-            // respond with method not allowed?
-            res.status(405).send('Method not supported.');
-        }
-        */
-        if(sess.isLoggedIn && url === '/login'){
-            res.redirect('/');
-        }
-        else if((sess.isLoggedIn && url !== '/login') || (!sess.isLoggedIn && url === '/login')){
+        else if (isLoggedIn) {
             next();
         }
         else{
-            res.redirect('/login');
+            // respond with not authorized?
+            res.status(401).send('Not autorized.');
         }
-
     });
 
     // Session related stuff ends //
@@ -295,13 +262,11 @@ module.exports.createApp = function createApp({
 
     app.post('/login', function (req, res) {
 
-        // TODO - Jeg burde måske nok sende http status koder tilbage i stedet for?
-        // 401 hvis login fejler og 200 hvis ok
-
-        // TODO - der bør nok være en test efter eksisterende gyldig session, og sende et OK eller 200 hvis så.
+        const MSG_LOGIN_OK = 'Successfully logged in';
+        const MSG_LOGIN_ERROR = 'Could not login';
 
         if(req.session.isLoggedIn){
-            res.json({status: "OK"});
+            res.status(200).end(MSG_LOGIN_OK);
         }
 
         Consultant.matchPasswords(req.body.name, req.body.password)
@@ -317,14 +282,14 @@ module.exports.createApp = function createApp({
                     sess.consultantId = result.consultant.id;
                     sess.isAdmin = result.consultant.isAdmin;
 
-                    res.json({status: "OK"});
+                    res.status(200).end(MSG_LOGIN_OK);
                 }
                 else{
-                    res.json({status: "INCORRECT_CREDENTIALS", message: "Forkert brugernavn eller kodeord."});
+                    res.status(401).end(MSG_LOGIN_ERROR);
                 }
             })
             .catch(function (error) {
-                res.status(500).end({status: "ERROR", message: "Unknown error"});
+                res.status(500).end('Unknown error');
             });
     });
 
