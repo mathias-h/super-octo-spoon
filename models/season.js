@@ -4,7 +4,11 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const Season = new Schema({
-    season: String
+    season: {
+        type: String,
+        unique: true,
+        required: true
+    }
 });
 
 Season.statics.createSeason = function (season) {
