@@ -120,8 +120,8 @@ module.exports.createApp = function createApp({
     
     app.post("/order", async (req, res) => {
         try {
-            const user = await Consultant.findOne({ _id: req.session.consultantId });
-            await Order.createOrder(req.body, user._id)
+            const consultant = await Consultant.findOne({ _id: req.session.consultantId });
+            await Order.createOrder(req.body, consultant._id)
             res.send("OK");
         } catch (error) {
             console.error(error);
@@ -322,11 +322,13 @@ module.exports.createApp = function createApp({
     app.post('/logout', function (req, res) {
         const sess = req.session;
 
-        if(sess.isLoggedIn){
-            sess.destroy();
+        try {
+            if (sess.isLoggedIn) {
+                sess.destroy();
+            }
             res.status(200).end('Logged out successfully.');
-        }
-        else{
+        } catch (error) {
+            console.log(error);
             res.status(500).end('Could not logout.');
         }
 
