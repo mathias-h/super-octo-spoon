@@ -1,14 +1,9 @@
 "use strict";
 
 const request = require('supertest');
-const testSession = require("supertest-session");
 const { expect } = require("chai");
 const { createApp } = require("../../app");
-const { Consultant: ConsultantSchema } = require("../../models/consultant.js");
 const mongoose = require("mongoose");
-const childProcess = require("child_process");
-const rimraf = require("rimraf");
-const fs = require("fs");
 
 describe('Login/session testing', function () {
 
