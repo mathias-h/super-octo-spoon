@@ -97,7 +97,10 @@ describe('Login/session testing', function () {
         describe('GET /', function () {
             it('should serve overview at /', function () {
 
-                const order = { name: "ORDER_NAME" };
+                const order = {
+                    name: "ORDER_NAME",
+                    comment: "comment"
+                };
                 const OrderMock = {
                     getAll(queryParams) {
                         return Promise.resolve([order])
@@ -142,7 +145,8 @@ describe('Login/session testing', function () {
 
                 const order = {
                     _id: id,
-                    name: 'testOrder'
+                    name: 'testOrder',
+                    comment: "comment"
                 };
                 const OrderMock = {
                     findOne: () => ({
@@ -177,7 +181,10 @@ describe('Login/session testing', function () {
 
         describe('GET /login', function () {
             it('should serve /', function () {
-                const order = { name: "ORDER_NAME" };
+                const order = {
+                    name: "ORDER_NAME",
+                    comment: "comment"
+                };
                 const OrderMock = {
                     getAll(queryParams) {
                         return Promise.resolve([order])
@@ -373,7 +380,7 @@ describe('Login/session testing', function () {
         });
 
         describe('POST /logout', function () {
-            it('should respond with http status 200 if ok logout', function () {
+            it('should respond with http status 200', function () {
 
                 let destroyCalled = false;
 
@@ -403,92 +410,163 @@ describe('Login/session testing', function () {
 
             });
 
-            it('should respond with http status 500 if not ok logout', function () {
-
-                let destroyCalled = false;
-
-                function sessionMock(consultantId) {
-                    return () => (req,res,next) => {
-                        req.session = {
-                            isLoggedIn: false,
-                            consultantId: consultantId,
-                            destroy: () => {
-                                destroyCalled = false;
-                            }
-                        };
-
-                        next();
-                    }
-                }
-                const app = createApp({
-                    session: sessionMock()
-                });
-
-                return request(app)
-                    .post('/logout')
-                    .expect(500)
-                    .then(function (res) {
-                        expect(destroyCalled).to.eq(false);
-                    })
-
-            });
-
         });
 
     });
 
     describe('Testing POST endpoints when logged in', function () {
-        //TODO
-        function sessionMock(consultantId) {
+
+        let destroyCalled = false;
+
+        function sessionMock() {
             return () => (req,res,next) => {
                 req.session = {
-                    isLoggedIn: false,
-                    consultantId: consultantId
+                    isLoggedIn: true,
+                    consultantId: "testConsultantId",
+                    destroy: () => {
+                        destroyCalled = true;
+                    }
                 };
 
                 next();
             }
         }
 
+        const orderMock = {
+            name: "testOrder",
+            createOrder() {
+                return Promise.resolve()
+            }
+        };
+
+        const consultantMock = {
+            name: "testConsultant",
+            findOne() {
+                return Promise.resolve({
+                    _id: "testConsultantId"
+                });
+            },
+            matchPasswords() {
+                return Promise.resolve({
+                    status: true,
+                    message: "OK Credentials",
+                    consultant: {
+                        id: "testConsultantId",
+                        name: "testConsultant",
+                        isAdmin: true
+                    }
+                });
+            }
+        };
+
+        const seasonMock = {
+            createSeason() {
+                return Promise.resolve();
+            }
+        };
+
+        const dynamicMock = {
+            createDynamic() {
+                return Promise.resolve();
+            }
+        };
+
+        const app = createApp({
+            session: sessionMock(),
+            Consultant: consultantMock,
+            Order: orderMock,
+            Season: seasonMock,
+            Dynamic: dynamicMock
+        });
+
         describe('POST /order', function () {
-            it('should...', function () {
-                //TODO
-                fail();
+            it('should receive http status 200 and message "OK"', function () {
+
+                const postBody = {
+                    msg: "testing POST /order when logged in"
+                };
+
+                return request(app)
+                    .post('/order')
+                    .send(postBody)
+                    .expect(200)
+                    .expect('OK');
             });
         });
 
         describe('POST /season', function () {
-            it('should...', function () {
-                //TODO
-                fail();
+            it('should receive http status 200 and message "season created"', function () {
+
+                const postBody = {
+                    msg: "testing POST /season when logged in"
+                };
+
+                return request(app)
+                    .post('/season')
+                    .send(postBody)
+                    .expect(200)
+                    .expect('season created');
+
             });
         });
 
         describe('POST /dynamic', function () {
-            it('should...', function () {
-                //TODO
-                fail();
+            it('should receive http status 200 and message "OK"', function () {
+
+                const postBody = {
+                    msg: "testing POST /dynamic when logged in"
+                };
+
+                return request(app)
+                    .post('/dynamic')
+                    .send(postBody)
+                    .expect(200)
+                    .expect('OK');
+
             });
         });
 
         describe('POST /consultant', function () {
-            it('should...', function () {
-                //TODO
-                fail();
+            it('should receive http status 403 and message "Must be admin to create consultants."', function () {
+
+                const postBody = {
+                    msg: "testing POST /consultant when logged in"
+                };
+
+                return request(app)
+                    .post('/consultant')
+                    .send(postBody)
+                    .expect(403)
+                    .expect('Must be admin to create consultants.');
+
             });
         });
 
         describe('POST /login', function () {
-            it('should...', function () {
-                //TODO
-                fail();
+            it('should receive http status 200 and message "Successfully logged in."', function () {
+
+                const postBody = {
+                    name: "testAdmin",
+                    password: "testAdmin"
+                };
+
+                return request(app)
+                    .post('/login')
+                    .send(postBody)
+                    .expect(200)
+                    .expect('Successfully logged in.');
+
             });
         });
 
         describe('POST /logout', function () {
-            it('should...', function () {
-                //TODO
-                fail();
+            it('should receive http status 200 and message "Logged out successfully."', function () {
+
+                return request(app)
+                    .post('/logout')
+                    .expect(200)
+                    .expect('Logged out successfully.');
+
             });
         });
     });
@@ -613,7 +691,7 @@ describe('Login/session testing', function () {
         });
 
         describe('PUT /season/:seasonID', function () {
-            it('should ...', function () {
+            it('should receive http status 200 and {"status":"OK","message":"Season updated."}', function () {
 
                 const Season = {
                     updateSeason() {
@@ -809,11 +887,3 @@ describe('Login/session testing', function () {
     });
 
 });
-
-/*
-    TODO
-    login
-    delete Order
-    resten af login test
-    test af om admin kan slette sig selv
- */
