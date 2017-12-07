@@ -8,7 +8,7 @@ const mongoose = require("mongoose");
 describe('Testing admin privileges', function () {
 
     describe('Testing create, edit and delete a consultant as a non admin', function () {
-        //TODO
+
         const testId  = "1234567890";
         const adminId = "adminId";
 
@@ -68,7 +68,7 @@ describe('Testing admin privileges', function () {
     });
 
     describe('Testing create, edit and delete a consultant as an admin', function () {
-        //TODO
+
         const testId  = "1234567890";
         const adminId = "adminId";
 
@@ -136,7 +136,7 @@ describe('Testing admin privileges', function () {
 
         describe('DELETE /consultant/consultantId : Testing editing a consultant as an admin.', function () {
             it('should receive http status 200 and message "Must be admin to delete consultants."', function () {
-                //TODO
+
                 const consultantData = {
                     name: "testUser",
                     password: "testUserPassword",
@@ -197,7 +197,7 @@ describe('Testing admin privileges', function () {
     describe('Testing remove admin rights from oneself as an admin user', function () {
         describe('PUT /consultant/:consultantId : Testing remove admin rights from oneself as an admin user', function () {
             it('should receive http status 403 and message "Cannot remove admin privileges from yourself."', function () {
-                //TODO
+
                 const testId  = "1234567890";
                 const adminId = "adminId";
 
