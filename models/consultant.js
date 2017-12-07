@@ -198,6 +198,8 @@ Consultant.statics.createConsultant = function (consultantData) {
     return consultant.save();
 };
 
+
+//TODO - skal lige have code review af deleteConsultant. Der er muligvis en bug.
 /**
  * Deletes a consultant.
  * @param consultantId - the id of the consultant to delete.
