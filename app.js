@@ -211,7 +211,7 @@ module.exports.createApp = function createApp({
         });
     });
 
-    app.post("/consultant", function (req, res) {
+    app.post('/consultant', function (req, res) {
 
         const sess = req.session;
 
@@ -243,11 +243,15 @@ module.exports.createApp = function createApp({
 
         const sess = req.session;
 
+        console.log(req.params.consultantId);
+        console.log(sess.consultantId)
+        console.log(req.params.consultantId === sess.consultantId);
+
         if(!sess.isAdmin){
             res.status(403).send('Must be admin to edit consultants.');
         }
-        else if(req.params.consultantId === sess.id && req.body.isAdmin === false){
-            res.status(403).end('Cannot remove admin privileges from yourself.');
+        else if(req.params.consultantId === sess.consultantId && req.body.isAdmin === false){
+            res.status(403).end('Cannot change your own admin privileges.');
         }
         else{
             Consultant.updateConsultant(req.params.consultantId, req.body)
@@ -267,7 +271,7 @@ module.exports.createApp = function createApp({
         if(!sess.isAdmin){
             res.status(403).send('Must be admin to delete consultants.');
         }
-        else if(req.params.consultantId === sess.id){
+        else if(req.params.consultantId === sess.consultantId){
             res.status(403).end('Cannot delete yourself.');
         }
         else{
