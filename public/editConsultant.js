@@ -14,7 +14,18 @@ window.addEventListener("load", () => {
             password
         }
 
-        const result = validatePassword(password)
+        function validatePassword(password) {
+            if (!password){
+                return "Kodeord er ikke udfyldt";
+            }else if (!/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/.test(password)){
+                console.log(password);
+                return "Kodeord skal indeholde mindst et tal, et stort bogstav og et lille bogstav, og være mindst 8 karaktere langt";
+            }else{
+                return true;
+            }
+        }
+
+        const result = validatePassword(password);
 
         if (result !== true) {
             throw new Error(result)

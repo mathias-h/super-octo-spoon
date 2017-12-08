@@ -37,6 +37,13 @@ module.exports.createApp = function createApp({
             }
             return comment;
         });
+        hbs.registerHelper("isAdminToChecked", function(value){
+            if(value){
+                return "checked";
+            }
+
+            return "";
+        });
 
         next()
     });
