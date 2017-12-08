@@ -1,8 +1,22 @@
-//TODO editSeason ala editConsultant
-
-//click button - for each season default=false | this.default=true
-
 window.addEventListener("load", function () {
+    $(".season").each(function () {
+        const seasonId = this.getAttribute("data-season-id")
+        const saveBtn = this.querySelector(".editSeasonSaveBtn")
+        const input = this.querySelector(".editSeasonInput")
+
+        saveBtn.addEventListener("click", async () => {
+            const season = input.value
+
+            await $.ajax({
+                url: "/season/" + seasonId,
+                method: "PUT",
+                data: JSON.stringify({ season }),
+                contentType: "application/json"
+            }).then(() => location.reload()).catch(err => {
+                // TODO handle error
+            })
+        })
+    })
     $("#setDefaultSeasonBtn").click(async function () {
         const seasonID = $("#seasonDefaultSelect").val()
 

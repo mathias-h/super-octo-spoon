@@ -224,7 +224,7 @@ Order.statics.sampleTotals = async function sampleTotals(selectedSeason) {
 }
 
 Order.statics.getAll = async function getAll({ query, sortBy="date", order }, seasonId) {
-    let orders = await this.find({ _id: seasonId }).lean()
+    let orders = await this.find({ season: seasonId }).lean()
         .populate('consultant', "name")
         .populate('season', "season")
         .exec();
