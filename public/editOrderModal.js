@@ -31,10 +31,18 @@ class EditOrderModal {
             labDate: "Sendt til lab",
             fromLabDate: "Modtaget fra lab",
             mO: "Sendt til markanalyse",
-            receptApproved: "Faktura godkendt"
+            receptApproved: "Faktura godkendt",
+            sendToFarmer: "Udsendt til landmand dato",
+            sendBy: "Udsendt af",
+            contactFarmer: "Landmand kontaktes",
+            wantsMap: "Ønkes tildelingskort?",
+            appointments: "Bemærkninger & aftaler",
+            mapSendToFarmer: "Sendt til landmand",
+            mapSendToMachineStation: "Sendt til maskinstation",
+            fields: "Tildelte marker på kort",
+            areaMap: "Antal ha",
+            done: "Fardig"
         }
-        // TODO add fase 3 to nameMap
-        
 
         $("#contentData tbody tr").click(function (evt) {
             const orderId = this.getAttribute("data-order-id");

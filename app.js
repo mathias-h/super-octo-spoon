@@ -31,6 +31,7 @@ module.exports.createApp = function createApp({
            }
         });
         hbs.registerHelper("trunkText", function(comment){
+            if (!comment) return comment;
             if(comment.length > 50){
                 comment = comment.substring(0, 50).trim() + "...";
             }
