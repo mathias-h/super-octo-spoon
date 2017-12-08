@@ -43,8 +43,10 @@ window.addEventListener("load", () => {
             data: JSON.stringify(consultant),
             contentType: "application/json"
         })
-    }
 
+        location.reload()
+    }
+    
     async function deleteConsultant(btn) {
 
         const row = btn.parentElement.parentElement;

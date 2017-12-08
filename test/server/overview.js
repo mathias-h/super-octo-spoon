@@ -15,10 +15,12 @@ describe("overview view", () => {
             }
         };
         const ConsultantMock = {
-            find: () => Promise.resolve({})
+            find: () => Promise.resolve({}),
+            findById: () => Promise.resolve({})
         }
         const SeasonMock = {
-            find: () => Promise.resolve([])
+            find: () => Promise.resolve([]),
+            findOne: () => Promise.resolve({})
         }
         const DynamicMock = {
             find: () => Promise.resolve([])
