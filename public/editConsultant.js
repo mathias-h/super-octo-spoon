@@ -14,15 +14,17 @@ window.addEventListener("load", () => {
             password
         }
 
-        const result = validatePassword(password)
+        if (password) {
+            const result = validatePassword(password)
+            
+            if (result !== true) {
+                throw new Error(result)
+                // TODO show error message
+            }
 
-        if (result !== true) {
-            throw new Error(result)
-            // TODO show error message
-        }
-
-        if (passwordInput) {
-            passwordInput.parentElement.removeChild(passwordInput)
+            if (passwordInput) {
+                passwordInput.parentElement.removeChild(passwordInput)
+            }
         }
 
         await $.ajax({
