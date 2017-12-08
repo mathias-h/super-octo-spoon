@@ -212,7 +212,7 @@ Consultant.statics.deleteConsultant = function (consultantId) {
      */
 
     return this.findOne({name: "dummy"})
-        .then(function (result) {
+        .then((result) => {
 
             if(result === null){
                 throw new Error('Could not process delete.');
@@ -228,7 +228,7 @@ Consultant.statics.deleteConsultant = function (consultantId) {
             };
 
             this.model("Order").updateMany(condition, update)
-                .then(function () {
+                .then(() => {
 
                     this.findOneAndRemove({_id: consultantId})
                         .then(function () {
