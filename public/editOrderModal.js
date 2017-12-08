@@ -31,10 +31,18 @@ class EditOrderModal {
             labDate: "Sendt til lab",
             fromLabDate: "Modtaget fra lab",
             mO: "Sendt til markanalyse",
-            receptApproved: "Faktura godkendt"
+            receptApproved: "Faktura godkendt",
+            sendToFarmer: "Udsendt til landmand dato",
+            sendBy: "Udsendt af",
+            contactFarmer: "Landmand kontaktes",
+            wantsMap: "Ønkes tildelingskort?",
+            appointments: "Bemærkninger & aftaler",
+            mapSendToFarmer: "Sendt til landmand",
+            mapSendToMachineStation: "Sendt til maskinstation",
+            fields: "Tildelte marker på kort",
+            areaMap: "Antal ha",
+            done: "Fardig"
         }
-        // TODO add fase 3 to nameMap
-        
 
         $("#contentData tbody tr").click(function (evt) {
             const orderId = this.getAttribute("data-order-id");
@@ -138,6 +146,16 @@ class EditOrderModal {
         setDate($("#inputFromLabDate"), order.fromLabDate)
         setDate($("#inputMO"), order.mO)
         setDate($("#inputReceptApproved"), order.receptApproved)
+        setDate($("#inputSendToFarmer"), order.sendToFarmer)
+        if (order.sendBy) $("#inputSendBy").val(order.sendBy._id)
+        $("#inputContactFarmer")[0].checked = order.contactFarmer
+        $("#inputWantsMap")[0].checked = order.wantsMap
+        $("#inputAppointments").val(order.appointments)
+        setDate($("#inputMapSendToFarmer"), order.mapSendToFarmer)
+        setDate($("#inputSendToMachineStation"), order.sendToMachineStation)
+        $("#inputFields").val(order.fields)
+        $("#inputAreaMap").val(order.areaMap)
+        $("#inputDone")[0].checked = order.done
     }
 
     setLog(order) {

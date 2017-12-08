@@ -17,6 +17,7 @@
         }
         thead tr th {
             vertical-align: middle !important;
+            border-top: none !important;
         }
 
         .navbar {
@@ -63,16 +64,17 @@
             color: lightgray;
         }
         .fase1 {
-            background: #EF5350;
+            background: #F44336;
         }
         .fase2 {
-            background: #3F51B5;
+            background: #FDD835;
         }
         .fase3 {
-            background: #D2E84E;
+            background: #2196F3;
         }
-
-        /* Farveskema 0.1: http://paletton.com/#uid=b00244c0klit+gCAGj5vTntspqGrt */
+        .fase4 {
+            background: #8BC34A;
+        }
     </style>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
@@ -89,7 +91,7 @@
     <script src="/dynamic.js"></script>
 
     <script>
-        onload = () => {
+        window.addEventListener("load", () => {
             let urlParams = new URL(location.href).searchParams;
 
             $("#season").change(function () {
@@ -114,19 +116,18 @@
                 }
 
                 location.search = urlParams;
-
             });
-                if (urlParams.has("sortBy")){
-                    if (urlParams.get("order") == "asc") {
-                        $("#" + urlParams.get("sortBy")).append("<div class='arrow-asc'></div>")
-                    } else {
-                        $("#" + urlParams.get("sortBy")).append("<div class='arrow-desc'></div>")
-                    }
-                }else {
-                    $("#date").append("<div class='arrow-desc'></div>")
+            
+            if (urlParams.has("sortBy")){
+                if (urlParams.get("order") == "asc") {
+                    $("#" + urlParams.get("sortBy")).append("<div class='arrow-asc'></div>")
+                } else {
+                    $("#" + urlParams.get("sortBy")).append("<div class='arrow-desc'></div>")
                 }
-
-        }
+            }else {
+                $("#date").append("<div class='arrow-desc'></div>")
+            }
+        })
     </script>
 </head>
 <body>
@@ -181,7 +182,7 @@
             <th class="sortable" id="consultant" data-toggle="tooltip" title="Konsulent, som håndterer denne ordre">
                 Kon.
             </th>
-            <th class="sortable" id="date" data-toggle="tooltip" title="Dato for oprettelse">Opr.d.
+            <th class="sortable" id="date" data-toggle="tooltip" title="Dato indågelse af aftale">Ind.d.
             </th>
             <th class="sortable" id="landline" data-toggle="tooltip" title="Kundens fastnet nummer">Fasnet</th>
             <th class="sortable" id="mobile" data-toggle="tooltip" title="Kundens mobiltelefon nummer">Mobil</th>
@@ -201,7 +202,7 @@
                     <div class="bubble fase{{fase}}"></div>
                 </td>
                 <td>
-                    {{consultant.username}}
+                    {{consultant.name}}
                 </td>
                 <td>
                     {{signedDate}}
