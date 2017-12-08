@@ -10,6 +10,15 @@ window.addEventListener("load", () => {
         }
     }
 
+    function setAlertBox(text){
+        let alertBox = $(".alert", "#editUser");
+        if(alertBox.length === 0){
+            $("#editUser").prepend("<div class='alert alert-danger alert-dismissible' role='alert'>" + text + "<button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button></div>");
+        }else{
+            alertBox.text(text);
+        }
+    }
+
     async function updateConsultant(btn) {
         const row = btn.parentElement.parentElement
         const consultantId = row.getAttribute("data-consultant-id")
@@ -29,8 +38,9 @@ window.addEventListener("load", () => {
             const result = validatePassword(password)
             
             if (result !== true) {
-                throw new Error(result)
-                // TODO show error message
+                setAlertBox(result);
+
+                return;
             }
             if (passwordInput) {
                 passwordInput.parentElement.removeChild(passwordInput)
@@ -43,8 +53,11 @@ window.addEventListener("load", () => {
             data: JSON.stringify(consultant),
             contentType: "application/json"
         })
-
-        location.reload()
+            .then(() => location.reload())
+            .catch((error) => {
+                console.log(error);
+                setAlertBox(error.responseText);
+            });
     }
     
     async function deleteConsultant(btn) {
@@ -53,9 +66,12 @@ window.addEventListener("load", () => {
         const consultantId = row.getAttribute("data-consultant-id");
 
         await $.ajax({
+            statusCode: {
+                403: () => setAlertBox("Kan ikke ændre egen superbruger status")
+            },
             url: '/consultant/' + consultantId,
             method: 'DELETE'
-        });
+        }).catch((error) => setAlertBox(error.responseText));
         row.parentElement.removeChild(row)
     }
 

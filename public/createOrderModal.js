@@ -43,7 +43,6 @@ window.addEventListener('load', function() {
 
     const form = document.getElementById('orderCreateForm');
     function clearOrderCreate(){
-        // TODO: Sæt konsulent tilbage til bruger
         $("#inputSignedDate").val(getCurrentDate());
         $("#inputName").val("");
         $("#inputFarmName").val("");
