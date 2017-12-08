@@ -225,8 +225,7 @@ module.exports.createApp = function createApp({
                     res.status(200).end("Consultant created.");
                 })
                 .catch(function (error) {
-
-                    console.log(error);
+                    console.error(error);
 
                     if (error instanceof MongoError && error.code === 11000){
                         res.status(409).end('Username already in use.');
