@@ -30,7 +30,7 @@
                     </li>
                 {{/if}}
                 <li class="nav-item">
-                    <a class="nav-link {{#equals consultant.isAdmin false}}active{{/equals}}" id="dynamicColumn-tab" data-toggle="tab" href="#dynamicColumn" role="tab"
+                    <a class="nav-link {{#equals consultant.isAdmin false}}active ml-3{{/equals}}" id="dynamicColumn-tab" data-toggle="tab" href="#dynamicColumn" role="tab"
                        aria-controls="dynamicColumn" aria-selected="{{#if consultant.isAdmin}}false{{else}}true{{/if}}">Dynamiske kolonner</a>
                 </li>
             </ul>
@@ -59,7 +59,7 @@
                                         </td>
                                         <td class="align-middle"><input class="editConsultantIsAdmin form-control"
                                                                         type="checkbox" name="er admin"
-                                                                        checked="{{isAdmin}}"></td>
+                                                                        {{#isAdminToChecked isAdmin}}{{/isAdminToChecked}}></td>
                                         <td>
                                             <button class="editConsultantSaveBtn btn btn-info">Gem</button>
                                         </td>
