@@ -547,7 +547,7 @@ describe("order integration test", () => {
         expect(totalTaken).to.eq(6)
     });
 
-    it.skip("should create consultant", async () => {
+    it("should create consultant", async () => {
         await page.reload()
 
         await page.evaluate(() => {
@@ -573,7 +573,7 @@ describe("order integration test", () => {
         expect(consultant.dummy).to.be.false
     });
 
-    it.skip("should update consultant", async () => {
+    it("should update consultant", async () => {
         const consultant = new Consultant({
             name: "CONSULTANT",
             password: "PASS",
@@ -585,8 +585,7 @@ describe("order integration test", () => {
         await page.reload();
 
         await page.evaluate(() => {
-            const modal = document.getElementById("adminModal");
-            $(modal).on("shown.bs.modal", () => {
+            $("#adminModal").on("shown.bs.modal", () => {
                 const consultants = document.querySelectorAll("#adminModal .consultant");
                 const consultant = consultants[1];
 
