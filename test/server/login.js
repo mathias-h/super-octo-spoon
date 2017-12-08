@@ -108,7 +108,8 @@ describe('Login/session testing', function () {
                     find: () => Promise.resolve({})
                 };
                 const SeasonMock = {
-                    find: () => Promise.resolve([])
+                    find: () => Promise.resolve([]),
+                    findOne: () => Promise.resolve({})
                 };
                 const DynamicMock = {
                     find: () => Promise.resolve([])
@@ -192,7 +193,8 @@ describe('Login/session testing', function () {
                     find: () => Promise.resolve({})
                 };
                 const SeasonMock = {
-                    find: () => Promise.resolve([])
+                    find: () => Promise.resolve([]),
+                    findOne: () => Promise.resolve({})
                 };
                 const DynamicMock = {
                     find: () => Promise.resolve([])
@@ -689,7 +691,7 @@ describe('Login/session testing', function () {
             it('should receive http status 200 and {"status":"OK","message":"Season updated."}', function () {
 
                 const Season = {
-                    updateSeason() {
+                    updateSeasonName() {
                         return Promise.resolve();
                     }
 

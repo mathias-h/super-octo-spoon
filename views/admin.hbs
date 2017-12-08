@@ -79,18 +79,26 @@
                         <thead>
                         <th>Sæson</th>
                         <th>Gem</th>
-                        <th>Gør Standard</th>
                         </thead>
                         <tbody> <!-- TODO implementer ordentligt -->
                         {{#each seasons}}
                                 <tr class="season" data-season-id="{{_id}}">
                                     <td><input class="form-control editSeasonInput" type="text" value="{{season}}" name="season" placeholder="Sæson"/></td>
                                     <td><button class="btn btn-info editSeasonSaveBtn">gem</button></td>
-                                    <td><button class="btn btn-info editSeasonDefaultBtn">kør</button></td>
+
                                 </tr>
                         {{/each}}
                         </tbody>
                     </table>
+                        <div class="row m-2">
+                            <select id="seasonDefaultSelect" class="col form-control mt-1 mr-3">
+                                {{#each seasons}}
+                                    <option value="{{this.id}}" {{#equals ../defaultSeason this.id}}selected{{/equals}}>Sæson {{this.season}}</option>
+                                {{/each}}
+                            </select>
+                            <button id="setDefaultSeasonBtn" class="col btn btn-info editSeasonDefaultBtn">Sæt til Standard</button>
+                            <div id="defaultSeasonSat" class="col text-center" style="display: none">OK</div>
+                        </div>
                 </div>
 
                 <div class="tab-pane" id="dynamicColumn" role="tabpanel" aria-labelledby="dynamicColumn-tab">

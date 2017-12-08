@@ -19,7 +19,7 @@ window.addEventListener('load', function() {
             statusCode: {
                 401: () => {
                     if ($(".alert").length === 0) {
-                        $('#alert-box').append('<div class="alert alert-danger alert-dismissible" id="errorMessage" role="alert">Fatal fejl, kontakt system administrator<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+                        $('#alert-box').append('<div class="alert alert-danger alert-dismissible" id="errorMessage" role="alert">Brugernavn eller kodeord er ikke korrekt<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
                     }
                 }
             },
@@ -33,6 +33,11 @@ window.addEventListener('load', function() {
             success: () => {
                 location.replace('/');
             }
-        });
+        })
+            .catch(() => {
+                if ($(".alert").length === 0) {
+                    $('#alert-box').append('<div class="alert alert-danger alert-dismissible" id="errorMessage" role="alert">Fatal fejl, kontakt system administrator<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+                }
+            });
     }, false);
 });
