@@ -118,7 +118,7 @@ window.addEventListener('load', function() {
                     "content-type": "application/json"
                 }
             })
-                .done(location.reload())
+                .then(() => location.reload())
                 .catch(() => {
                     // TODO: Error handling når server side validering fejler
                 });
