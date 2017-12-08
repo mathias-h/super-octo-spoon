@@ -115,8 +115,8 @@ module.exports.createApp = function createApp({
     
     app.post("/order", async (req, res) => {
         try {
-            const user = await Consultant.findOne({ _id: req.session.consultantId });
-            await Order.createOrder(req.body, user._id)
+            const consultant = await Consultant.findOne({ _id: req.session.consultantId });
+            await Order.createOrder(req.body, consultant._id)
             res.send("OK");
         } catch (error) {
             console.error(error);
@@ -207,7 +207,7 @@ module.exports.createApp = function createApp({
         });
     });
 
-    app.post("/consultant", function (req, res) {
+    app.post('/consultant', function (req, res) {
 
         const sess = req.session;
 
@@ -235,11 +235,15 @@ module.exports.createApp = function createApp({
     app.put('/consultant/:consultantId', function (req, res) {
         const sess = req.session;
 
+        console.log(req.params.consultantId);
+        console.log(sess.consultantId)
+        console.log(req.params.consultantId === sess.consultantId);
+
         if(!sess.isAdmin){
             res.status(403).send('Must be admin to edit consultants.');
         }
-        else if(req.params.consultantId === sess.id && req.body.isAdmin === false){
-            res.status(403).end('Cannot remove admin privileges from yourself.');
+        else if(req.params.consultantId === sess.consultantId && req.body.isAdmin === false){
+            res.status(403).end('Cannot change your own admin privileges.');
         }
         else{
             Consultant.updateConsultant(req.params.consultantId, req.body)
@@ -258,7 +262,7 @@ module.exports.createApp = function createApp({
         if(!sess.isAdmin){
             res.status(403).send('Must be admin to delete consultants.');
         }
-        else if(req.params.consultantId === sess.id){
+        else if(req.params.consultantId === sess.consultantId){
             res.status(403).end('Cannot delete yourself.');
         }
         else{
@@ -311,11 +315,13 @@ module.exports.createApp = function createApp({
     app.post('/logout', function (req, res) {
         const sess = req.session;
 
-        if(sess.isLoggedIn){
-            sess.destroy();
+        try {
+            if (sess.isLoggedIn) {
+                sess.destroy();
+            }
             res.status(200).end('Logged out successfully.');
-        }
-        else{
+        } catch (error) {
+            console.log(error);
             res.status(500).end('Could not logout.');
         }
 
