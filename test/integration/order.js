@@ -31,7 +31,6 @@ describe("order integration test", () => {
         fs.mkdirSync(dataPath);
 
         db = childProcess.spawn("mongod", ["--port", "27018", "--dbpath", dataPath]);
-
         await sleep(1500); // sleep to wait for db to start
 
         mongoose.Promise = global.Promise;
@@ -50,7 +49,7 @@ describe("order integration test", () => {
             session
         }).listen(1025);
 
-        browser = await puppeteer.launch({ headless: false });
+        browser = await puppeteer.launch();
 
         page = await browser.newPage();
         await page.goto("http://localhost:1025/");
@@ -76,7 +75,7 @@ describe("order integration test", () => {
 
     after(async () => {
         await mongoose.disconnect();
-        //await browser.close();
+        await browser.close();
         server.close();
         db.kill()
     });
