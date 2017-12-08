@@ -34,4 +34,6 @@ describe("season server testing", () => {
             .expect(200)
             .expect("season created");
     });
+
+    it("should update season")
 })

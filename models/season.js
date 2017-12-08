@@ -11,7 +11,7 @@ const Season = new Schema({
     },
     default: {
         type: Boolean,
-        required: true,
+        required: true
     }
 });
 

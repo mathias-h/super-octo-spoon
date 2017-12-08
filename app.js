@@ -25,20 +25,13 @@ module.exports.createApp = function createApp({
         hbs.registerPartial("createConsultant", require("fs").readFileSync(__dirname + "/views/admin/createConsultant.hbs").toString());
         hbs.registerPartial("createSeason", require("fs").readFileSync(__dirname + "/views/admin/createSeason.hbs").toString());
 
-        hbs.registerHelper("objectIter", function(obj, options) {
-            let out = ""
-            for (const [key, val] of Object.entries(obj)) {
-                out += options.fn({ key, val })
-            }
-            console.log(out)
-            return out
-        });
         hbs.registerHelper("equals", function (a, b, options) {
            if (a === b){
                return options.fn()
            }
         });
         hbs.registerHelper("trunkText", function(comment){
+            if (!comment) return comment;
             if(comment.length > 50){
                 comment = comment.substring(0, 50).trim() + "...";
             }
@@ -96,12 +89,13 @@ module.exports.createApp = function createApp({
     app.get("/", async (req,res) => {
         try {
             const { totalSamples, totalTaken } = await Order.sampleTotals();
+            const consultant = await Consultant.findById(req.session.consultantId);
             const orders = await Order.getAll(req.query);
             const consultants = await Consultant.find({});
             const seasons = await Season.find({});
             const dynamics = await Dynamic.find({});
             const defaultSeason = await Season.findOne({default:true});
-            
+
             const data = {
                 orders,
                 totalSamples,
@@ -111,7 +105,8 @@ module.exports.createApp = function createApp({
                 defaultSeason: (defaultSeason !== null) ? defaultSeason._id : null,
                 consultants,
                 seasons,
-                dynamics
+                dynamics,
+                consultant
             };
             res.render("overview", data);
         } catch(err) {
@@ -178,6 +173,7 @@ module.exports.createApp = function createApp({
                 res.send("season created")
             })
             .catch(function (err) {
+                console.error(err);
                 res.status(400).end("seasonal error")
             })
     });
@@ -246,11 +242,9 @@ module.exports.createApp = function createApp({
                     }
                 });
         }
-
     });
 
     app.put('/consultant/:consultantId', function (req, res) {
-
         const sess = req.session;
 
         if(!sess.isAdmin){
@@ -271,7 +265,6 @@ module.exports.createApp = function createApp({
     });
 
     app.delete('/consultant/:consultantId', function (req, res) {
-
         const sess = req.session;
 
         if(!sess.isAdmin){
@@ -286,11 +279,10 @@ module.exports.createApp = function createApp({
                     res.status(200).end("Consultant deleted.");
                 })
                 .catch(function (error) {
-                    console.log(error);
+                    console.error(error);
                     res.status(500).end("Unknown error.");
                 });
         }
-
     });
 
     app.get('/login', (req, res) =>{
@@ -308,7 +300,6 @@ module.exports.createApp = function createApp({
 
         Consultant.matchPasswords(req.body.name, req.body.password)
             .then(function (result) {
-
                 if(result.status){
                     const sess = req.session;
 

@@ -11,68 +11,72 @@
             </div>
 
             <ul class="nav nav-tabs pt-2 bg-light" id="myTab" role="tablist">
-                <li class="nav-item ml-3">
-                    <a class="nav-link active" id="createUser-tab" data-toggle="tab" href="#createUser" role="tab"
-                       aria-controls="createUser" aria-selected="true">Opret bruger</a>
-                </li>
+                {{#if consultant.isAdmin}}
+                    <li class="nav-item ml-3">
+                        <a class="nav-link active" id="createUser-tab" data-toggle="tab" href="#createUser" role="tab"
+                        aria-controls="createUser" aria-selected="true">Opret bruger</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="editUser-tab" data-toggle="tab" href="#editUser" role="tab"
+                        aria-controls="editUser" aria-selected="false">Rediger bruger</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="createSeason-tab" data-toggle="tab" href="#createSeason" role="tab"
+                        aria-controls="createSeason" aria-selected="false">Opret sæson</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="editSeason-tab" data-toggle="tab" href="#editSeason" role="tab"
+                        aria-controls="editSeason" aria-selected="false">Rediger sæson</a>
+                    </li>
+                {{/if}}
                 <li class="nav-item">
-                    <a class="nav-link" id="editUser-tab" data-toggle="tab" href="#editUser" role="tab"
-                       aria-controls="editUser" aria-selected="false">Rediger bruger</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="createSeason-tab" data-toggle="tab" href="#createSeason" role="tab"
-                       aria-controls="createSeason" aria-selected="false">Opret sæson</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="editSeason-tab" data-toggle="tab" href="#editSeason" role="tab"
-                       aria-controls="editSeason" aria-selected="false">Rediger sæson</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="dynamicColumn-tab" data-toggle="tab" href="#dynamicColumn" role="tab"
-                       aria-controls="dynamicColumn" aria-selected="false">Dynamiske kolonner</a>
+                    <a class="nav-link {{#equals consultant.isAdmin false}}active{{/equals}}" id="dynamicColumn-tab" data-toggle="tab" href="#dynamicColumn" role="tab"
+                       aria-controls="dynamicColumn" aria-selected="{{#if consultant.isAdmin}}false{{else}}true{{/if}}">Dynamiske kolonner</a>
                 </li>
             </ul>
             <div class="tab-content" id="myTabContent">
-                <div class="tab-pane show active" id="createUser" role="tabpanel" aria-labelledby="createUser-tab">
-                    {{> createConsultant}}
-                </div>
+                {{#if consultant.isAdmin}}
+                    <div class="tab-pane show active" id="createUser" role="tabpanel" aria-labelledby="createUser-tab">
+                        {{> createConsultant}}
+                    </div>
 
-                <div class="tab-pane" id="editUser" role="tabpanel" aria-labelledby="editUser-tab">
-                    <table class="table table-striped">
-                        <thead>
-                        <th>Brugernavn</th>
-                        <th>Kode</th>
-                        <th class="text-center">Superbruger</th>
-                        </thead>
-                        <tbody>
-                        {{#each consultants}}
-                            {{#if isDisabled}}
-                            {{else}}
-                                <tr class="consultant" data-consultant-id="{{_id}}">
-                                    <td><input class="editConsultantName form-control" type="text" value="{{name}}"
-                                               name="brugernavn" placeholder="Brugernavn"/></td>
-                                    <td>
-                                        <button class="editConsultantPasswordBtn btn btn-info">Skift kodeord</button>
-                                    </td>
-                                    <td class="align-middle"><input class="editConsultantIsAdmin form-control"
-                                                                    type="checkbox" name="er admin"
-                                                                    checked="{{isAdmin}}"></td>
-                                    <td>
-                                        <button class="editConsultantSaveBtn btn btn-info">Gem</button>
-                                    </td>
-                                    <td>
-                                        <button class="editConsultantDeleteBtn btn btn-info">Slet</button>
-                                    </td>
-                                </tr>
-                            {{/if}}
-                        {{/each}}
-                        </tbody>
-                    </table>
-                </div>
+                    <div class="tab-pane" id="editUser" role="tabpanel" aria-labelledby="editUser-tab">
+                        <table class="table table-striped">
+                            <thead>
+                            <th>Brugernavn</th>
+                            <th>Kode</th>
+                            <th class="text-center">Superbruger</th>
+                            </thead>
+                            <tbody>
+                            {{#each consultants}}
+                                {{#if isDisabled}}
+                                {{else}}
+                                    <tr class="consultant" data-consultant-id="{{_id}}">
+                                        <td><input class="editConsultantName form-control" type="text" value="{{name}}"
+                                                name="brugernavn" placeholder="Brugernavn"/></td>
+                                        <td>
+                                            <button class="editConsultantPasswordBtn btn btn-info">Skift kodeord</button>
+                                        </td>
+                                        <td class="align-middle"><input class="editConsultantIsAdmin form-control"
+                                                                        type="checkbox" name="er admin"
+                                                                        checked="{{isAdmin}}"></td>
+                                        <td>
+                                            <button class="editConsultantSaveBtn btn btn-info">Gem</button>
+                                        </td>
+                                        <td>
+                                            <button class="editConsultantDeleteBtn btn btn-info">Slet</button>
+                                        </td>
+                                    </tr>
+                                {{/if}}
+                            {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
 
-                <div class="tab-pane" id="createSeason" role="tabpanel" aria-labelledby="createSeason-tab">
-                    {{> createSeason}}
-                </div>
+                    <div class="tab-pane" id="createSeason" role="tabpanel" aria-labelledby="createSeason-tab">
+                        {{> createSeason}}
+                    </div>
+
 
                 <div class="tab-pane" id="editSeason" role="tabpanel" aria-labelledby="editSeason-tab">
                     <table class="table table-striped">
@@ -100,8 +104,8 @@
                             <div id="defaultSeasonSat" class="col text-center" style="display: none">OK</div>
                         </div>
                 </div>
-
-                <div class="tab-pane" id="dynamicColumn" role="tabpanel" aria-labelledby="dynamicColumn-tab">
+                {{/if}}
+                <div class="tab-pane {{#equals consultant.isAdmin false}}show active{{/equals}}" id="dynamicColumn" role="tabpanel" aria-labelledby="dynamicColumn-tab">
                     <table class="table table-striped">
                         <thead>
                         <th scope="col">Navn</th>

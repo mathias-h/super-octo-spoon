@@ -158,11 +158,8 @@ Consultant.statics.matchPasswords = async function (name, password) {
                 });
             }
         }).catch(function (error) {
-            console.log(error);
-            return {
-                    status: false,
-                    error: error
-                    };
+            console.error(error);
+            return { status: false, error: error };
         });
 
 };
@@ -229,7 +226,6 @@ Consultant.statics.deleteConsultant = function (consultantId) {
 
             this.model("Order").updateMany(condition, update)
                 .then(() => {
-
                     this.findOneAndRemove({_id: consultantId})
                         .then(function () {
                             return {
@@ -241,7 +237,7 @@ Consultant.statics.deleteConsultant = function (consultantId) {
 
         })
         .catch(function (error) {
-            console.log(error);
+            console.error(error);
             return {
                 status: 'ERROR',
                 message: error
