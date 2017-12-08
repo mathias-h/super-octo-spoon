@@ -218,15 +218,8 @@ Order.statics.sampleTotals = async function sampleTotals() {
     ]).exec())[0] || {}
 }
 
-Order.statics.getAll = async function getAll({query, sortBy="date", order, season}) {
-    const seasonQuery = {}
-    if (season) {
-        seasonQuery.season = season
-    } else {
-        seasonQuery.default = true
-    }
-    var season = (await this.model("Season").findOne(seasonQuery))
-    let orders = await this.find({ season: season ? season._id : null }).lean()
+Order.statics.getAll = async function getAll({ query, sortBy="date", order }, seasonId) {
+    let orders = await this.find({ _id: seasonId }).lean()
         .populate('consultant', "name")
         .populate('season', "season")
         .exec();
