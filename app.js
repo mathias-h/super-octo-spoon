@@ -23,7 +23,11 @@ module.exports.createApp = function createApp({
 
         hbs.registerPartial("adminModal", require("fs").readFileSync(__dirname + "/views/admin.hbs").toString());
         hbs.registerPartial("createConsultant", require("fs").readFileSync(__dirname + "/views/admin/createConsultant.hbs").toString());
+        hbs.registerPartial("editConsultant", require("fs").readFileSync(__dirname + "/views/admin/editConsultant.hbs").toString());
         hbs.registerPartial("createSeason", require("fs").readFileSync(__dirname + "/views/admin/createSeason.hbs").toString());
+        hbs.registerPartial("editSeason", require("fs").readFileSync(__dirname + "/views/admin/editSeason.hbs").toString());
+        hbs.registerPartial("createDynamic", require("fs").readFileSync(__dirname + "/views/admin/createDynamic.hbs").toString());
+
 
         hbs.registerHelper("equals", function (a, b, options) {
            if (a === b){
