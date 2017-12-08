@@ -88,21 +88,22 @@ module.exports.createApp = function createApp({
 
     app.get("/", async (req,res) => {
         try {
-            const { totalSamples, totalTaken } = await Order.sampleTotals();
+            const defaultSeason = await Season.findOne({default:true});
+            const selectedSeason = await Season.findOne({season: req.query.season || defaultSeason ? defaultSeason.season : null})
+            const { totalSamples, totalTaken } = await Order.sampleTotals(selectedSeason);
             const consultant = await Consultant.findById(req.session.consultantId);
             const orders = await Order.getAll(req.query);
             const consultants = await Consultant.find({});
             const seasons = await Season.find({});
             const dynamics = await Dynamic.find({});
-            const defaultSeason = await Season.findOne({default:true});
 
             const data = {
                 orders,
                 totalSamples,
                 totalTaken,
                 query: req.query.query,
-                selectedSeason: (defaultSeason !== null) ? req.query.season || defaultSeason.season : null ,
-                defaultSeason: (defaultSeason !== null) ? defaultSeason._id : null,
+                selectedSeason: selectedSeason ? selectedSeason.season : null,
+                defaultSeason: defaultSeason ? defaultSeason._id : null,
                 consultants,
                 seasons,
                 dynamics,

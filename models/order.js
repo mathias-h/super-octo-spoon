@@ -203,17 +203,22 @@ Order.statics.createOrder = async function createOrder(orderData, userId) {
     }
 };
 
-Order.statics.sampleTotals = async function sampleTotals() {
+Order.statics.sampleTotals = async function sampleTotals(selectedSeason) {
     const startOfYear = moment(new Date()).startOf("year").toDate()
-
+    if (!selectedSeason){
+        return {
+            totalSamples: 0,
+            totalTaken: 0
+        }
+    }
     return (await this.aggregate([
         { $match: {
-            signedDate: { $gte: startOfYear }
+            season: selectedSeason._id
         }},
         { $group: {
             _id: null,
             totalSamples: { $sum:"$area" },
-            totalTaken: { $sum:{$add:["$mgSamples","$cutSamples","$otherSamples"] }
+            totalTaken: { $sum:"$samplesTaken"
         }}}
     ]).exec())[0] || {}
 }
