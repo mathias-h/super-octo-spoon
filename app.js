@@ -320,7 +320,7 @@ module.exports.createApp = function createApp({
                 }
             })
             .catch(function (error) {
-                console.log(error);
+                console.error(error);
                 res.status(500).end('Unknown error.');
             });
     });
@@ -334,7 +334,7 @@ module.exports.createApp = function createApp({
             }
             res.status(200).end('Logged out successfully.');
         } catch (error) {
-            console.log(error);
+            console.error(error);
             res.status(500).end('Could not logout.');
         }
 

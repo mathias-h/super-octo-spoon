@@ -18,10 +18,14 @@ describe("dynamic server tests", () => {
 
             const app = createApp({
                 Dynamic: DynamicMock,
-                session: () => () => ({ isLoggedIn: true })
+                session: () => (req,_,next) => {
+                    req.session = { isLoggedIn: true };
+    
+                    next();
+                }
             });
 
-            request(app)
+            return request(app)
                 .post("/dynamic")
                 .send({ name, fase })
                 .expect(200)
@@ -35,17 +39,21 @@ describe("dynamic server tests", () => {
 
             const app = createApp({
                 Dynamic: DynamicMock,
-                session: () => () => ({ isLoggedIn: true })
+                session: () => (req,_,next) => {
+                    req.session = { isLoggedIn: true };
+    
+                    next();
+                }
             });
 
-            request(app)
+            return request(app)
                 .post("/dynamic")
                 .send({ name: null, fase: null })
                 .expect(500)
-                .expect("ERROR")
-        })
-    })
-    describe("dynamic", () => {
+                .expect("ERROR");
+        });
+    });
+    describe("delete dynamic", () => {
         it("should delete dynamic", () => {
             const id = "ID"
             const DynamicMock = {
@@ -58,14 +66,18 @@ describe("dynamic server tests", () => {
 
             const app = createApp({
                 Dynamic: DynamicMock,
-                session: () => () => ({ isLoggedIn: true })
+                session: () => (req,_,next) => {
+                    req.session = { isLoggedIn: true };
+    
+                    next();
+                }
             });
 
-            request(app)
+            return request(app)
                 .delete("/dynamic/" + id)
                 .expect(200)
-                .expect("OK")
-        })
+                .expect("OK");
+        });
 
         it("should handle error", () => {
             const DynamicMock = {
@@ -74,13 +86,17 @@ describe("dynamic server tests", () => {
 
             const app = createApp({
                 Dynamic: DynamicMock,
-                session: () => () => ({ isLoggedIn: true })
+                session: () => (req,_,next) => {
+                    req.session = { isLoggedIn: true };
+    
+                    next();
+                }
             });
 
-            request(app)
-                .post("/dynamic/ID")
+            return request(app)
+                .delete("/dynamic/ID")
                 .expect(500)
-                .expect("ERROR")
-        })
+                .expect("ERROR");
+        });
     })
 })
