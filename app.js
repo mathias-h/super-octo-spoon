@@ -100,13 +100,15 @@ module.exports.createApp = function createApp({
             const consultants = await Consultant.find({});
             const seasons = await Season.find({});
             const dynamics = await Dynamic.find({});
+            const defaultSeason = await Season.findOne({default:true});
             
             const data = {
                 orders,
                 totalSamples,
                 totalTaken,
                 query: req.query.query,
-                selectedSeason: req.query.season,
+                selectedSeason: (defaultSeason !== null) ? req.query.season || defaultSeason.season : null ,
+                defaultSeason: (defaultSeason !== null) ? defaultSeason._id : null,
                 consultants,
                 seasons,
                 dynamics
@@ -181,9 +183,19 @@ module.exports.createApp = function createApp({
     });
 
     app.put("/season/:seasonID", (req, res) => {
-        Season.updateSeason(req.params.seasonID, req.body)
+        Season.updateSeasonName(req.params.seasonID, req.body)
             .then(function (response) {
                 res.json({status: "OK", message: "Season updated."});
+            })
+            .catch(function (error) {
+                res.status(500).end("ERROR");
+            });
+    });
+
+    app.put("/season/default/:seasonID", (req, res) => {
+        Season.setDefaultSeason(req.params.seasonID)
+            .then(function (response) {
+                res.json({status: "OK", message: "Season updated to default."});
             })
             .catch(function (error) {
                 res.status(500).end("ERROR");
