@@ -334,33 +334,33 @@ describe("order integration test", () => {
 
         await sleep(500);
 
-        const order = await Order.findOne({ _id: orderId });
+        const newOrder = await Order.findOne({ _id: orderId });
 
-        expect(order.season.toHexString()).to.eq(season1._id.toHexString());
-        expect(order.consultant.toHexString()).to.eq(consultant1._id.toHexString());
-        expect(order.name).to.eq("NEW_NAME");
-        expect(order.farmName).to.eq("NEW_FARM_NAME");
-        expect(order.address.street).to.eq("NEW_STREET");
-        expect(order.address.zip).to.eq(8888);
-        expect(order.address.city).to.eq("NEW_CITY");
-        expect(order.landlineNumber).to.eq("77777777");
-        expect(order.phoneNumber).to.eq("66666666");
-        expect(order.comment).to.eq("NEW_COMMENT");
-        expect(order.sampleDensity).to.eq(2);
-        expect(order.area).to.eq(3);
-        expect(order.samePlanAsLast).to.eq(false);
-        expect(order.takeOwnSamples).to.eq(false);
-        expect(order.mapDate).to.deep.eq(new Date("1970-01-02"));
-        expect(order.sampleDate).to.deep.eq(new Date("1970-01-02"));
-        expect(order.sampleTime).to.eq(2);
-        expect(order.mgSamples).to.eq(2);
-        expect(order.cutSamples).to.eq(2);
-        expect(order.otherSamples).to.eq(2);
-        expect(order.samplesTaken).to.eq(2);
-        expect(order.labDate).to.deep.eq(new Date("1970-01-02"));
-        expect(order.fromLabDate).to.deep.eq(new Date("1970-01-02"));
-        expect(order.mO).to.deep.eq(new Date("1970-01-02"));
-        expect(order.receptApproved).to.deep.eq(new Date("1970-01-02"))
+        expect(newOrder.season.toHexString()).to.eq(season1._id.toHexString());
+        expect(newOrder.consultant.toHexString()).to.eq(consultant1._id.toHexString());
+        expect(newOrder.name).to.eq("NEW_NAME");
+        expect(newOrder.farmName).to.eq("NEW_FARM_NAME");
+        expect(newOrder.address.street).to.eq("NEW_STREET");
+        expect(newOrder.address.zip).to.eq(8888);
+        expect(newOrder.address.city).to.eq("NEW_CITY");
+        expect(newOrder.landlineNumber).to.eq("77777777");
+        expect(newOrder.phoneNumber).to.eq("66666666");
+        expect(newOrder.comment).to.eq("NEW_COMMENT");
+        expect(newOrder.sampleDensity).to.eq(2);
+        expect(newOrder.area).to.eq(3);
+        expect(newOrder.samePlanAsLast).to.eq(false);
+        expect(newOrder.takeOwnSamples).to.eq(false);
+        expect(newOrder.mapDate).to.deep.eq(new Date("1970-01-02"));
+        expect(newOrder.sampleDate).to.deep.eq(new Date("1970-01-02"));
+        expect(newOrder.sampleTime).to.eq(2);
+        expect(newOrder.mgSamples).to.eq(2);
+        expect(newOrder.cutSamples).to.eq(2);
+        expect(newOrder.otherSamples).to.eq(2);
+        expect(newOrder.samplesTaken).to.eq(2);
+        expect(newOrder.labDate).to.deep.eq(new Date("1970-01-02"));
+        expect(newOrder.fromLabDate).to.deep.eq(new Date("1970-01-02"));
+        expect(newOrder.mO).to.deep.eq(new Date("1970-01-02"));
+        expect(newOrder.receptApproved).to.deep.eq(new Date("1970-01-02"))
         expect(newOrder.sendToFarmer.getTime()).to.eq(new Date("1970-01-02").getTime())
         expect(newOrder.sendBy.toHexString()).to.eq(consultant1._id.toHexString())
         expect(newOrder.contactFarmer).to.eq(false)
@@ -676,6 +676,8 @@ describe("order integration test", () => {
                 .map(o => o.getAttribute("data-order-id")));
 
         expect(orderIds).to.deep.eq([order1._id.toHexString()])
+
+        await page.goto("http://localhost:1025/")
     });
 
     //TODO: Larsen: Kan ikke teste, da jeg stadig får fejl i before-hook.
@@ -687,15 +689,21 @@ describe("order integration test", () => {
                 const modal = document.getElementById("adminModal");
 
                 if(!modal.classList.contains("show")){
-                    throw new Error("modal, for seasons, isn't shown")
+                    throw new Error("modal, for seasons, isn't shown");
                 }
+
                 const seasons = document.querySelectorAll("#season");
                 const season = seasons[0];
 
                 $("#seasonInput").val("19/20");
                 $("#createSeasonSubmit").click();
             }, 300);
-        })
+        });
+
+        const seasons = await Season.find();
+        const season = seasons[0];
+
+        expect(season.season).to.eq("19/20");
     });
 
     //TODO: Mangler edit season test
@@ -710,25 +718,9 @@ describe("order integration test", () => {
             //Check om sæson er ændret
         })
     });
-    //TODO: Mangler select season test
-    it("should select season", async () => {
-        const season1718 = new Season({
-            season: "Sæson 17/18"
-        });
-        await season1718.save();
-        const season1819 = new Season({
-            season: "Sæson 18/19"
-        });
-        await season1819.save();
-        await page.reload();
-        await page.evaluate(() => {
-            //Vælg sæson #2
-            //Check om sæson er ændret
-        })
-    });
 
     it("should create dynamic", async () => {
-        await page.reload()
+        await page.reload();
         await page.evaluate(() => {
             $("#navbarSupportedContent > ul > li:nth-child(2) > a").click();
             
@@ -736,7 +728,7 @@ describe("order integration test", () => {
                 const modal = document.getElementById("adminModal");
 
                 if (!modal.classList.contains("show")) {
-                    throw new Error("modal not shown")
+                    throw new Error("modal not shown");
                 }
 
                 const consultants = document.querySelectorAll("#adminModal .consultant");
@@ -747,11 +739,11 @@ describe("order integration test", () => {
                 consultant.querySelector(".editConsultantPasswordBtn").click();
                 consultant.querySelector(".editConsultantPassword").value= "NEW_Pa55";
 
-                user.querySelector(".editConsultantSaveBtn").click()
-            }, 300)
+                user.querySelector(".editConsultantSaveBtn").click();
+            }, 300);
         });
 
-        await sleep(500)
+        await sleep(500);
     });
 
     it("should delete dynamic")
