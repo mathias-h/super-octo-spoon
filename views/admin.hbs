@@ -55,16 +55,16 @@
                                         <td><input class="editConsultantName form-control" type="text" value="{{name}}"
                                                 name="brugernavn" placeholder="Brugernavn"/></td>
                                         <td>
-                                            <button class="editConsultantPasswordBtn btn btn-info">Skift kodeord</button>
+                                            <button class="editConsultantPasswordBtn btn btn-secondary">Skift kodeord</button>
                                         </td>
                                         <td class="align-middle"><input class="editConsultantIsAdmin form-control"
                                                                         type="checkbox" name="er admin"
-                                                                        {{#isAdminToChecked isAdmin}}{{/isAdminToChecked}}></td>
+                                                                        {{#if isAdmin}}checked{{/if}}></td>
                                         <td>
-                                            <button class="editConsultantSaveBtn btn btn-info">Gem</button>
+                                            <button class="editConsultantSaveBtn btn btn-primary">Gem</button>
                                         </td>
                                         <td>
-                                            <button class="editConsultantDeleteBtn btn btn-info">Slet</button>
+                                            <button class="editConsultantDeleteBtn btn btn-danger">Slet</button>
                                         </td>
                                     </tr>
                                 {{/if}}
@@ -88,8 +88,7 @@
                         {{#each seasons}}
                                 <tr class="season" data-season-id="{{_id}}">
                                     <td><input class="form-control editSeasonInput" type="text" value="{{season}}" name="season" placeholder="Sæson"/></td>
-                                    <td><button class="btn btn-info editSeasonSaveBtn">gem</button></td>
-
+                                    <td><button class="btn btn-primary editSeasonSaveBtn">Gem</button></td>
                                 </tr>
                         {{/each}}
                         </tbody>
@@ -100,7 +99,7 @@
                                     <option value="{{this.id}}" {{#equals ../defaultSeason this.id}}selected{{/equals}}>Sæson {{this.season}}</option>
                                 {{/each}}
                             </select>
-                            <button id="setDefaultSeasonBtn" class="col btn btn-info editSeasonDefaultBtn">Sæt til Standard</button>
+                            <button id="setDefaultSeasonBtn" class="col btn btn-primary editSeasonDefaultBtn">Sæt til Standard</button>
                             <div id="defaultSeasonSat" class="col text-center" style="display: none">OK</div>
                         </div>
                 </div>
@@ -119,7 +118,7 @@
                                 <td>{{name}}</td>
                                 <td>{{fase}}</td>
                                 <td>
-                                    <button class="sletDynamicColumn">slet</button>
+                                    <button class="btn btn-danger sletDynamicColumn">Slet</button>
                                 </td>
                                 <td></td>
                             </tr>
@@ -140,7 +139,7 @@
                                     <input class="form-control" id="dynamicColumnFase" type="number" min="1" max="3" name="dyanmicFase" placeholder="Fase"/>
                                 </div>
                                 <div class="col">
-                                    <button class="btn btn-info" id="dynamicColumnBtn" type="submit">Tilføj</button>
+                                    <button class="btn btn-primary" id="dynamicColumnBtn" type="submit">Tilføj</button>
                                 </div>
                             </div>
                         </div>
