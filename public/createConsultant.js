@@ -1,24 +1,5 @@
 "use strict";
 
-function validatePassword(passedPassword, password = { addClass: () => {} }) {
-    if (!passedPassword){
-        password.addClass('is-invalid');
-        return "Kodeord er ikke udfyldt.";
-    }
-
-    if (passedPassword.length < 8) {
-        password.addClass('is-invalid');
-        return "Kodeord er for kort.";
-    }
-
-    if (!/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/.test(passedPassword)){
-        password.addClass('is-invalid');
-        return "Kode skal indeholde midst et tal, et stort og et lille bogstav.";
-    }
-
-    return true;
-}
-
 function convertFormToObject(form) {
     const data = {};
     const f = new FormData(form);
@@ -28,10 +9,7 @@ function convertFormToObject(form) {
     return data;
 }
 
-$(() => {
-    const form = document.getElementById('createConsultantForm');
-    if (!form) return
-
+$(document).ready(() => {
     $("#createConsultantCancel").click(() => {
         clearCreateConsultant();
     });
@@ -86,37 +64,20 @@ $(() => {
             $("#smallCreateConsultant-passwordRepeat").text("");
             passwordRepeat.addClass("is-invalid");
         } else {
-            passwordRepeat[0].setCustomValidity('');
-            passwordRepeat.removeClass('is-invalid');
-            const result = validatePassword(password.val(), password);
-
-            console.log(result);
-            if (result === true) {
-                password[0].setCustomValidity('');
-                password.removeClass('is-invalid');
-            }
-            else password[0].setCustomValidity(result);
+            passwordRepeat[0].setCustomValidity("");
+            $("#smallCreateConsultant-passwordRepeat").text("");
+            passwordRepeat.removeClass("is-invalid");
         }
     }
 
+    consultant.keyup(() => {
+        consultant[0].setCustomValidity("");
+        $("#smallCreateConsultant-consultant").text("");
+        consultant.removeClass("is-invalid");
+    });
+
     password.keyup(() => {
-        const result = validatePassword(password.val(), password);
-
-        if(result !== true){
-            password[0].setCustomValidity(result);
-
-            if(password.parent().find('small').length == 1){
-                password.parent().find('small').text(result);
-            }else{
-                password.parent().append('<small class="text-danger">' + result + '</small>');
-            }
-
-        }else{
-            password[0].setCustomValidity(result);
-            password.removeClass('is-invalid');
-            password.parent().find('small').remove();
-        }
-
+        validatePassword();
         matchPasswords();
     });
 
@@ -124,7 +85,8 @@ $(() => {
         matchPasswords();
     });
 
-    form.addEventListener('submit', function(event) {
+    const form = document.getElementById("createConsultantForm");
+    form.addEventListener("submit", function(event) {
         event.preventDefault();
         event.stopPropagation();
 
@@ -148,12 +110,10 @@ $(() => {
                     "content-type": "application/json"
                 }
             })
-                .then(() => location.reload())
-                .catch(() => {
-                    // TODO: Error handling når server side validering fejler
-                });
+                .then(() => location.reload());
         }
 
         form.classList.add("was-validated");
     }, false);
+
 });
