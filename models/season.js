@@ -11,30 +11,36 @@ const Season = new Schema({
     },
     default: {
         type: Boolean,
+<<<<<<< HEAD
         required: true
+=======
+        required: true,
+>>>>>>> fa54e46fffb09588fa86c3610cbb0b7069c7740e
     }
 });
 
 Season.statics.createSeason = function (season) {
     if (!season){
-        return Error("Seasonal Error")
+        throw new Error("Seasonal Error")
     }else {
         return new this({
             season: season,
+<<<<<<< HEAD
             default: false // TODO set default
+=======
+            default: false
+>>>>>>> fa54e46fffb09588fa86c3610cbb0b7069c7740e
         }).save()
     }
 }
 
-Season.statics.updateSeason = function (seasonID, seasonData) {
-    return this.findOneAndUpdate({_id: seasonID}, {$set:seasonData}, {runValidators: true})
-        .then(function (res) {
-            if (res){
-                return {status: "OKSEASONKO", message: "season updated"}
-            }else {
-                throw new Error("oops update season didn't work")
-            }
-        })
+Season.statics.updateSeasonName = function (seasonID, newSeasonName) {
+    return this.findOneAndUpdate({_id: seasonID}, {$set:{season:newSeasonName}}, {runValidators: true})
+}
+
+Season.statics.setDefaultSeason = async function (seasonID) {
+    await this.update({},{$set:{default:false}}, {runValidators: true, multi:true});
+    await this.findOneAndUpdate({_id: seasonID}, {$set:{default:true}}, {runValidators: true})
 }
 
 module.exports.Season = Season
