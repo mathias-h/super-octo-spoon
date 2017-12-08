@@ -225,12 +225,7 @@ Consultant.statics.deleteConsultant = function (consultantId) {
             };
 
             this.model("Order").updateMany(condition, update)
-<<<<<<< HEAD
-                .then(function () {
-=======
                 .then(() => {
-
->>>>>>> fa54e46fffb09588fa86c3610cbb0b7069c7740e
                     this.findOneAndRemove({_id: consultantId})
                         .then(function () {
                             return {

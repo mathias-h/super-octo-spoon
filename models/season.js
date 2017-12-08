@@ -11,11 +11,7 @@ const Season = new Schema({
     },
     default: {
         type: Boolean,
-<<<<<<< HEAD
         required: true
-=======
-        required: true,
->>>>>>> fa54e46fffb09588fa86c3610cbb0b7069c7740e
     }
 });
 
@@ -25,11 +21,7 @@ Season.statics.createSeason = function (season) {
     }else {
         return new this({
             season: season,
-<<<<<<< HEAD
-            default: false // TODO set default
-=======
             default: false
->>>>>>> fa54e46fffb09588fa86c3610cbb0b7069c7740e
         }).save()
     }
 }

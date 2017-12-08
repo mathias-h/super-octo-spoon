@@ -38,12 +38,9 @@ describe("consultant tests", () => {
     }
 
     before(async () => {
-<<<<<<< HEAD
-        const dataPath = __dirname + '/test-data';
-=======
 
-        const dataPath = __dirname + '/test-data-consultant';
->>>>>>> fa54e46fffb09588fa86c3610cbb0b7069c7740e
+        const dataPath = __dirname + '/test-data';
+
         rimraf.sync(dataPath);
         fs.mkdirSync(dataPath);
 

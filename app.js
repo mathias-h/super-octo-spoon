@@ -94,12 +94,8 @@ module.exports.createApp = function createApp({
             const consultants = await Consultant.find({});
             const seasons = await Season.find({});
             const dynamics = await Dynamic.find({});
-<<<<<<< HEAD
-
-=======
             const defaultSeason = await Season.findOne({default:true});
-            
->>>>>>> fa54e46fffb09588fa86c3610cbb0b7069c7740e
+
             const data = {
                 orders,
                 totalSamples,

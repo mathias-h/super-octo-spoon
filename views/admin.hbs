@@ -77,27 +77,7 @@
                         {{> createSeason}}
                     </div>
 
-<<<<<<< HEAD
-                    <div class="tab-pane" id="editSeason" role="tabpanel" aria-labelledby="editSeason-tab">
-                        <table class="table table-striped">
-                            <thead>
-                            <th>Sæson</th>
-                            <th>Gem</th>
-                            <th>Gør Standard</th>
-                            </thead>
-                            <tbody> <!-- TODO implementer ordentligt -->
-                            {{#each seasons}}
-                                    <tr class="season" data-season-id="{{_id}}">
-                                        <td><input class="form-control editSeasonInput" type="text" value="{{season}}" name="season" placeholder="Sæson"/></td>
-                                        <td><button class="btn btn-info editSeasonSaveBtn">gem</button></td>
-                                        <td><button class="btn btn-info editSeasonDefaultBtn">kør</button></td>
-                                    </tr>
-                            {{/each}}
-                            </tbody>
-                        </table>
-                    </div>
-                {{/if}}
-=======
+
                 <div class="tab-pane" id="editSeason" role="tabpanel" aria-labelledby="editSeason-tab">
                     <table class="table table-striped">
                         <thead>
@@ -124,8 +104,7 @@
                             <div id="defaultSeasonSat" class="col text-center" style="display: none">OK</div>
                         </div>
                 </div>
->>>>>>> fa54e46fffb09588fa86c3610cbb0b7069c7740e
-
+                {{/if}}
                 <div class="tab-pane {{#equals consultant.isAdmin false}}show active{{/equals}}" id="dynamicColumn" role="tabpanel" aria-labelledby="dynamicColumn-tab">
                     <table class="table table-striped">
                         <thead>
