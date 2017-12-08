@@ -221,7 +221,6 @@ module.exports.createApp = function createApp({
         else {
             Consultant.createConsultant(req.body)
                 .then(function (response) {
-                    console.log(response);
                     res.status(200).end("Consultant created.");
                 })
                 .catch(function (error) {
@@ -242,10 +241,6 @@ module.exports.createApp = function createApp({
     app.put('/consultant/:consultantId', function (req, res) {
 
         const sess = req.session;
-
-        console.log(req.params.consultantId);
-        console.log(sess.consultantId)
-        console.log(req.params.consultantId === sess.consultantId);
 
         if(!sess.isAdmin){
             res.status(403).send('Must be admin to edit consultants.');
