@@ -28,14 +28,10 @@ function convertFormToObject(form) {
     return data;
 }
 
-<<<<<<< HEAD
-window.addEventListener('load', function() {
+$(() => {
     const form = document.getElementById('createConsultantForm');
     if (!form) return
 
-=======
-$(document).ready(() => {
->>>>>>> fa54e46fffb09588fa86c3610cbb0b7069c7740e
     $("#createConsultantCancel").click(() => {
         clearCreateConsultant();
     });
@@ -90,7 +86,6 @@ $(document).ready(() => {
             $("#smallCreateConsultant-passwordRepeat").text("");
             passwordRepeat.addClass("is-invalid");
         } else {
-<<<<<<< HEAD
             passwordRepeat[0].setCustomValidity('');
             passwordRepeat.removeClass('is-invalid');
             const result = validatePassword(password.val(), password);
@@ -122,22 +117,6 @@ $(document).ready(() => {
             password.parent().find('small').remove();
         }
 
-=======
-            passwordRepeat[0].setCustomValidity("");
-            $("#smallCreateConsultant-passwordRepeat").text("");
-            passwordRepeat.removeClass("is-invalid");
-        }
-    }
-
-    consultant.keyup(() => {
-        consultant[0].setCustomValidity("");
-        $("#smallCreateConsultant-consultant").text("");
-        consultant.removeClass("is-invalid");
-    });
-
-    password.keyup(() => {
-        validatePassword();
->>>>>>> fa54e46fffb09588fa86c3610cbb0b7069c7740e
         matchPasswords();
     });
 
@@ -145,12 +124,7 @@ $(document).ready(() => {
         matchPasswords();
     });
 
-<<<<<<< HEAD
     form.addEventListener('submit', function(event) {
-=======
-    const form = document.getElementById("createConsultantForm");
-    form.addEventListener("submit", function(event) {
->>>>>>> fa54e46fffb09588fa86c3610cbb0b7069c7740e
         event.preventDefault();
         event.stopPropagation();
 
@@ -174,14 +148,10 @@ $(document).ready(() => {
                     "content-type": "application/json"
                 }
             })
-<<<<<<< HEAD
-                .done(() => location.reload())
+                .then(() => location.reload())
                 .catch(() => {
                     // TODO: Error handling når server side validering fejler
                 });
-=======
-                .then(() => location.reload());
->>>>>>> fa54e46fffb09588fa86c3610cbb0b7069c7740e
         }
 
         form.classList.add("was-validated");
