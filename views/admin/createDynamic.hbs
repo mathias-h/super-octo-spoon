@@ -1,0 +1,41 @@
+<div class="tab-pane {{#equals consultant.isAdmin false}}show active{{/equals}}" id="dynamicColumn" role="tabpanel" aria-labelledby="dynamicColumn-tab">
+    <table class="table table-striped">
+        <thead>
+        <th scope="col">Navn</th>
+        <th scope="col">Fase</th>
+        <th scope="col"></th>
+        <th scope="col"></th>
+        </thead>
+        <tbody>
+        {{#each dynamics}}
+            <tr data-id="{{id}}">
+                <td>{{name}}</td>
+                <td>{{fase}}</td>
+                <td>
+                    <button class="btn btn-danger sletDynamicColumn">Slet</button>
+                </td>
+                <td></td>
+            </tr>
+        {{/each}}
+        </tbody>
+    </table>
+    <form class="form">
+        <div class="form-group ml-2">
+            <div class="align-middle row">
+                <div class="col-3">
+                    <label for="addDynamicColumn">Tilføj dynamisk kolonne</label>
+                </div>
+                <div class="col">
+                    <input class="form-control" id="dynamicColumnName" type="text" name="dynamicName"
+                           placeholder="Navn"/>
+                </div>
+                <div class="col">
+                    <input class="form-control" id="dynamicColumnFase" type="number" min="1" max="3" name="dyanmicFase" placeholder="Fase"/>
+                </div>
+                <div class="col">
+                    <button class="btn btn-primary" id="dynamicColumnBtn" type="submit">Tilføj</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
