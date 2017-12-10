@@ -54,6 +54,13 @@ describe("consultant tests", () => {
 
         await Season.remove({});
         await Order.remove({});
+
+        const dummy = await Consultant.findOne({dummy: true});
+
+        if(dummy !== null){
+            await Consultant.updateConsultant(dummy._id, {dummy: false});
+        }
+
         await Consultant.remove({});
 
     });
@@ -318,23 +325,23 @@ describe("consultant tests", () => {
             ];
 
             const adminData = {
-                "name": "admin",
-                "password": "admin",
-                "isAdmin": true,
-                "dummy": false
+                name: "admin",
+                password: "admin",
+                isAdmin: true,
+                dummy: false
             };
 
             await Consultant.createConsultant(adminData);
 
             const dummyData = {
-                "name": "dummy",
-                "password": "dummy",
-                "isAdmin": false,
-                "dummy": true
+                name: "dummy",
+                password: "dummy",
+                isAdmin: false,
+                dummy: true
             };
 
             await Consultant.createConsultant(dummyData);
-            const dummy = await Consultant.findOne({name: 'dummy'});
+            const dummy = await Consultant.findOne({name: dummyData.name});
 
             const consultantData = {
                 name: "testConsultant01",
@@ -371,6 +378,21 @@ describe("consultant tests", () => {
             }
 
         });
+
+        it('should fail if attempting to delete dummy user', async function () {
+            const dummyData = {
+                name: "dummy",
+                password: "dummy",
+                isAdmin: false,
+                dummy: true
+            };
+
+            await Consultant.createConsultant(dummyData);
+            const dummy = await Consultant.findOne({dummy: true});
+
+            expect(await Consultant.deleteConsultant(dummy._id)).to.throw(Error, 'Deleting dummy user not allowed')
+
+        })
     });
 
 });

@@ -208,11 +208,15 @@ Consultant.statics.deleteConsultant = function (consultantId) {
     "tidligereAnsat" and then delete user.
      */
 
-    return this.findOne({name: "dummy"})
+    return this.findOne({dummy: true})
         .then((result) => {
 
             if(result === null){
-                throw new Error('Could not process delete.');
+                throw new Error('Could not process delete');
+            }
+
+            if(result._id.equals(consultantId)){
+                throw new Error('Deleting dummy user not allowed');
             }
 
             const condition = {
@@ -235,13 +239,6 @@ Consultant.statics.deleteConsultant = function (consultantId) {
                         });
                 });
 
-        })
-        .catch(function (error) {
-            console.error(error);
-            return {
-                status: 'ERROR',
-                message: error
-            };
         });
 
 };
