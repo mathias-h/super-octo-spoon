@@ -230,7 +230,7 @@ Consultant.statics.deleteConsultant = function (consultantId) {
 
             return this.model("Order").updateMany(condition, update)
                 .then(() => {
-                    this.findOneAndRemove({_id: consultantId})
+                    return this.findOneAndRemove({_id: consultantId})
                         .then(function () {
                             return {
                                 status: 'OK',
