@@ -219,9 +219,24 @@ describe("consultant tests", () => {
         });
     });
 
-    // todo - test for delete consultant
-
     describe('Testing delete consultant', function () {
+
+        it('should fail if attempting to delete dummy user', async function () {
+            const dummyData = {
+                name: "dummy",
+                password: "dummy",
+                isAdmin: false,
+                dummy: true
+            };
+
+            await Consultant.createConsultant(dummyData);
+            const dummy = await Consultant.findOne({dummy: true});
+
+            await Consultant.deleteConsultant(dummy._id).catch(err => {
+                expect(err.message).to.eq('Deleting dummy user not allowed')
+            })
+
+        });
 
         it('should delete a consultant ' +
             'and update all orders referencing this consultant to reference the dummy consultant instead', async function () {
@@ -368,31 +383,17 @@ describe("consultant tests", () => {
             const foundOrders = await Order.find();
 
             for(let i = 0; i < foundOrders.length; i++){
-                expect(foundOrders[i].consultant === foundConsultant._id);
+                expect(foundOrders[i].consultant.equals(foundConsultant._id));
             }
 
             await Consultant.deleteConsultant(foundConsultant._id);
 
             for(let i = 0; i < foundOrders.length; i++){
-                expect(foundOrders[i].consultant === dummy._id);
+                expect(foundOrders[i].consultant.equals(dummy._id));
             }
 
         });
 
-        it('should fail if attempting to delete dummy user', async function () {
-            const dummyData = {
-                name: "dummy",
-                password: "dummy",
-                isAdmin: false,
-                dummy: true
-            };
-
-            await Consultant.createConsultant(dummyData);
-            const dummy = await Consultant.findOne({dummy: true});
-
-            expect(await Consultant.deleteConsultant(dummy._id)).to.throw(Error, 'Deleting dummy user not allowed')
-
-        })
     });
 
 });
