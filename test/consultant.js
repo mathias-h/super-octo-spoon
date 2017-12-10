@@ -219,165 +219,7 @@ describe("consultant tests", () => {
         });
     });
 
-    // todo - test for delete consultant
-
     describe('Testing delete consultant', function () {
-
-        it('should delete a consultant ' +
-            'and update all orders referencing this consultant to reference the dummy consultant instead', async function () {
-
-            const orderDataArr = [
-                {
-                    consultant: undefined,
-                    season: undefined,
-                    signedDate: new Date("1/1/2017"),
-                    landlineNumber: "88888888",
-                    phoneNumber: "20202020",
-                    name: "NN1",
-                    farmName: "Bondegården",
-                    address: {
-                        "street": "Markvejen 1",
-                        "city": "Bondeby",
-                        "zip": "8123"
-                    },
-                    comment: "Ring efter høst",
-                    sampleDensity: 1,
-                    samePlanAsLast: true,
-                    takeOwnSamples: true,
-                    area: 100
-                },
-                {
-                    consultant: undefined,
-                    season: undefined,
-                    signedDate: new Date("1/1/2017"),
-                    landlineNumber: "88888889",
-                    phoneNumber: "20202020",
-                    name: "NN1",
-                    farmName: "Bondegården",
-                    address: {
-                        "street": "Markvejen 2",
-                        "city": "Bondeby",
-                        "zip": "8123"
-                    },
-                    comment: "Ring før høst",
-                    sampleDensity: 1,
-                    samePlanAsLast: true,
-                    takeOwnSamples: true,
-                    area: 100
-                },
-                {
-                    consultant: undefined,
-                    season: undefined,
-                    signedDate: new Date("1/1/2017"),
-                    landlineNumber: "88888888",
-                    phoneNumber: "20202020",
-                    name: "NN1",
-                    farmName: "Bondegården",
-                    address: {
-                        "street": "Markvejen 12",
-                        "city": "TestAArhus",
-                        "zip": "8000"
-                    },
-                    comment: "Ring under høst",
-                    sampleDensity: 1,
-                    samePlanAsLast: true,
-                    takeOwnSamples: true,
-                    area: 100
-                },
-                {
-                    consultant: undefined,
-                    season: undefined,
-                    signedDate: new Date("1/1/2017"),
-                    landlineNumber: "88888888",
-                    phoneNumber: "20202020",
-                    name: "NN1",
-                    farmName: "Bondegården",
-                    address: {
-                        "street": "Markvejen 12",
-                        "city": "Aarhus",
-                        "zip": "8000"
-                    },
-                    comment: "Ring under høst",
-                    sampleDensity: 1,
-                    samePlanAsLast: true,
-                    takeOwnSamples: true,
-                    area: 100
-                },
-                {
-                    consultant: undefined,
-                    season: undefined,
-                    signedDate: new Date("1/1/2017"),
-                    landlineNumber: "88888888",
-                    phoneNumber: "20202020",
-                    name: "NN1",
-                    farmName: "Bondegården",
-                    address: {
-                        "street": "Markvejen 3",
-                        "city": "Bondeby",
-                        "zip": "8123"
-                    },
-                    comment: "Ring under høst",
-                    smapleDensity: 1,
-                    samePlanAsLast: true,
-                    takeOwnSamples: true,
-                    area: 100
-                }
-            ];
-
-            const adminData = {
-                name: "admin",
-                password: "admin",
-                isAdmin: true,
-                dummy: false
-            };
-
-            await Consultant.createConsultant(adminData);
-
-            const dummyData = {
-                name: "dummy",
-                password: "dummy",
-                isAdmin: false,
-                dummy: true
-            };
-
-            await Consultant.createConsultant(dummyData);
-            const dummy = await Consultant.findOne({name: dummyData.name});
-
-            const consultantData = {
-                name: "testConsultant01",
-                password: "testConsultant01Password",
-                isAdmin: true,
-                dummy: false
-            };
-
-            await Consultant.createConsultant(consultantData);
-
-            await Season.createSeason("2017/2018");
-
-            const season = await Season.findOne();
-
-            const foundConsultant = await Consultant.findOne({name: consultantData.name});
-
-            for(let i = 0; i < orderDataArr.length; i++){
-                orderDataArr[i].consultant = foundConsultant._id;
-                orderDataArr[i].season = season._id;
-
-                await Order.createOrder(orderDataArr[i]);
-            }
-
-            const foundOrders = await Order.find();
-
-            for(let i = 0; i < foundOrders.length; i++){
-                expect(foundOrders[i].consultant === foundConsultant._id);
-            }
-
-            await Consultant.deleteConsultant(foundConsultant._id);
-
-            for(let i = 0; i < foundOrders.length; i++){
-                expect(foundOrders[i].consultant === dummy._id);
-            }
-
-        });
 
         it('should fail if attempting to delete dummy user', async function () {
             const dummyData = {
@@ -390,9 +232,12 @@ describe("consultant tests", () => {
             await Consultant.createConsultant(dummyData);
             const dummy = await Consultant.findOne({dummy: true});
 
-            expect(await Consultant.deleteConsultant(dummy._id)).to.throw(Error, 'Deleting dummy user not allowed')
+            await Consultant.deleteConsultant(dummy._id).catch(err => {
+                expect(err.message).to.eq('Deleting dummy user not allowed')
+            })
 
-        })
+        });
+
     });
 
 });
