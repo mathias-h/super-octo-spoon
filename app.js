@@ -13,6 +13,22 @@ module.exports.createApp = function createApp({
     Season,
     Dynamic
 }) {
+    Consultant.count().then(count => {
+        if (count === 0) {
+            new Consultant({
+                name: "Tidligere ansat",
+                dummy: true,
+                isAdmin: true,
+                password: "CUmsGUIjR1xxvorV"
+            }).save().then(() => new Consultant({
+                name: "admin",
+                password: "admin",
+                dummy: false,
+                isAdmin: true
+            }).save())
+        }
+    })
+
     const app = express();
     app.set('view engine', 'hbs');
     
