@@ -139,6 +139,7 @@ class EditOrderModal {
         setDate($("#inputMapDate"), order.mapDate)
         setDate($("#inputSampleDate"), order.sampleDate)
         $("#inputSampleTime").val(order.sampleTime);
+        $("#inputSamplesTaken").val(order.samplesTaken)
         $("#inputMgSamples").val(order.mgSamples);
         $("#inputCutSamples").val(order.cutSamples);
         $("#inputOtherSamples").val(order.otherSamples);

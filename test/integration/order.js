@@ -31,8 +31,7 @@ describe("order integration test", () => {
         fs.mkdirSync(dataPath);
 
         db = childProcess.spawn("mongod", ["--port", "27018", "--dbpath", dataPath]);
-
-        await sleep(1000);
+        await sleep(1500); // sleep to wait for db to start
 
         mongoose.Promise = global.Promise;
         const connection = await mongoose.createConnection("mongodb://localhost:27018/super-octo-spoon-test");
@@ -71,7 +70,7 @@ describe("order integration test", () => {
             document.querySelector("button[type=submit]").click()
         });
 
-        await sleep(100);
+        await page.waitForNavigation();
     });
 
     after(async () => {
@@ -146,20 +145,14 @@ describe("order integration test", () => {
             season: "SEASON",
             default: false
         });
-        await season.save()
+        await season.save();
 
         await page.reload();
 
         await page.evaluate((consultantId, seasonId) => {
-            document.querySelector("#navbarSupportedContent > ul > li:nth-child(1) > a").click();
-
             const modal = document.querySelector("#createOrderModal");
-
-            setTimeout(() => {
-                if (!modal.classList.contains("show")) {
-                    throw new Error("modal not shown")
-                }
-
+            
+            $(modal).on("shown.bs.modal", () => {
                 modal.querySelector("#orderSeason").value = seasonId;
                 modal.querySelector("#inputConsultant").value = consultantId;
                 modal.querySelector("#inputName").value = "NAME";
@@ -174,14 +167,14 @@ describe("order integration test", () => {
                 modal.querySelector("#inputArea").value = 2;
                 modal.querySelector("#inputSamePlanAsLast").checked = true;
                 modal.querySelector("#inputTakeOwnSamples").checked = true;
-
-                console.log(modal.querySelector("button[type=submit]"));
-
+    
                 modal.querySelector("button[type=submit]").click()
-            }, 300)
+            });
+
+            document.querySelector("#navbarSupportedContent > ul > li:nth-child(2) > a").click();
         }, consultant._id, season._id);
 
-        await sleep(500);
+        await page.waitForNavigation();
 
         const orders = await Order.find();
         const order = orders[0];
@@ -228,11 +221,13 @@ describe("order integration test", () => {
             dummy: false
         });
         const season = new Season({
-            season: "SEASON"
+            season: "SEASON",
+            default: true
         });
         await season.save();
         const season1 = new Season({
-            season: "SEASON1"
+            season: "SEASON1",
+            default: false
         });
         await season1.save();
 
@@ -284,14 +279,9 @@ describe("order integration test", () => {
         await page.reload();
 
         await page.evaluate((newConsultantId, newSeasonId) => {
-            document.querySelector(".order").click();
             const modal = document.getElementById("editOrderModal");
 
-            setTimeout(() => {
-                if (!modal.classList.contains("show")) {
-                    throw new Error("modal not shown")
-                }
-
+            $(modal).on("shown.bs.modal", () => {
                 modal.querySelector("#editOrderSeason").value = newSeasonId;
                 modal.querySelector("#editInputConsultant").value = newConsultantId;
                 modal.querySelector("#editInputName").value = "NEW_NAME";
@@ -328,13 +318,15 @@ describe("order integration test", () => {
                 modal.querySelector("#inputAreaMap").value = 2;
                 modal.querySelector("#inputDone").checked = false;
 
-                modal.querySelector("#orderEditSave").click()
-            }, 200)
+                modal.querySelector("#orderEditSave").click();
+            });
+
+            document.querySelector(".order").click();
         }, consultant1._id, season1._id);
 
-        await sleep(500);
+        await page.waitForNavigation();
 
-        const newOrder = await Order.findOne({ _id: orderId });
+        const newOrder = await Order.findOne({ _id: order._id });
 
         expect(newOrder.season.toHexString()).to.eq(season1._id.toHexString());
         expect(newOrder.consultant.toHexString()).to.eq(consultant1._id.toHexString());
@@ -420,7 +412,7 @@ describe("order integration test", () => {
             $("#search").submit()
         });
 
-        await sleep(1000);
+        await page.waitForNavigation();
 
         const orderIds = await page.evaluate(() =>
         Array.from(document.querySelectorAll("tr.order"))
@@ -476,7 +468,7 @@ describe("order integration test", () => {
             $("#name").click()
         });
 
-        await sleep(1000);
+        await page.waitForNavigation();
 
         const orderIds = await page.evaluate(() =>
             Array.from(document.querySelectorAll("tr.order"))
@@ -497,8 +489,13 @@ describe("order integration test", () => {
             isAdmin: false
         });
         await consultant.save();
+        const season = new Season({
+            season: "season",
+            default: true
+        })
+        await season.save();
         const order = new Order({
-            season: mongoose.Types.ObjectId(),
+            season: season._id,
             consultant: consultant._id,
             signedDate: new Date("2017-01-02"),
             name: "NAME",
@@ -508,13 +505,11 @@ describe("order integration test", () => {
                 street: "STREET",
                 zip: 9999
             },
-            cutSamples: 1,
-            mgSamples: 1,
-            otherSamples: 1,
-            area: 3
+            area: 3,
+            samplesTaken: 3
         });
         const order1 = new Order({
-            season: mongoose.Types.ObjectId(),
+            season: season._id,
             consultant: consultant._id,
             signedDate: new Date("2017-01-01"),
             name: "NAME",
@@ -524,10 +519,8 @@ describe("order integration test", () => {
                 street: "STREET",
                 zip: 9999
             },
-            cutSamples: 1,
-            mgSamples: 1,
-            otherSamples: 1,
-            area: 3
+            area: 3,
+            samplesTaken: 3,
         });
         await order.save();
         await order1.save();
@@ -538,7 +531,7 @@ describe("order integration test", () => {
             $("#name").click()
         });
 
-        await sleep(1000);
+        await page.waitForNavigation();
 
         const { totalSamples, totalTaken } = await page.evaluate(() => {
             const totalMatch = $("#navbar-statistics").text().match(/Prøver udtaget: (\d+)\s*\/\s*(\d+)/)
@@ -557,24 +550,19 @@ describe("order integration test", () => {
         await page.reload()
 
         await page.evaluate(() => {
-            $("#navbarSupportedContent > ul > li:nth-child(2) > a").click();
-
-            const modal = document.getElementById("adminModal");
-            setTimeout(() => {
-                if (!modal.classList.contains("show")) {
-                    throw new Error("modal not shown")
-                }
-                
+            $("#adminModal").on("shown.bs.modal", () => {
                 $("#inputCreateConsultant-consultant").val("CONSULTANT");
                 $("#inputCreateConsultant-isSuperUser").prop("checked", true);
                 $("#inputCreateConsultant-password").val("Pa55word");
                 $("#inputCreateConsultant-passwordRepeat").val("Pa55word");
 
                 $("#createConsultantForm button[type=submit]").click()
-            }, 300)
+            });
+
+            $("#navbarSupportedContent > ul > li:nth-child(3) > a").click();
         });
 
-        await sleep(500);
+        await page.waitForNavigation();
 
         const consultants = await Consultant.find()
         const consultant = consultants[1]
@@ -596,15 +584,7 @@ describe("order integration test", () => {
         await page.reload();
 
         await page.evaluate(() => {
-            $("#navbarSupportedContent > ul > li:nth-child(2) > a").click();
-            
-            setTimeout(() => {
-                const modal = document.getElementById("adminModal");
-
-                if (!modal.classList.contains("show")) {
-                    throw new Error("modal not shown")
-                }
-
+            $("#adminModal").on("shown.bs.modal", () => {
                 const consultants = document.querySelectorAll("#adminModal .consultant");
                 const consultant = consultants[1];
 
@@ -614,10 +594,12 @@ describe("order integration test", () => {
                 consultant.querySelector(".editConsultantPassword").value= "NEW_Pa55";
 
                 consultant.querySelector(".editConsultantSaveBtn").click()
-            }, 300)
+            });
+               
+            $("#navbarSupportedContent > ul > li:nth-child(3) > a").click();
         });
 
-        await sleep(500);
+        await page.waitForNavigation();
 
         const newConsultant = await Consultant.findById(consultant._id);
 
@@ -664,12 +646,13 @@ describe("order integration test", () => {
         });
         await order1.save();
         await page.reload();
+
         await page.evaluate((seasonId) => {
             $("#season").val(seasonId)
             $("#season")[0].dispatchEvent(new CustomEvent("change"))
         }, season1819._id);
 
-        await sleep(500);
+        await page.waitForNavigation();
 
         const orderIds = await page.evaluate(() =>
             Array.from(document.querySelectorAll("tr.order"))
@@ -680,25 +663,22 @@ describe("order integration test", () => {
         await page.goto("http://localhost:1025/")
     });
 
-    //TODO: Larsen: Kan ikke teste, da jeg stadig får fejl i before-hook.
     it("should create season", async () => {
+        await page.reload();
+
         await page.evaluate(() => {
-            $("#navbarSupportedContent > ul > li:nth-child(2) > a").click();
-
-            setTimeout(() => {
-                const modal = document.getElementById("adminModal");
-
-                if(!modal.classList.contains("show")){
-                    throw new Error("modal, for seasons, isn't shown");
-                }
-
+            $("#adminModal").on("shown.bs.modal", () => {
                 const seasons = document.querySelectorAll("#season");
                 const season = seasons[0];
-
+                
                 $("#seasonInput").val("19/20");
                 $("#createSeasonSubmit").click();
-            }, 300);
+            });
+
+            $("#navbarSupportedContent > ul > li:nth-child(3) > a").click();
         });
+
+        await page.waitForNavigation();
 
         const seasons = await Season.find();
         const season = seasons[0];
@@ -706,45 +686,35 @@ describe("order integration test", () => {
         expect(season.season).to.eq("19/20");
     });
 
-    //TODO: Mangler edit season test
     it("should edit season", async () => {
-        const season1718 = new Season({
-            season: "Sæson 17/18"
+        const season = new Season({
+            season: "SEASON",
+            default: true
         });
-        await season1718.save();
+        await season.save();
+
         await page.reload();
-        await page.evaluate(() => {
-            //Adminstration --> check Modal' eksistens--> Ændre Sæson --> String af **/** --> Submit
-            //Check om sæson er ændret
-        })
-    });
 
-    it("should create dynamic", async () => {
-        await page.reload();
-        await page.evaluate(() => {
-            $("#navbarSupportedContent > ul > li:nth-child(2) > a").click();
-            
-            setTimeout(() => {
-                const modal = document.getElementById("adminModal");
+        await page.evaluate(() => {
+            $("#adminModal").on("shown.bs.modal", () => {
+                const season = document.querySelector(".season");
 
-                if (!modal.classList.contains("show")) {
-                    throw new Error("modal not shown");
-                }
+                season.querySelector(".editSeasonInput").value = "NEW_SEASON";
 
-                const consultants = document.querySelectorAll("#adminModal .consultant");
-                const consultant = consultants[0];
+                season.querySelector(".editSeasonSaveBtn").click();
+            });
 
-                consultant.querySelector(".editConsultantName").value = "NEW_CONSULTANT_NAME";
-                consultant.querySelector(".editConsultantIsAdmin").checked = false;
-                consultant.querySelector(".editConsultantPasswordBtn").click();
-                consultant.querySelector(".editConsultantPassword").value= "NEW_Pa55";
-
-                user.querySelector(".editConsultantSaveBtn").click();
-            }, 300);
+            $("#navbarSupportedContent > ul > li:nth-child(3) > a").click();
         });
 
-        await sleep(500);
+        await page.waitForNavigation();
+
+        const newSeason = await Season.findOne({ _id: season._id });
+
+        expect(newSeason.season).to.eq("NEW_SEASON");
     });
 
-    it("should delete dynamic")
+    it("should set default season");
+    it("should create dynamic");
+    it("should delete dynamic");
 });

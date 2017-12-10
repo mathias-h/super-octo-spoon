@@ -203,30 +203,28 @@ Order.statics.createOrder = async function createOrder(orderData, userId) {
     }
 };
 
-Order.statics.sampleTotals = async function sampleTotals() {
+Order.statics.sampleTotals = async function sampleTotals(selectedSeason) {
     const startOfYear = moment(new Date()).startOf("year").toDate()
-
+    if (!selectedSeason){
+        return {
+            totalSamples: 0,
+            totalTaken: 0
+        }
+    }
     return (await this.aggregate([
         { $match: {
-            signedDate: { $gte: startOfYear }
+            season: selectedSeason._id
         }},
         { $group: {
             _id: null,
             totalSamples: { $sum:"$area" },
-            totalTaken: { $sum:{$add:["$mgSamples","$cutSamples","$otherSamples"] }
+            totalTaken: { $sum:"$samplesTaken"
         }}}
     ]).exec())[0] || {}
 }
 
-Order.statics.getAll = async function getAll({query, sortBy="date", order, season}) {
-    const seasonQuery = {}
-    if (season) {
-        seasonQuery.season = season
-    } else {
-        seasonQuery.default = true
-    }
-    var season = (await this.model("Season").findOne(seasonQuery))
-    let orders = await this.find({ season: season ? season._id : null }).lean()
+Order.statics.getAll = async function getAll({ query, sortBy="date", order }, seasonId) {
+    let orders = await this.find({ season: seasonId }).lean()
         .populate('consultant', "name")
         .populate('season', "season")
         .exec();

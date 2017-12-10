@@ -13,6 +13,22 @@ module.exports.createApp = function createApp({
     Season,
     Dynamic
 }) {
+    Consultant.count().then(count => {
+        if (count === 0) {
+            new Consultant({
+                name: "Tidligere ansat",
+                dummy: true,
+                isAdmin: true,
+                password: "CUmsGUIjR1xxvorV"
+            }).save().then(() => new Consultant({
+                name: "admin",
+                password: "admin",
+                dummy: false,
+                isAdmin: true
+            }).save())
+        }
+    })
+
     const app = express();
     app.set('view engine', 'hbs');
     
@@ -23,7 +39,11 @@ module.exports.createApp = function createApp({
 
         hbs.registerPartial("adminModal", require("fs").readFileSync(__dirname + "/views/admin.hbs").toString());
         hbs.registerPartial("createConsultant", require("fs").readFileSync(__dirname + "/views/admin/createConsultant.hbs").toString());
+        hbs.registerPartial("editConsultant", require("fs").readFileSync(__dirname + "/views/admin/editConsultant.hbs").toString());
         hbs.registerPartial("createSeason", require("fs").readFileSync(__dirname + "/views/admin/createSeason.hbs").toString());
+        hbs.registerPartial("editSeason", require("fs").readFileSync(__dirname + "/views/admin/editSeason.hbs").toString());
+        hbs.registerPartial("createDynamic", require("fs").readFileSync(__dirname + "/views/admin/createDynamic.hbs").toString());
+
 
         hbs.registerHelper("equals", function (a, b, options) {
            if (a === b){
@@ -88,21 +108,22 @@ module.exports.createApp = function createApp({
 
     app.get("/", async (req,res) => {
         try {
-            const { totalSamples, totalTaken } = await Order.sampleTotals();
+            const defaultSeason = await Season.findOne({default:true});
+            const selectedSeason = await Season.findOne({season: req.query.season || (defaultSeason ? defaultSeason.season : null)})
+            const { totalSamples, totalTaken } = await Order.sampleTotals(selectedSeason);
             const consultant = await Consultant.findById(req.session.consultantId);
-            const orders = await Order.getAll(req.query);
+            const orders = await Order.getAll(req.query, selectedSeason ? selectedSeason._id : null);
             const consultants = await Consultant.find({});
             const seasons = await Season.find({});
             const dynamics = await Dynamic.find({});
-            const defaultSeason = await Season.findOne({default:true});
 
             const data = {
                 orders,
                 totalSamples,
                 totalTaken,
                 query: req.query.query,
-                selectedSeason: (defaultSeason !== null) ? req.query.season || defaultSeason.season : null ,
-                defaultSeason: (defaultSeason !== null) ? defaultSeason._id : null,
+                selectedSeason: selectedSeason ? selectedSeason.season : null,
+                defaultSeason: defaultSeason ? defaultSeason._id : null,
                 consultants,
                 seasons,
                 dynamics,
@@ -315,7 +336,7 @@ module.exports.createApp = function createApp({
                 }
             })
             .catch(function (error) {
-                console.log(error);
+                console.error(error);
                 res.status(500).end('Unknown error.');
             });
     });
@@ -329,7 +350,7 @@ module.exports.createApp = function createApp({
             }
             res.status(200).end('Logged out successfully.');
         } catch (error) {
-            console.log(error);
+            console.error(error);
             res.status(500).end('Could not logout.');
         }
 

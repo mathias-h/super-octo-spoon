@@ -1,0 +1,40 @@
+<div class="tab-pane" id="editUser" role="tabpanel" aria-labelledby="editUser-tab">
+    <div class="modal-body">
+        <div id="alert-createConsultant">
+            <!-- error message -->
+        </div>
+    </div>
+    <table class="table table-striped">
+        <thead>
+        <th>Brugernavn</th>
+        <th>Kode</th>
+        <th class="text-center">Superbruger</th>
+        </thead>
+        <tbody>
+        {{#each consultants}}
+            {{#if isDisabled}}
+            {{else}}
+                {{#if dummy}}
+                {{else}}
+                <tr class="consultant" data-consultant-id="{{_id}}">
+                    <td><input class="editConsultantName form-control" type="text" value="{{name}}"
+                               name="brugernavn" placeholder="Brugernavn"/></td>
+                    <td>
+                        <button class="editConsultantPasswordBtn btn btn-secondary">Skift kodeord</button>
+                    </td>
+                    <td class="align-middle"><input class="editConsultantIsAdmin form-control"
+                                                    type="checkbox" name="er admin"
+                                                    {{#if isAdmin}}checked{{/if}}></td>
+                    <td>
+                        <button class="editConsultantSaveBtn btn btn-primary">Gem</button>
+                    </td>
+                    <td>
+                        <button class="editConsultantDeleteBtn btn btn-danger">Slet</button>
+                    </td>
+                </tr>
+                {{/if}}
+            {{/if}}
+        {{/each}}
+        </tbody>
+    </table>
+</div>

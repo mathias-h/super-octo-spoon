@@ -1,0 +1,31 @@
+<div class="tab-pane" id="editSeason" role="tabpanel" aria-labelledby="editSeason-tab">
+    <div class="modal-body">
+        <div id="alert-editSeason">
+            <!-- error message -->
+        </div>
+    </div>
+
+    <table class="table table-striped">
+        <thead>
+        <th>Sæson</th>
+        <th>Gem</th>
+        </thead>
+        <tbody>
+        {{#each seasons}}
+            <tr class="season" data-season-id="{{_id}}">
+                <td><input class="form-control editSeasonInput" type="text" value="{{season}}" name="season" placeholder="Sæson"/></td>
+                <td><button class="btn btn-primary editSeasonSaveBtn">Gem</button></td>
+            </tr>
+        {{/each}}
+        </tbody>
+    </table>
+    <div class="row m-2">
+        <select id="seasonDefaultSelect" class="col form-control mt-1 mr-3">
+            {{#each seasons}}
+                <option value="{{this.id}}" {{#equals ../defaultSeason this.id}}selected{{/equals}}>Sæson {{this.season}}</option>
+            {{/each}}
+        </select>
+        <button id="setDefaultSeasonBtn" class="col btn btn-primary editSeasonDefaultBtn">Sæt til Standard</button>
+        <div id="defaultSeasonSat" class="col text-center" style="display: none">OK</div>
+    </div>
+</div>

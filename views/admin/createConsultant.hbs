@@ -1,41 +1,43 @@
-<form id="createConsultantForm" novalidate>
-    <div class="modal-body">
-        <div class="form-row">
-            <div class="col form-group">
-                <label for="inputConsultant">Konsulents initialer</label>
-                <input name="consultant" id="inputCreateConsultant-consultant" class="form-control" placeholder="Konsulent" required>
-                <small id="smallCreateConsultant-consultant" class="text-danger"></small>
+<div class="tab-pane show active" id="createUser" role="tabpanel" aria-labelledby="createUser-tab">
+    <form id="createConsultantForm" novalidate>
+        <div class="modal-body">
+            <div class="form-row">
+                <div class="col form-group">
+                    <label for="inputConsultant">Brugernavn</label>
+                    <input name="consultant" id="inputCreateConsultant-consultant" class="form-control" placeholder="Brugernavn" required>
+                    <small id="smallCreateConsultant-consultant" class="text-danger"></small>
+                </div>
+
+                <div class="col-3">
+                    <div class="form-check" style="margin-top: 2.5em;">
+                        <label class="form-check-label">
+                            <input name="isSuperUser" id="inputCreateConsultant-isSuperUser" type="checkbox" class="form-check-input">
+                            Er superbruger
+                        </label>
+                    </div>
+                </div>
             </div>
 
-            <div class="col-3">
-                <div class="form-check" style="margin-top: 2.5em;">
-                    <label class="form-check-label">
-                        <input name="isSuperUser" id="inputCreateConsultant-isSuperUser" type="checkbox" class="form-check-input">
-                        Er superbruger
-                    </label>
+            <div class="form-row" id="passwordFields">
+                <div class="col form-group">
+                    <label for="inputPassword">Adgangskode</label>
+                    <input name="password" type="password" id="inputCreateConsultant-password" class="form-control" placeholder="Adgangskode" required>
+                    <small id="smallCreateConsultant-password" class="text-danger"></small>
+                </div>
+                <div class="col form-group">
+                    <label for="inputPasswordRepeat">Gentag adgangskode</label>
+                    <input name="passwordRepeat" type="password" id="inputCreateConsultant-passwordRepeat" class="form-control" placeholder="Gentag adgangskode" required>
+                    <small id="smallCreateConsultant-passwordRepeat" class="text-danger"></small>
                 </div>
             </div>
         </div>
-
-        <div class="form-row" id="passwordFields">
-            <div class="col form-group">
-                <label for="inputPassword">Adgangskode</label>
-                <input name="password" type="password" id="inputCreateConsultant-password" class="form-control" placeholder="Adgangskode" required>
-                <small id="smallCreateConsultant-password" class="text-danger"></small>
-            </div>
-            <div class="col form-group">
-                <label for="inputPasswordRepeat">Gentag adgangskode</label>
-                <input name="passwordRepeat" type="password" id="inputCreateConsultant-passwordRepeat" class="form-control" placeholder="Gentag adgangskode" required>
-                <small id="smallCreateConsultant-passwordRepeat" class="text-danger"></small>
+        <div class="modal-footer">
+            <div class="form-row float-right">
+                <div class="col form-group">
+                    <button id="createConsultantCancel" class="btn btn-secondary" data-dismiss="modal" style="cursor: pointer">Annuller</button>
+                    <button type="submit" class="btn btn-primary" style="cursor: pointer;">Opret bruger</button>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="modal-footer">
-        <div class="form-row float-right">
-            <div class="col form-group">
-                <button id="createConsultantCancel" class="btn btn-secondary" data-dismiss="modal" style="cursor: pointer">Annuller</button>
-                <button type="submit" class="btn btn-primary" style="cursor: pointer;">Opret bruger</button>
-            </div>
-        </div>
-    </div>
-</form>
+    </form>
+</div>

@@ -2,12 +2,12 @@
 
 window.addEventListener('load', function () {
 
-    
+    let season = $("#seasonInput");
     const form = document.getElementById('createSeasonForm')
     if (!form) return
 
     $("#createSeasonCancel").click(() => {
-        $("#seasonInput").val("");
+        season.val("");
     });
 
     form.addEventListener('submit', function (event) {
@@ -16,17 +16,25 @@ window.addEventListener('load', function () {
 
         var seasonOK = true;
         for (var i = 0; i < $("#season")[0].options.length; i++){
-            if ($("#seasonInput")[0].value === $("#season")[0][i].text.substring(6)){
+            if (season[0].value === $("#season")[0][i].text.substring(6)){
                 seasonOK = false
             }
         }
 
         if(!seasonOK){
-            $('#alert-season').append('<div class="alert alert-danger alert-dismissible" id="errorMessage" role="alert">Sæson er allerede oprettet<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+            season[0].setCustomValidity("Sæson er findes allerede");
+            $("#smallCreateSeason-season").text("Sæson er findes allerede");
+            season.addClass("is-invalid");
         }
 
+        season.keyup(() => {
+            season[0].setCustomValidity("");
+            $("#smallCreateSeason-season").text("");
+            season.removeClass("is-invalid");
+        });
+
         if (form.checkValidity() === true){
-            var consultantData = $("#seasonInput").val()
+            var consultantData = season.val()
             $.ajax({
                 url: "/season",
                 method: "POST",
@@ -36,9 +44,8 @@ window.addEventListener('load', function () {
                 .then(() => location.reload())
                 .catch(() => {
                 if ($(".alert").length === 0){
-                $('#alert-season').append('<div class="alert alert-danger alert-dismissible" id="errorMessage" role="alert">' +
-                        'Sæson er allerede oprettet<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
-                        '<span aria-hidden="true">&times;</span></button></div>');
+                $('#alert-season').append('<div class="alert alert-danger" id="errorMessage" role="alert">' +
+                        'Sæson er allerede oprettet</div>');
             }});
         }
 

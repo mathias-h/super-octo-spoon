@@ -477,27 +477,30 @@ describe("order", () => {
     })
 
     it("sample totals", async () => {
+        const season = new Season({
+            season: "SEASON",
+            default: true
+        })
+        await season.save()
         await createOrder({
+            season: season._id,
             signedDate: new Date("2017-02-01"),
             area: 10,
-            mgSamples: 1,
-            cutSamples: 1,
-            otherSamples: 1
+            samplesTaken: 5
         });
         await createOrder({
+            season: season._id,
             signedDate: new Date("2017-02-01"),
             area: 10,
-            mgSamples: 1,
-            cutSamples: 1,
-            otherSamples: 1
+            samplesTaken: 5
         });
 
-        const result = await Order.sampleTotals()
+        const result = await Order.sampleTotals(season)
         
         expect(result).to.deep.eq({
             _id: null,
             totalSamples: 20,
-            totalTaken: 6
+            totalTaken: 10
         })
     })
 
@@ -510,10 +513,23 @@ describe("order", () => {
                 dummy: false
             })
             await consultant.save()
-            const order = await createOrder({ name: "X", consultant: consultant._id })
-            await createOrder({ name: "Y", consultant: consultant._id })
+            const season = new Season({
+                season: "SEASON",
+                default: true
+            })
+            await season.save()
+            const order = await createOrder({
+                season: season._id,
+                name: "X",
+                consultant: consultant._id
+            })
+            await createOrder({
+                season: season._id,
+                name: "Y",
+                consultant: consultant._id
+            })
             
-            const result = await Order.getAll({ query: "X" })
+            const result = await Order.getAll({ query: "X" }, season._id)
 
             expect(result.length).to.eq(1)
             expect(result[0]._id.toHexString()).to.eq(order._id.toHexString())
@@ -543,7 +559,7 @@ describe("order", () => {
                 season: season._id
             })
 
-            const results = await Order.getAll({ sortBy: "name", order: "asc" })
+            const results = await Order.getAll({ sortBy: "name", order: "asc" }, season._id)
 
             expect(results.length).to.eq(2)
             expect(results[1]._id.toHexString()).to.eq(order._id.toHexString())
@@ -573,7 +589,7 @@ describe("order", () => {
                 season: season._id
             })
 
-            const results = await Order.getAll({ sortBy: "name", order: "desc" })
+            const results = await Order.getAll({ sortBy: "name", order: "desc" }, season._id)
 
             expect(results.length).to.eq(2)
             expect(results[1]._id.toHexString()).to.eq(order._id.toHexString())
@@ -603,7 +619,7 @@ describe("order", () => {
                 season: season._id
             })
 
-            const results = await Order.getAll({})
+            const results = await Order.getAll({}, season._id)
 
             expect(results[1]._id.toHexString()).to.eq(order._id.toHexString())
             expect(results[0]._id.toHexString()).to.eq(order1._id.toHexString())
@@ -617,16 +633,27 @@ describe("order", () => {
                 dummy: false
             })
             await consultant.save()
+            const season = new Season({
+                season: "SEASON",
+                default: true
+            })
+            await season.save()
             await createOrder({
+                season: season._id,
                 signedDate: new Date("1970-02-01"),
                 consultant: consultant._id
             })
 
-            const [result] = await Order.getAll({})
+            const [result] = await Order.getAll({}, season._id);
 
             expect(result.signedDate).to.eq("01-02-1970")
         })
         it("should set fase 1", async () => {
+            const season = new Season({
+                season: "SEASON",
+                default: true
+            })
+            await season.save()
             const consultant = new Consultant({
                 name: "CONSULTANT",
                 password: "PASS",
@@ -635,14 +662,20 @@ describe("order", () => {
             })
             await consultant.save()
             await createOrder({
+                season: season._id,
                 consultant: consultant._id
             })
 
-            const [result] = await Order.getAll({})
+            const [result] = await Order.getAll({}, season._id)
 
             expect(result.fase).to.eq(1)
         })
         it("should set fase 2", async () => {
+            const season = new Season({
+                season: "SEASON",
+                default: true
+            })
+            await season.save()
             const consultant = new Consultant({
                 name: "CONSULTANT",
                 password: "PASS",
@@ -651,15 +684,21 @@ describe("order", () => {
             })
             await consultant.save()
             await createOrder({
+                season: season._id,
                 mapDate: new Date("1970-01-01"),
                 consultant: consultant._id
             })
 
-            const [result] = await Order.getAll({})
+            const [result] = await Order.getAll({}, season._id)
 
             expect(result.fase).to.eq(2)
         })
         it("should set fase 3", async () => {
+            const season = new Season({
+                season: "SEASON",
+                default: true
+            })
+            await season.save()
             const consultant = new Consultant({
                 name: "CONSULTANT",
                 password: "PASS",
@@ -668,15 +707,21 @@ describe("order", () => {
             })
             await consultant.save()
             await createOrder({
+                season: season._id,
                 sendToFarmer: new Date("1970-01-01"),
                 consultant: consultant._id
             })
 
-            const [result] = await Order.getAll({})
+            const [result] = await Order.getAll({}, season._id)
 
             expect(result.fase).to.eq(3)
         })
         it("should set fase done", async () => {
+            const season = new Season({
+                season: "SEASON",
+                default: true
+            })
+            await season.save()
             const consultant = new Consultant({
                 name: "CONSULTANT",
                 password: "PASS",
@@ -685,11 +730,12 @@ describe("order", () => {
             })
             await consultant.save()
             await createOrder({
+                season: season._id,
                 done: true,
                 consultant: consultant._id
             })
 
-            const [result] = await Order.getAll({})
+            const [result] = await Order.getAll({}, season._id)
 
             expect(result.fase).to.eq(4)
         })

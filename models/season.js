@@ -26,8 +26,8 @@ Season.statics.createSeason = function (season) {
     }
 }
 
-Season.statics.updateSeasonName = function (seasonID, newSeasonName) {
-    return this.findOneAndUpdate({_id: seasonID}, {$set:{season:newSeasonName}}, {runValidators: true})
+Season.statics.updateSeasonName = function (seasonID, { season }) {
+    return this.findOneAndUpdate({_id: seasonID}, {$set:{ season }}, {runValidators: true})
 }
 
 Season.statics.setDefaultSeason = async function (seasonID) {
