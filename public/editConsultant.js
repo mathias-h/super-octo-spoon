@@ -10,9 +10,9 @@ window.addEventListener("load", () => {
     }
 
     function setAlertBox(text){
-        let alertBox = $(".alert", "#editUser");
+        let alertBox = $(".alert", "#alert-createConsultant");
         if(alertBox.length === 0){
-            $("#editUser").prepend("<div class='alert alert-danger alert-dismissible' role='alert'>" + text + "<button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button></div>");
+            $("#alert-createConsultant").prepend("<div class='alert alert-danger alert-dismissible' role='alert'>" + text + "</div>");
         }else{
             alertBox.text(text);
         }
@@ -47,16 +47,16 @@ window.addEventListener("load", () => {
         }
 
         await $.ajax({
+            statusCode: {
+                500: () => { setAlertBox("Brugernavnet bliver allerede brugt"); },
+                403: () => { setAlertBox("Kan ikke ændre superbruger status for egen bruger"); }
+            },
             url: "/consultant/" + consultantId,
             method: "PUT",
             data: JSON.stringify(consultant),
             contentType: "application/json"
         })
-            .then(() => location.reload())
-            .catch((error) => {
-                console.log(error);
-                setAlertBox(error.responseText);
-            });
+            .then(() => location.reload());
     }
     
     async function deleteConsultant(btn) {
@@ -66,12 +66,13 @@ window.addEventListener("load", () => {
 
         await $.ajax({
             statusCode: {
-                403: () => setAlertBox("Kan ikke ændre egen superbruger status")
+                403: () => { setAlertBox("Kan ikke slette egen bruger"); }
             },
             url: '/consultant/' + consultantId,
             method: 'DELETE'
-        }).catch((error) => setAlertBox(error.responseText));
-        row.parentElement.removeChild(row)
+        }).then(() => {
+            row.parentElement.removeChild(row);
+        });
     }
 
     function changePassword(btn) {

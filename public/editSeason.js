@@ -1,4 +1,13 @@
 window.addEventListener("load", function () {
+    function setAlertBox(text){
+        let alertBox = $(".alert", "#alert-editSeason");
+        if(alertBox.length === 0){
+            $("#alert-editSeason").prepend("<div class='alert alert-danger' role='alert'>" + text + "</div>");
+        }else{
+            alertBox.text(text);
+        }
+    }
+
     $(".season").each(function () {
         const seasonId = this.getAttribute("data-season-id")
         const saveBtn = this.querySelector(".editSeasonSaveBtn")
@@ -8,13 +17,14 @@ window.addEventListener("load", function () {
             const season = input.value
 
             await $.ajax({
+                statusCode: {
+                    500: () => { setAlertBox("Sæson navnet bliver allerede brugt"); }
+                },
                 url: "/season/" + seasonId,
                 method: "PUT",
                 data: JSON.stringify({ season }),
                 contentType: "application/json"
-            }).then(() => location.reload()).catch(err => {
-                // TODO handle error
-            })
+            }).then(() => location.reload());
         })
     })
     $("#setDefaultSeasonBtn").click(async function () {

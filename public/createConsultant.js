@@ -98,8 +98,8 @@ $(document).ready(() => {
             $.ajax({
                 statusCode: {
                     409: () => {
-                        consultant[0].setCustomValidity("Initialerne bliver allerede brugt");
-                        $("#smallCreateConsultant-consultant").text("Initialerne bliver allerede brugt");
+                        consultant[0].setCustomValidity("Brugernavnet bliver allerede brugt");
+                        $("#smallCreateConsultant-consultant").text("Brugernavnet bliver allerede brugt");
                         consultant.addClass("is-invalid");
                     }
                 },

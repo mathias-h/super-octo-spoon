@@ -1,4 +1,9 @@
 <div class="tab-pane {{#equals consultant.isAdmin false}}show active{{/equals}}" id="dynamicColumn" role="tabpanel" aria-labelledby="dynamicColumn-tab">
+    <div class="modal-body">
+        <div id="alert-createDynamic">
+            <!-- error message -->
+        </div>
+    </div>
     <table class="table table-striped">
         <thead>
         <th scope="col">Navn</th>
@@ -19,7 +24,7 @@
         {{/each}}
         </tbody>
     </table>
-    <form class="form">
+    <form id="createDynamicForm">
         <div class="form-group ml-2">
             <div class="align-middle row">
                 <div class="col-3">
