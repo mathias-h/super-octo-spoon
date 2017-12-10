@@ -228,7 +228,7 @@ Consultant.statics.deleteConsultant = function (consultantId) {
                 }
             };
 
-            this.model("Order").updateMany(condition, update)
+            return this.model("Order").updateMany(condition, update)
                 .then(() => {
                     this.findOneAndRemove({_id: consultantId})
                         .then(function () {
