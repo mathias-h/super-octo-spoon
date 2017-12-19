@@ -17,6 +17,11 @@ describe("dynamic server tests", () => {
             }
 
             const app = createApp({
+                Consultant: new class {
+                    count() {
+                        return Promise.resolve(1);
+                    }
+                },
                 Dynamic: DynamicMock,
                 session: () => (req,_,next) => {
                     req.session = { isLoggedIn: true };
@@ -36,8 +41,12 @@ describe("dynamic server tests", () => {
             const DynamicMock = {
                 createDynamic: () => Promise.reject()
             }
-
             const app = createApp({
+                Consultant: new class {
+                    count() {
+                        return Promise.resolve(1);
+                    }
+                },
                 Dynamic: DynamicMock,
                 session: () => (req,_,next) => {
                     req.session = { isLoggedIn: true };
@@ -65,6 +74,11 @@ describe("dynamic server tests", () => {
             }
 
             const app = createApp({
+                Consultant: new class {
+                    count() {
+                        return Promise.resolve(1);
+                    }
+                },
                 Dynamic: DynamicMock,
                 session: () => (req,_,next) => {
                     req.session = { isLoggedIn: true };
@@ -85,6 +99,11 @@ describe("dynamic server tests", () => {
             }
 
             const app = createApp({
+                Consultant: new class {
+                    count() {
+                        return Promise.resolve(1);
+                    }
+                },
                 Dynamic: DynamicMock,
                 session: () => (req,_,next) => {
                     req.session = { isLoggedIn: true };

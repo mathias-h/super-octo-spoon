@@ -34,6 +34,11 @@ describe("Order server tests", () => {
                 })
             }
             const app = createApp({
+                Consultant: new class {
+                    count() {
+                        return Promise.resolve(1);
+                    }
+                },
                 Order: OrderMock,
                 session: sessionMock()
             })
@@ -61,6 +66,11 @@ describe("Order server tests", () => {
             }
 
             const app = createApp({
+                Consultant: new class {
+                    count() {
+                        return Promise.resolve(1);
+                    }
+                },
                 Order: OrderMock,
                 session: sessionMock()
             })
@@ -90,6 +100,9 @@ describe("Order server tests", () => {
             findOne(query) {
                 expect(query).to.deep.eq({ _id: consultantId })
                 return Promise.resolve({ _id: consultantId })
+            },
+            count() {
+                return Promise.resolve(1);
             }
         }
         
@@ -131,6 +144,9 @@ describe("Order server tests", () => {
             const ConsultantMock = {
                 findOne(q) {
                     return Promise.resolve({ _id: "USER_ID" })
+                },
+                count() {
+                    return Promise.resolve(1);
                 }
             }
 
@@ -161,6 +177,9 @@ describe("Order server tests", () => {
             const ConsultantMock = {
                 findOne(q) {
                     return Promise.resolve({ _id: "USER_ID" })
+                },
+                count() {
+                    return Promise.resolve(1);
                 }
             }
 
@@ -190,6 +209,9 @@ describe("Order server tests", () => {
             const ConsultantMock = {
                 findOne(q) {
                     return Promise.resolve({ _id: "USER_ID" })
+                },
+                count() {
+                    return Promise.resolve(1);
                 }
             }
 

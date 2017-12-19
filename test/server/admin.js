@@ -25,6 +25,11 @@ describe('Testing admin privileges', function () {
         };
 
         const app = createApp({
+            Consultant: new class {
+                count() {
+                    return Promise.resolve(1);
+                }
+            },
             session: sessionMock()
         });
 
@@ -93,6 +98,9 @@ describe('Testing admin privileges', function () {
             },
             deleteConsultant(){
                 return Promise.resolve();
+            },
+            count() {
+                return Promise.resolve(1);
             }
         };
 
@@ -173,6 +181,9 @@ describe('Testing admin privileges', function () {
                 const ConsultantMock = {
                     updateConsultant() {
                         return Promise.resolve();
+                    },
+                    count() {
+                        return Promise.resolve(1);
                     }
                 };
 
@@ -216,6 +227,9 @@ describe('Testing admin privileges', function () {
                 const ConsultantMock = {
                     updateConsultant() {
                         return Promise.resolve();
+                    },
+                    count() {
+                        return Promise.resolve(1);
                     }
                 };
 

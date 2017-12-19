@@ -24,6 +24,11 @@ describe('Login/session testing', function () {
             it('should redirect to /login', function () {
 
                 const app = createApp({
+                    Consultant: new class {
+                        count() {
+                            return Promise.resolve(1);
+                        }
+                    },
                     session: sessionMock()
                 });
 
@@ -41,6 +46,11 @@ describe('Login/session testing', function () {
             it('should redirect to /login', function () {
 
                 const app = createApp({
+                    Consultant: new class {
+                        count() {
+                            return Promise.resolve(1);
+                        }
+                    },
                     session: sessionMock()
                 });
 
@@ -60,6 +70,11 @@ describe('Login/session testing', function () {
             it('should serve /login', function () {
 
                 const app = createApp({
+                    Consultant: new class {
+                        count() {
+                            return Promise.resolve(1);
+                        }
+                    },
                     session: sessionMock()
                 });
 
@@ -105,7 +120,10 @@ describe('Login/session testing', function () {
                     }
                 };
                 const ConsultantMock = {
-                    find: () => Promise.resolve({})
+                    find: () => Promise.resolve({}),
+                    count() {
+                        return Promise.resolve(1);
+                    }
                 };
                 const SeasonMock = {
                     find: () => Promise.resolve([]),
@@ -155,6 +173,11 @@ describe('Login/session testing', function () {
                 };
 
                 const app = createApp({
+                    Consultant: new class {
+                        count() {
+                            return Promise.resolve(1);
+                        }
+                    },
                     Order: OrderMock,
                     session: function sessionMock(req,res,next) {
                         return (req,res,next) => {
@@ -190,7 +213,10 @@ describe('Login/session testing', function () {
                     }
                 };
                 const ConsultantMock = {
-                    find: () => Promise.resolve({})
+                    find: () => Promise.resolve({}),
+                    count() {
+                        return Promise.resolve(1);
+                    }
                 };
                 const SeasonMock = {
                     find: () => Promise.resolve([]),
@@ -241,6 +267,11 @@ describe('Login/session testing', function () {
                 };
 
                 const app = createApp({
+                    Consultant: new class {
+                        count() {
+                            return Promise.resolve(1);
+                        }
+                    },
                     session: sessionMock()
                 });
 
@@ -260,6 +291,11 @@ describe('Login/session testing', function () {
                 };
 
                 const app = createApp({
+                    Consultant: new class {
+                        count() {
+                            return Promise.resolve(1);
+                        }
+                    },
                     session: sessionMock()
                 });
 
@@ -279,6 +315,11 @@ describe('Login/session testing', function () {
                 };
 
                 const app = createApp({
+                    Consultant: new class {
+                        count() {
+                            return Promise.resolve(1);
+                        }
+                    },
                     session: sessionMock()
                 });
 
@@ -299,6 +340,11 @@ describe('Login/session testing', function () {
                 };
 
                 const app = createApp({
+                    Consultant: new class {
+                        count() {
+                            return Promise.resolve(1);
+                        }
+                    },
                     session: sessionMock()
                 });
 
@@ -340,6 +386,9 @@ describe('Login/session testing', function () {
                             message: "Incorrect credentials"
                         });
                     }
+                },
+                count() {
+                    return Promise.resolve(1);
                 }
             };
 
@@ -395,6 +444,11 @@ describe('Login/session testing', function () {
                     }
                 }
                 const app = createApp({
+                    Consultant: new class {
+                        count() {
+                            return Promise.resolve(1);
+                        }
+                    },
                     session: sessionMock()
                 });
 
@@ -453,6 +507,9 @@ describe('Login/session testing', function () {
                         isAdmin: true
                     }
                 });
+            },
+            count() {
+                return Promise.resolve(1);
             }
         };
 
@@ -589,6 +646,11 @@ describe('Login/session testing', function () {
                 };
 
                 const app = createApp({
+                    Consultant: new class {
+                        count() {
+                            return Promise.resolve(1);
+                        }
+                    },
                     session: sessionMock()
                 });
 
@@ -609,6 +671,11 @@ describe('Login/session testing', function () {
                 };
 
                 const app = createApp({
+                    Consultant: new class {
+                        count() {
+                            return Promise.resolve(1);
+                        }
+                    },
                     session: sessionMock()
                 });
 
@@ -629,6 +696,11 @@ describe('Login/session testing', function () {
                 };
 
                 const app = createApp({
+                    Consultant: new class {
+                        count() {
+                            return Promise.resolve(1);
+                        }
+                    },
                     session: sessionMock()
                 });
 
@@ -663,8 +735,10 @@ describe('Login/session testing', function () {
                 const Consultant = {
                     findOne() {
                         return Promise.resolve({_id: "testId"});
+                    },
+                    count() {
+                        return Promise.resolve(1);
                     }
-
                 };
 
                 const Order = {
@@ -698,6 +772,11 @@ describe('Login/session testing', function () {
                 };
 
                 const app = createApp({
+                    Consultant: new class {
+                        count() {
+                            return Promise.resolve(1);
+                        }
+                    },
                     Season: Season,
                     session: sessionMock()
                 });
@@ -718,6 +797,11 @@ describe('Login/session testing', function () {
                 };
 
                 const app = createApp({
+                    Consultant: new class {
+                        count() {
+                            return Promise.resolve(1);
+                        }
+                    },
                     session: sessionMock()
                 });
 
@@ -751,6 +835,11 @@ describe('Login/session testing', function () {
             it('should receive http status 500 and message "ERROR"', function () {
 
                 const app = createApp({
+                    Consultant: new class {
+                        count() {
+                            return Promise.resolve(1);
+                        }
+                    },
                     session: sessionMock()
                 });
 
@@ -767,6 +856,11 @@ describe('Login/session testing', function () {
             it('should receive http status 500 and message "ERROR"', function () {
 
                 const app = createApp({
+                    Consultant: new class {
+                        count() {
+                            return Promise.resolve(1);
+                        }
+                    },
                     session: sessionMock()
                 });
 
@@ -783,6 +877,11 @@ describe('Login/session testing', function () {
             it('should receive http status 500 and message "ERROR"', function () {
 
                 const app = createApp({
+                    Consultant: new class {
+                        count() {
+                            return Promise.resolve(1);
+                        }
+                    },
                     session: sessionMock()
                 });
 
@@ -821,6 +920,11 @@ describe('Login/session testing', function () {
                 };
 
                 const app = createApp({
+                    Consultant: new class {
+                        count() {
+                            return Promise.resolve(1);
+                        }
+                    },
                     Order: orderMock,
                     session: sessionMock()
                 });
@@ -844,6 +948,11 @@ describe('Login/session testing', function () {
                 };
 
                 const app = createApp({
+                    Consultant: new class {
+                        count() {
+                            return Promise.resolve(1);
+                        }
+                    },
                     Dynamic: dynamicMock,
                     session: sessionMock()
                 });
@@ -865,8 +974,10 @@ describe('Login/session testing', function () {
                             status: 'OK',
                             message: 'Deletion successfully completed.'
                         });
+                    },
+                    count() {
+                        return Promise.resolve(1);
                     }
-
                 };
 
                 const app = createApp({

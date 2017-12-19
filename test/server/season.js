@@ -24,6 +24,11 @@ describe("season server testing", () => {
         };
 
         const app = createApp({
+            Consultant: new class {
+                count() {
+                    return Promise.resolve(1);
+                }
+            },
             Season : SeasonMock,
             session: sessionMock()
         });

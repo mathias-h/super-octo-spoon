@@ -16,7 +16,10 @@ describe("overview view", () => {
         };
         const ConsultantMock = {
             find: () => Promise.resolve({}),
-            findById: () => Promise.resolve({})
+            findById: () => Promise.resolve({}),
+            count() {
+                return Promise.resolve(1);
+            }
         }
         const SeasonMock = {
             find: () => Promise.resolve([]),
