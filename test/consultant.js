@@ -301,7 +301,6 @@ describe("consultant tests", () => {
             expect((await Order.findById(order1._id)).consultant.toHexString()).to.eq(dummy._id.toHexString());
             expect((await Order.findById(order2._id)).consultant.toHexString()).to.eq(order2.consultant.toHexString());
         });
-
     });
 
 });
