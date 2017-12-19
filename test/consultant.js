@@ -238,160 +238,68 @@ describe("consultant tests", () => {
 
         });
 
-        it('should delete a consultant ' +
+        it.only('should delete a consultant ' +
             'and update all orders referencing this consultant to reference the dummy consultant instead', async function () {
-
-            const orderDataArr = [
-                {
-                    consultant: undefined,
-                    season: undefined,
-                    signedDate: new Date("1/1/2017"),
-                    landlineNumber: "88888888",
-                    phoneNumber: "20202020",
-                    name: "NN1",
-                    farmName: "Bondegården",
-                    address: {
-                        "street": "Markvejen 1",
-                        "city": "Bondeby",
-                        "zip": "8123"
-                    },
-                    comment: "Ring efter høst",
-                    sampleDensity: 1,
-                    samePlanAsLast: true,
-                    takeOwnSamples: true,
-                    area: 100
-                },
-                {
-                    consultant: undefined,
-                    season: undefined,
-                    signedDate: new Date("1/1/2017"),
-                    landlineNumber: "88888889",
-                    phoneNumber: "20202020",
-                    name: "NN1",
-                    farmName: "Bondegården",
-                    address: {
-                        "street": "Markvejen 2",
-                        "city": "Bondeby",
-                        "zip": "8123"
-                    },
-                    comment: "Ring før høst",
-                    sampleDensity: 1,
-                    samePlanAsLast: true,
-                    takeOwnSamples: true,
-                    area: 100
-                },
-                {
-                    consultant: undefined,
-                    season: undefined,
-                    signedDate: new Date("1/1/2017"),
-                    landlineNumber: "88888888",
-                    phoneNumber: "20202020",
-                    name: "NN1",
-                    farmName: "Bondegården",
-                    address: {
-                        "street": "Markvejen 12",
-                        "city": "TestAArhus",
-                        "zip": "8000"
-                    },
-                    comment: "Ring under høst",
-                    sampleDensity: 1,
-                    samePlanAsLast: true,
-                    takeOwnSamples: true,
-                    area: 100
-                },
-                {
-                    consultant: undefined,
-                    season: undefined,
-                    signedDate: new Date("1/1/2017"),
-                    landlineNumber: "88888888",
-                    phoneNumber: "20202020",
-                    name: "NN1",
-                    farmName: "Bondegården",
-                    address: {
-                        "street": "Markvejen 12",
-                        "city": "Aarhus",
-                        "zip": "8000"
-                    },
-                    comment: "Ring under høst",
-                    sampleDensity: 1,
-                    samePlanAsLast: true,
-                    takeOwnSamples: true,
-                    area: 100
-                },
-                {
-                    consultant: undefined,
-                    season: undefined,
-                    signedDate: new Date("1/1/2017"),
-                    landlineNumber: "88888888",
-                    phoneNumber: "20202020",
-                    name: "NN1",
-                    farmName: "Bondegården",
-                    address: {
-                        "street": "Markvejen 3",
-                        "city": "Bondeby",
-                        "zip": "8123"
-                    },
-                    comment: "Ring under høst",
-                    smapleDensity: 1,
-                    samePlanAsLast: true,
-                    takeOwnSamples: true,
-                    area: 100
-                }
-            ];
-
-            const adminData = {
-                name: "admin",
-                password: "admin",
-                isAdmin: true,
+            const consultant = new Consultant({
+                name: "NAME",
+                password: "PASS",
+                isAdmin: false,
                 dummy: false
-            };
-
-            await Consultant.createConsultant(adminData);
-
-            const dummyData = {
+            });
+            await consultant.save();
+            const dummy = new Consultant({
                 name: "dummy",
                 password: "dummy",
                 isAdmin: false,
                 dummy: true
-            };
+            });
+            await dummy.save();
 
-            await Consultant.createConsultant(dummyData);
-            const dummy = await Consultant.findOne({name: dummyData.name});
+            const order = new Order({
+                season: mongoose.Types.ObjectId(),
+                consultant: consultant._id,
+                signedDate: new Date("2017-01-02"),
+                name: "NAME",
+                farmName: "FARM_NAME",
+                address: {
+                    city: "CITY",
+                    street: "STREET",
+                    zip: 9999
+                }
+            });
+            await order.save();
+            const order1 = new Order({
+                season: mongoose.Types.ObjectId(),
+                consultant: consultant._id,
+                signedDate: new Date("2017-01-02"),
+                name: "NAME1",
+                farmName: "FARM_NAME",
+                address: {
+                    city: "CITY",
+                    street: "STREET",
+                    zip: 9999
+                }
+            });
+            await order1.save();
+            const order2 = new Order({
+                season: mongoose.Types.ObjectId(),
+                consultant: mongoose.Types.ObjectId(),
+                signedDate: new Date("2017-01-02"),
+                name: "NAME2",
+                farmName: "FARM_NAME",
+                address: {
+                    city: "CITY",
+                    street: "STREET",
+                    zip: 9999
+                }
+            });
+            await order2.save();
 
-            const consultantData = {
-                name: "testConsultant01",
-                password: "testConsultant01Password",
-                isAdmin: true,
-                dummy: false
-            };
+            await Consultant.deleteConsultant(consultant._id);
 
-            await Consultant.createConsultant(consultantData);
-
-            await Season.createSeason("2017/2018");
-
-            const season = await Season.findOne();
-
-            const foundConsultant = await Consultant.findOne({name: consultantData.name});
-
-            for(let i = 0; i < orderDataArr.length; i++){
-                orderDataArr[i].consultant = foundConsultant._id;
-                orderDataArr[i].season = season._id;
-
-                await Order.createOrder(orderDataArr[i]);
-            }
-
-            const foundOrders = await Order.find();
-
-            for(let i = 0; i < foundOrders.length; i++){
-                expect(foundOrders[i].consultant.equals(foundConsultant._id));
-            }
-
-            await Consultant.deleteConsultant(foundConsultant._id);
-
-            for(let i = 0; i < foundOrders.length; i++){
-                expect(foundOrders[i].consultant.equals(dummy._id));
-            }
-
+            expect((await Order.findById(order._id)).consultant.toHexString()).to.eq(dummy._id.toHexString());
+            expect((await Order.findById(order1._id)).consultant.toHexString()).to.eq(dummy._id.toHexString());
+            expect((await Order.findById(order2._id)).consultant.toHexString()).to.eq(order2.consultant.toHexString());
         });
 
     });

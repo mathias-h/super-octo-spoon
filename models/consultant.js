@@ -195,52 +195,32 @@ Consultant.statics.createConsultant = function (consultantData) {
     return consultant.save();
 };
 
-
-//TODO - skal lige have code review af deleteConsultant. Der er muligvis en bug.
 /**
  * Deletes a consultant.
  * @param consultantId - the id of the consultant to delete.
  * @returns {Promise|Promise.<T>}
  */
-Consultant.statics.deleteConsultant = function (consultantId) {
-    /*
-    implement delete functionality. Deleting a user should replace all references to that user with a dummy user
-    "tidligereAnsat" and then delete user.
-     */
+Consultant.statics.deleteConsultant = async function (consultantId) {
+    const dummy = await this.findOne({dummy: true})
 
-    return this.findOne({dummy: true})
-        .then((result) => {
+    if(dummy === null){
+        throw new Error('Could not process delete');
+    }
 
-            if(result === null){
-                throw new Error('Could not process delete');
-            }
+    if(dummy._id.equals(consultantId)){
+        throw new Error('Deleting dummy user not allowed');
+    }
 
-            if(result._id.equals(consultantId)){
-                throw new Error('Deleting dummy user not allowed');
-            }
+    await this.model("Order").updateMany({ consultant: consultantId }, {
+        $set: { consultant: dummy._id }
+    });
 
-            const condition = {
-                _id: consultantId
-            };
-            const update = {
-                $set: {
-                    consultant: result._id
-                }
-            };
+    await this.findOneAndRemove({ _id: consultantId });
 
-            this.model("Order").updateMany(condition, update)
-                .then(() => {
-                    this.findOneAndRemove({_id: consultantId})
-                        .then(function () {
-                            return {
-                                status: 'OK',
-                                message: 'Deletion successfully completed.'
-                            };
-                        });
-                });
-
-        });
-
+    return {
+        status: 'OK',
+        message: 'Deletion successfully completed.'
+    };
 };
 
 module.exports.Consultant = Consultant;
