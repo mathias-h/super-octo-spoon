@@ -42,8 +42,8 @@ describe("consultant tests", () => {
 
     });
 
-    after(() => {
-        mongoose.disconnect();
+    after(async () => {
+        await mongoose.disconnect();
         db.kill();
         await sleep(1000);
         const dataPath = __dirname + '/test-data';
