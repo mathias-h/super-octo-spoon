@@ -78,6 +78,7 @@ describe("order integration test", () => {
         await browser.close();
         server.close();
         db.kill()
+        await sleep(1000);
     });
 
     beforeEach(async () => {

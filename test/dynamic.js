@@ -11,20 +11,26 @@ const sleep = time => new Promise(resolve => setTimeout(resolve, time))
 describe("dynamic", () => {
     let Order
     let Dynamic
+    let db 
     before(async () => {
         const dataPath = __dirname + "/test-data"
         rimraf.sync(dataPath)
         fs.mkdirSync(dataPath)
 
         db = childProcess.spawn("mongod", ["--port", "27018", "--dbpath", dataPath])
-        
-        await sleep(1000)
+        await sleep(1000);
 
         mongoose.Promise = global.Promise;
         const connection = await mongoose.createConnection("mongodb://localhost:27018/super-octo-spoon-test");
 
         Dynamic = connection.models.Dynamic || connection.model("Dynamic", DynamicSchema)
         Order = connection.models.Order || connection.model("Order", OrderSchema)
+    })
+
+    after(async () => {
+        await mongoose.disconnect();
+        db.kill();
+        await sleep(1000);
     })
 
     beforeEach(async () => {

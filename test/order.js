@@ -59,8 +59,7 @@ describe("order", () => {
         fs.mkdirSync(dataPath)
 
         db = childProcess.spawn("mongod", ["--port", "27018", "--dbpath", dataPath])
-
-        await sleep(500)
+        await sleep(1000);
 
         mongoose.Promise = global.Promise;
         const connection = await mongoose.createConnection("mongodb://localhost:27018/super-octo-spoon");
@@ -74,6 +73,7 @@ describe("order", () => {
     after(async () => {
         await mongoose.disconnect()
         db.kill()
+        await sleep(1000);
     })
 
     beforeEach(async () => {

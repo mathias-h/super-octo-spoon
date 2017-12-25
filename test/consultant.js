@@ -31,8 +31,7 @@ describe("consultant tests", () => {
         fs.mkdirSync(dataPath);
 
         db = await childProcess.spawn("mongod", ["--port", "27018", "--dbpath", dataPath]);
-
-        await sleep(500);
+        await sleep(1000);
 
         mongoose.Promise = global.Promise;
         const connection = await mongoose.createConnection("mongodb://localhost:27018/super-octo-spoon");
@@ -46,6 +45,7 @@ describe("consultant tests", () => {
     after(() => {
         mongoose.disconnect();
         db.kill();
+        await sleep(1000);
         const dataPath = __dirname + '/test-data';
         rimraf.sync(dataPath);
     });
@@ -238,7 +238,7 @@ describe("consultant tests", () => {
 
         });
 
-        it.only('should delete a consultant ' +
+        it('should delete a consultant ' +
             'and update all orders referencing this consultant to reference the dummy consultant instead', async function () {
             const consultant = new Consultant({
                 name: "NAME",
