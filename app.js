@@ -114,7 +114,7 @@ module.exports.createApp = function createApp({
             const consultant = await Consultant.findById(req.session.consultantId);
             const orders = await Order.getAll(req.query, selectedSeason ? selectedSeason._id : null);
             const consultants = await Consultant.find({});
-            const seasons = await Season.find({});
+            const seasons = await Season.find({}).sort({season:1});
             const dynamics = await Dynamic.find({});
 
             const data = {

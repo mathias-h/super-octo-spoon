@@ -148,7 +148,7 @@ class EditOrderModal {
         setDate($("#inputMO"), order.mO)
         setDate($("#inputReceptApproved"), order.receptApproved)
         setDate($("#inputSendToFarmer"), order.sendToFarmer)
-        if (order.sendBy) $("#inputSendBy").val(order.sendBy._id)
+        if (order.sendBy) $("#inputSendBy").val(order.sendBy)
         $("#inputContactFarmer")[0].checked = order.contactFarmer
         $("#inputWantsMap")[0].checked = order.wantsMap
         $("#inputAppointments").val(order.appointments)
