@@ -18,7 +18,7 @@ const Dynamic = new Schema({
 Dynamic.statics.createDynamic = async function(name, fase) {
     await new this({ name, fase }).save()
 
-    await this.model("Order").update({}, {
+    await this.model("Order").updateMany({}, {
         $set: { [`dynamics.${fase}.${name}`]: "" }
     })
 }
@@ -26,7 +26,7 @@ Dynamic.statics.createDynamic = async function(name, fase) {
 Dynamic.statics.deleteDynamic = async function(id) {
     const { name, fase } = await this.findById(id)
 
-    await this.model("Order").update({}, {
+    await this.model("Order").updateMany({}, {
         $unset: { ["dynamics." + fase + "." + name]: "" }
     })
 
