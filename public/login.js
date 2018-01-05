@@ -1,7 +1,8 @@
 function convertFormToObject(form) {
     const data = {};
     const f = new FormData(form);
-    for (const [key,value] of f.entries()) {
+    for (const key of f) {
+        const value = f.get(key)
         data[key] = value;
     }
     return data;
