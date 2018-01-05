@@ -61,6 +61,7 @@ module.exports.createApp = function createApp({
         next()
     });
 
+    app.use(express.static(__dirname + '/public-transpiled'));
     app.use(express.static(__dirname + '/public'));
     app.use(bodyParser.urlencoded({extended: true}));
     app.use(bodyParser.json());
