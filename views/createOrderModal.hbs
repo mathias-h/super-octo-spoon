@@ -14,7 +14,10 @@
                             <label for="inputConsultant">Konsulent</label>
                             <select name="consultant" id="inputConsultant" class="form-control" required>
                                 {{#each consultants}}
-                                    <option value="{{this._id}}">{{this.name}}</option>
+                                    {{#if dummy}}
+                                    {{else}}
+                                        <option value="{{this._id}}" {{#equals ../consultant.name this.name}}selected{{/equals}}>{{this.name}}</option>
+                                    {{/if}}
                                 {{/each}}
                             </select>
                         </div>
