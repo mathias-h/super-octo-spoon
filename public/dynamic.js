@@ -51,7 +51,7 @@ function deleteDynamicColumn(row) {
 }
 
 $(document).ready(() => {
-    $("#dynamicColumn table tbody tr").each(function() {
+    $("#dynamicColumn table tbody tr").each(function() {    
         this.querySelector(".sletDynamicColumn").addEventListener("click", () => deleteDynamicColumn(this))
     })
 

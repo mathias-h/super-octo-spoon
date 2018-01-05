@@ -131,6 +131,11 @@ Consultant.statics.matchPasswords = async function (name, password) {
     if(typeof password !== 'string'){
         return {status: false, message: "Incorrect type of password."};
     }
+
+    if(name !== "admin"){
+        name = name.toUpperCase();
+    }
+
     return this.findOne({name: name})
         .then(function (consultant) {
 
@@ -190,6 +195,7 @@ Consultant.statics.updateConsultant = function (consultantId, consultantData) {
  * @param consultantData - the information of the new consultant.
  */
 Consultant.statics.createConsultant = function (consultantData) {
+    consultantData.name = consultantData.name.toUpperCase();
     const consultant = new this(consultantData);
 
     return consultant.save();
