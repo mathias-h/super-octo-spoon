@@ -135,6 +135,11 @@ module.exports.createApp = function createApp({
             res.render("error");
         }
     });
+
+    app.get("/logout", async (req,res) => {
+       await req.session.destroy();
+       res.redirect("/login");
+    });
     
     app.post("/order", async (req, res) => {
         try {

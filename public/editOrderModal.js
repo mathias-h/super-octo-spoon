@@ -10,6 +10,7 @@ class EditOrderModal {
         const _this = this;
         this.nameMap = {
             consultant: "Konsulent",
+            signedDate: "Indgået dato",
             name: "Navn",
             farmName: "Gårdnavn",
             street: "Adresse",

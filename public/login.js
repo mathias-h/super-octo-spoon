@@ -19,7 +19,7 @@ window.addEventListener('load', function() {
             statusCode: {
                 401: () => {
                     if ($(".alert").length === 0) {
-                        $('#alert-box').append('<div class="alert alert-danger alert-dismissible" id="errorMessage" role="alert">Brugernavn eller kodeord er ikke korrekt<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+                        $('#alert-box').append('<div class="alert alert-danger alert-dismissible" id="errorMessage" role="alert">Brugernavn eller kodeord er ikke korrekt. <br>Husk at brugernavn er case sensitive.<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
                     }
                 }
             },
