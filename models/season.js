@@ -19,10 +19,13 @@ Season.statics.createSeason = function (season) {
     if (!season){
         throw new Error("Seasonal Error")
     }else {
-        return new this({
-            season: season,
-            default: false
-        }).save()
+        return this.count().then(count => {
+            const isFirstSeason = count === 0
+            return new this({
+                season: season,
+                default: isFirstSeason
+            }).save()
+        })
     }
 }
 
