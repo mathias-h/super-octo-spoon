@@ -137,6 +137,12 @@ Order.statics.editOrder = async function updateOrder(order, consultantId) {
     delete changes.dynamics
 
     const update = { $set: changes }
+    if (update.$set.address) {
+        for (const key of Object.keys(update.$set.address)) {
+            update.$set["address." + key] = update.$set.address[key]
+        }
+        delete update.$set.address
+    }
 
     const logChanges = Object.assign({}, changes, changes.address)
     delete logChanges.dynamics
